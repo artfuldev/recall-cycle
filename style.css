@@ -20,21 +20,16 @@ html, body {
 }
 
 .container {
-    margin: 0 auto;
-    padding: 1em; 
-    width: 100%;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    height: 80vh;
-    transform: translate(-50%, -50%);
+    padding-top: 80px;
+    width: 90%;
+    max-width: 500px;
+    margin: 20px auto 0;
 }
 
 .title.bar {
-    width: 90%;
-    max-width: 900px;
-    margin: 0 auto;
     position: relative;
+    width: 100%;
+    margin-bottom: 20px;
 }
 
 h1 {
@@ -62,20 +57,6 @@ h1 {
     text-transform: uppercase;
     font-weight: 700;
     font-size: 1em;
-}
-
-.grid {
-    padding: 20px;
-}
-
-.grid, .panel {
-    overflow: auto;
-}
-
-.panel {
-    width: 90%;
-    max-width: 500px;
-    margin: 20px auto 0;
 }
 
 .cell {
