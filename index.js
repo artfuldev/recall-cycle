@@ -4,7 +4,7 @@ import delay from 'xstream/extra/delay';
 import { run } from '@cycle/xstream-run';
 import { div, h1, ul, li, a, p, span, makeDOMDriver } from '@cycle/dom';
 
-function main({ dom }) {
+function intent({ dom }) {
   const newGame$ = dom
     .select('.new')
     .events('click')
@@ -27,10 +27,18 @@ function main({ dom }) {
       (ev.target.tagName == 'SPAN'
         ? ev.target.parentElement
         : ev.target).attributes['data-index'].value));
+  return {
+    newGame$,
+    reset$,
+    cellClicks$
+  };
+}
+
+function model(intent) {
   const grid = [];
   for (var i = 0; i < 25; i++)
     grid.push(i);
-  const puzzle$ = newGame$.map(() => {
+  const puzzle$ = intent.newGame$.map(() => {
     const puzzle = [];
     const maxSize = 9;
     for (var i = 0; i < maxSize; i++) {
@@ -41,8 +49,8 @@ function main({ dom }) {
     }
     return puzzle;
   });
-  const userInputAllowed$ = xs.merge(newGame$.mapTo(false), newGame$.compose(delay(4000)).mapTo(true));
-  const userSelectedCells$ = xs.merge(userInputAllowed$.map(allowed => cellClicks$.filter(() => allowed)).flatten()
+  const userInputAllowed$ = xs.merge(intent.newGame$.mapTo(false), intent.newGame$.compose(delay(4000)).mapTo(true));
+  const userSelectedCells$ = xs.merge(userInputAllowed$.map(allowed => intent.cellClicks$.filter(() => allowed)).flatten()
     .fold((selectedCells, clicked) => {
       selectedCells = selectedCells || [];
       var index = selectedCells.indexOf(clicked);
@@ -51,14 +59,19 @@ function main({ dom }) {
       else
         selectedCells.splice(index, 1);
       return selectedCells;
-    }, []), reset$.mapTo([]));
+    }, []), intent.reset$.mapTo([]));
   const state$ = xs.combine(puzzle$, userInputAllowed$, userSelectedCells$).map(a => {
     return {
       puzzle: a[0],
       userInputAllowed: a[1],
-      userSelectedCells: a[2]
+      userSelectedCells: a[2],
+      grid
     };
   });
+  return state$;
+}
+
+function view(state$) {
   const vtree$ = state$.map(state =>
     div('#root', [
       div('.container', [
@@ -74,7 +87,7 @@ function main({ dom }) {
           p(['Click on the nine tiles you see to win!'])
         ]),
         div('.panel', [
-          div('.grid', grid.map((x) =>
+          div('.grid', state.grid.map((x) =>
             div('.cell'
               + ((!state.userInputAllowed && state.puzzle.indexOf(x) !== -1) ? '.highlighted' : '')
               + ((state.userInputAllowed && state.userSelectedCells.indexOf(x) !== -1) ? '.selected' : ''), {
@@ -84,10 +97,13 @@ function main({ dom }) {
         ])
       ])
     ]));
-  const sinks = {
+  return {
     dom: vtree$
   };
-  return sinks;
+}
+
+function main(sources) {
+  return view(model(intent(sources)));
 }
 
 const drivers = {

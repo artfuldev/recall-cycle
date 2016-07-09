@@ -13611,7 +13611,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 ;
 
 
-function main(_ref) {
+function intent(_ref) {
   var dom = _ref.dom;
 
   var newGame$ = dom.select('.new').events('click').map(function (ev) {
@@ -13625,10 +13625,18 @@ function main(_ref) {
   var cellClicks$ = dom.select('.cell').events('click').map(function (ev) {
     return parseInt((ev.target.tagName == 'SPAN' ? ev.target.parentElement : ev.target).attributes['data-index'].value);
   });
+  return {
+    newGame$: newGame$,
+    reset$: reset$,
+    cellClicks$: cellClicks$
+  };
+}
+
+function model(intent) {
   var grid = [];
   for (var i = 0; i < 25; i++) {
     grid.push(i);
-  }var puzzle$ = newGame$.map(function () {
+  }var puzzle$ = intent.newGame$.map(function () {
     var puzzle = [];
     var maxSize = 9;
     for (var i = 0; i < maxSize; i++) {
@@ -13639,9 +13647,9 @@ function main(_ref) {
     }
     return puzzle;
   });
-  var userInputAllowed$ = _xstream2.default.merge(newGame$.mapTo(false), newGame$.compose((0, _delay2.default)(4000)).mapTo(true));
+  var userInputAllowed$ = _xstream2.default.merge(intent.newGame$.mapTo(false), intent.newGame$.compose((0, _delay2.default)(4000)).mapTo(true));
   var userSelectedCells$ = _xstream2.default.merge(userInputAllowed$.map(function (allowed) {
-    return cellClicks$.filter(function () {
+    return intent.cellClicks$.filter(function () {
       return allowed;
     });
   }).flatten().fold(function (selectedCells, clicked) {
@@ -13649,25 +13657,33 @@ function main(_ref) {
     var index = selectedCells.indexOf(clicked);
     if (index === -1) selectedCells.push(clicked);else selectedCells.splice(index, 1);
     return selectedCells;
-  }, []), reset$.mapTo([]));
+  }, []), intent.reset$.mapTo([]));
   var state$ = _xstream2.default.combine(puzzle$, userInputAllowed$, userSelectedCells$).map(function (a) {
     return {
       puzzle: a[0],
       userInputAllowed: a[1],
-      userSelectedCells: a[2]
+      userSelectedCells: a[2],
+      grid: grid
     };
   });
+  return state$;
+}
+
+function view(state$) {
   var vtree$ = state$.map(function (state) {
-    return (0, _dom.div)('#root', [(0, _dom.div)('.container', [(0, _dom.div)('.title.bar', [(0, _dom.h1)(['Recall']), (0, _dom.ul)('.actions', [(0, _dom.li)([(0, _dom.a)('.new', 'New')]), (0, _dom.li)([(0, _dom.a)('.reset', 'Reset')])])]), (0, _dom.div)('.before.grid', [(0, _dom.p)(['Click on the nine tiles you see to win!'])]), (0, _dom.div)('.panel', [(0, _dom.div)('.grid', grid.map(function (x) {
+    return (0, _dom.div)('#root', [(0, _dom.div)('.container', [(0, _dom.div)('.title.bar', [(0, _dom.h1)(['Recall']), (0, _dom.ul)('.actions', [(0, _dom.li)([(0, _dom.a)('.new', 'New')]), (0, _dom.li)([(0, _dom.a)('.reset', 'Reset')])])]), (0, _dom.div)('.before.grid', [(0, _dom.p)(['Click on the nine tiles you see to win!'])]), (0, _dom.div)('.panel', [(0, _dom.div)('.grid', state.grid.map(function (x) {
       return (0, _dom.div)('.cell' + (!state.userInputAllowed && state.puzzle.indexOf(x) !== -1 ? '.highlighted' : '') + (state.userInputAllowed && state.userSelectedCells.indexOf(x) !== -1 ? '.selected' : ''), {
         attrs: { 'data-index': x }
       }, [(0, _dom.span)()]);
     }))])])]);
   });
-  var sinks = {
+  return {
     dom: vtree$
   };
-  return sinks;
+}
+
+function main(sources) {
+  return view(model(intent(sources)));
 }
 
 var drivers = {
