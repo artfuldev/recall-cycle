@@ -25,12 +25,12 @@ function intent({ dom }) {
     });
 
   const selectCell$ = dom
-    .select('.cell')
+    .select('.cell span')
     .events('click')
-    .map(ev => parseInt(
-      (ev.target.tagName == 'SPAN'
-        ? ev.target.parentElement
-        : ev.target).attributes['data-index'].value));
+    .map(ev => {
+      ev.preventDefault();
+      return parseInt(ev.target.parentElement.attributes['data-index'].value);
+    });
 
   return {
     newGame$,
@@ -42,65 +42,68 @@ function intent({ dom }) {
 
 function reducers(actions) {
 
-  const newPuzzleReducer$ = actions.newGame$.map(state => {
-    const puzzle = [];
-    const maxSize = 9;
-    for (var i = 0; i < maxSize; i++) {
-      var nextNumber = Math.floor(Math.random() * 25);
-      while (puzzle.indexOf(nextNumber) !== -1)
-        nextNumber = Math.floor(Math.random() * 25);
-      puzzle.push(nextNumber);
-    }
-    return state.set('puzzle', puzzle);
-  });
+  const puzzleReducer$ = actions.newGame$.map(x =>
+    state => {
+      const puzzle = [];
+      const maxSize = 9;
+      for (var i = 0; i < maxSize; i++) {
+        var nextNumber = Math.floor(Math.random() * 25);
+        while (puzzle.indexOf(nextNumber) !== -1)
+          nextNumber = Math.floor(Math.random() * 25);
+        puzzle.push(nextNumber);
+      }
+      return state.set('puzzle', puzzle);
+    });
 
   const allowedReducer$ = xs.merge(
-    actions.newGame$.map(state => state.set('allowed', false)),
-    actions.newGame$.compose(delay(4000)).map(state => state.set('allowed', true))
+    actions.newGame$.map(x => state => state.set('allowed', false)),
+    actions.newGame$.compose(delay(4000)).map(x => state => state.set('allowed', true))
   );
 
-  const selectedReducer$ = xs.merge(actions.selectCell$.map(state => {
-    if (!state.get('allowed'))
-      return state;
-    state.selected.set(state.selected || Immutable.List());
-    var index = state.selected.indexOf(clicked);
-    if (index === -1)
-      return state.set('selected', state.selected.push(clicked));
-    else
-      return state.set('selected', selected.filter(x => x != clicked));
-  }),
-    actions.reset$.map(state => state.set('selected', []))
+  const selectedReducer$ = xs.merge(actions.selectCell$.map(clicked =>
+    state => {
+      const allowed = state.get('allowed');
+      if (!allowed)
+        return state;
+      const selected = state.get('selected');
+      state.set('selected', selected || []);
+      var index = selected.indexOf(clicked);
+      if (index === -1)
+        return state.set('selected', selected.concat(clicked));
+      else
+        return state.set('selected', selected.filter(x => x != clicked));
+    }),
+    actions.reset$.map(x => state => state.set('selected', []))
   );
 
   return xs.merge(
-    newPuzzleReducer$,
+    puzzleReducer$,
     allowedReducer$,
     selectedReducer$
   );
 }
 
 function model(actions) {
-  var grid = Immutable.List();
+  var grid = [];
   for (var i = 0; i < 25; i++)
-    grid = grid.push(i);
+    grid.push(i);
   const reducer$ = reducers(actions);
   const state$ = actions.any$
     .mapTo(Immutable.Map(
       {
         grid,
-        puzzle: Immutable.List(),
+        puzzle: [],
         allowed: false,
-        selectedCells: Immutable.List()
+        selected: []
       }
     ))
-    .map(state => reducer$.fold((acc, reducer) => reducer(acc), state))
+    .map(state => reducer$.fold((next, reducer) => reducer(next), state))
     .flatten();
   return state$;
 }
 
 function view(state$) {
-  const vtree$ = state$.map(state =>
-  {
+  const vtree$ = state$.map(state => {
     const grid = state.get('grid');
     const allowed = state.get('allowed');
     const puzzle = state.get('puzzle');
