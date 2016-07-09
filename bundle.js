@@ -18609,8 +18609,9 @@ function intent(_ref) {
     return true;
   });
 
-  var selectCell$ = dom.select('.cell').events('click').map(function (ev) {
-    return parseInt((ev.target.tagName == 'SPAN' ? ev.target.parentElement : ev.target).attributes['data-index'].value);
+  var selectCell$ = dom.select('.cell span').events('click').map(function (ev) {
+    ev.preventDefault();
+    return parseInt(ev.target.parentElement.attributes['data-index'].value);
   });
 
   return {
@@ -18623,51 +18624,63 @@ function intent(_ref) {
 
 function reducers(actions) {
 
-  var newPuzzleReducer$ = actions.newGame$.map(function (state) {
-    var puzzle = [];
-    var maxSize = 9;
-    for (var i = 0; i < maxSize; i++) {
-      var nextNumber = Math.floor(Math.random() * 25);
-      while (puzzle.indexOf(nextNumber) !== -1) {
-        nextNumber = Math.floor(Math.random() * 25);
-      }puzzle.push(nextNumber);
-    }
-    return state.set('puzzle', puzzle);
+  var puzzleReducer$ = actions.newGame$.map(function (x) {
+    return function (state) {
+      var puzzle = [];
+      var maxSize = 9;
+      for (var i = 0; i < maxSize; i++) {
+        var nextNumber = Math.floor(Math.random() * 25);
+        while (puzzle.indexOf(nextNumber) !== -1) {
+          nextNumber = Math.floor(Math.random() * 25);
+        }puzzle.push(nextNumber);
+      }
+      return state.set('puzzle', puzzle);
+    };
   });
 
-  var allowedReducer$ = _xstream2.default.merge(actions.newGame$.map(function (state) {
-    return state.set('allowed', false);
-  }), actions.newGame$.compose((0, _delay2.default)(4000)).map(function (state) {
-    return state.set('allowed', true);
+  var allowedReducer$ = _xstream2.default.merge(actions.newGame$.map(function (x) {
+    return function (state) {
+      return state.set('allowed', false);
+    };
+  }), actions.newGame$.compose((0, _delay2.default)(4000)).map(function (x) {
+    return function (state) {
+      return state.set('allowed', true);
+    };
   }));
 
-  var selectedReducer$ = _xstream2.default.merge(actions.selectCell$.map(function (state) {
-    if (!state.get('allowed')) return state;
-    state.selected.set(state.selected || _immutable2.default.List());
-    var index = state.selected.indexOf(clicked);
-    if (index === -1) return state.set('selected', state.selected.push(clicked));else return state.set('selected', selected.filter(function (x) {
-      return x != clicked;
-    }));
-  }), actions.reset$.map(function (state) {
-    return state.set('selected', []);
+  var selectedReducer$ = _xstream2.default.merge(actions.selectCell$.map(function (clicked) {
+    return function (state) {
+      var allowed = state.get('allowed');
+      if (!allowed) return state;
+      var selected = state.get('selected');
+      state.set('selected', selected || []);
+      var index = selected.indexOf(clicked);
+      if (index === -1) return state.set('selected', selected.concat(clicked));else return state.set('selected', selected.filter(function (x) {
+        return x != clicked;
+      }));
+    };
+  }), actions.reset$.map(function (x) {
+    return function (state) {
+      return state.set('selected', []);
+    };
   }));
 
-  return _xstream2.default.merge(newPuzzleReducer$, allowedReducer$, selectedReducer$);
+  return _xstream2.default.merge(puzzleReducer$, allowedReducer$, selectedReducer$);
 }
 
 function model(actions) {
-  var grid = _immutable2.default.List();
+  var grid = [];
   for (var i = 0; i < 25; i++) {
-    grid = grid.push(i);
+    grid.push(i);
   }var reducer$ = reducers(actions);
   var state$ = actions.any$.mapTo(_immutable2.default.Map({
     grid: grid,
-    puzzle: _immutable2.default.List(),
+    puzzle: [],
     allowed: false,
-    selectedCells: _immutable2.default.List()
+    selected: []
   })).map(function (state) {
-    return reducer$.fold(function (acc, reducer) {
-      return reducer(acc);
+    return reducer$.fold(function (next, reducer) {
+      return reducer(next);
     }, state);
   }).flatten();
   return state$;
