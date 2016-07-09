@@ -5,6 +5,7 @@ html, body {
     margin: 0;
     padding: 0;
     font-family: 'Raleway', Arial, Helvetica, sans-serif;
+    color: white;
 }
 
 html, body {
@@ -34,10 +35,13 @@ html, body {
 
 h1 {
     display: inline-block;
-    color: white;
     font-weight: 100;
     font-size: 3em;
     margin: 0;
+}
+
+.before.grid p {
+    margin-bottom: 20px;
 }
 
 .actions {
@@ -53,7 +57,6 @@ h1 {
     display: inline-block;
     margin-left: 20px;
     padding: 10px;
-    color: white;
     text-transform: uppercase;
     font-weight: 700;
     font-size: 1em;
@@ -88,4 +91,8 @@ h1 {
 
 .cell.highlighted {
     background: #68efad;
+}
+
+.cell.selected {
+    background: #7b1fa2;
 }

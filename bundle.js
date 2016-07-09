@@ -165,7 +165,7 @@ var HTMLSource = (function () {
 }());
 exports.HTMLSource = HTMLSource;
 
-},{"@cycle/xstream-adapter":19,"xstream":370}],4:[function(require,module,exports){
+},{"@cycle/xstream-adapter":19,"xstream":371}],4:[function(require,module,exports){
 "use strict";
 var xstream_adapter_1 = require('@cycle/xstream-adapter');
 var xstream_1 = require('xstream');
@@ -328,7 +328,7 @@ var MainDOMSource = (function () {
 }());
 exports.MainDOMSource = MainDOMSource;
 
-},{"./ElementFinder":1,"./EventDelegator":2,"./fromEvent":7,"./isolate":11,"./utils":18,"@cycle/xstream-adapter":19,"matches-selector":20,"xstream":370}],5:[function(require,module,exports){
+},{"./ElementFinder":1,"./EventDelegator":2,"./fromEvent":7,"./isolate":11,"./utils":18,"@cycle/xstream-adapter":19,"matches-selector":20,"xstream":371}],5:[function(require,module,exports){
 "use strict";
 var ScopeChecker = (function () {
     function ScopeChecker(scope, isolateModule) {
@@ -401,7 +401,7 @@ function fromEvent(element, eventName, useCapture) {
 }
 exports.fromEvent = fromEvent;
 
-},{"xstream":370}],8:[function(require,module,exports){
+},{"xstream":371}],8:[function(require,module,exports){
 "use strict";
 var hyperscript_1 = require('./hyperscript');
 function isValidString(param) {
@@ -1008,7 +1008,7 @@ function makeDOMDriver(container, options) {
 }
 exports.makeDOMDriver = makeDOMDriver;
 
-},{"./MainDOMSource":4,"./VNodeWrapper":6,"./isolateModule":12,"./modules":16,"./transposition":17,"./utils":18,"@cycle/xstream-adapter":19,"snabbdom":65,"xstream":370}],14:[function(require,module,exports){
+},{"./MainDOMSource":4,"./VNodeWrapper":6,"./isolateModule":12,"./modules":16,"./transposition":17,"./utils":18,"@cycle/xstream-adapter":19,"snabbdom":65,"xstream":371}],14:[function(require,module,exports){
 "use strict";
 var xstream_adapter_1 = require('@cycle/xstream-adapter');
 var transposition_1 = require('./transposition');
@@ -1089,7 +1089,7 @@ function mockDOMSource(streamAdapter, mockConfig) {
 }
 exports.mockDOMSource = mockDOMSource;
 
-},{"@cycle/xstream-adapter":19,"xstream":370}],16:[function(require,module,exports){
+},{"@cycle/xstream-adapter":19,"xstream":371}],16:[function(require,module,exports){
 "use strict";
 var ClassModule = require('snabbdom/modules/class');
 exports.ClassModule = ClassModule;
@@ -1154,7 +1154,7 @@ function makeTransposeVNode(runStreamAdapter) {
 }
 exports.makeTransposeVNode = makeTransposeVNode;
 
-},{"@cycle/xstream-adapter":19,"xstream":370}],18:[function(require,module,exports){
+},{"@cycle/xstream-adapter":19,"xstream":371}],18:[function(require,module,exports){
 "use strict";
 function isElement(obj) {
     return typeof HTMLElement === "object" ?
@@ -1236,7 +1236,7 @@ var XStreamAdapter = {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = XStreamAdapter;
 
-},{"xstream":370}],20:[function(require,module,exports){
+},{"xstream":371}],20:[function(require,module,exports){
 'use strict';
 
 var proto = Element.prototype;
@@ -4885,7 +4885,7 @@ exports.default = Cycle;
 
 },{}],70:[function(require,module,exports){
 arguments[4][19][0].apply(exports,arguments)
-},{"dup":19,"xstream":370}],71:[function(require,module,exports){
+},{"dup":19,"xstream":371}],71:[function(require,module,exports){
 (function (global){
 "use strict";
 
@@ -13489,13 +13489,107 @@ exports.default = Stream;
 
 },{}],370:[function(require,module,exports){
 "use strict";
+var core_1 = require('../core');
+var DelayOperator = (function () {
+    function DelayOperator(dt, ins) {
+        this.dt = dt;
+        this.ins = ins;
+        this.type = 'delay';
+        this.out = null;
+    }
+    DelayOperator.prototype._start = function (out) {
+        this.out = out;
+        this.ins._add(this);
+    };
+    DelayOperator.prototype._stop = function () {
+        this.ins._remove(this);
+        this.out = null;
+    };
+    DelayOperator.prototype._n = function (t) {
+        var u = this.out;
+        if (!u)
+            return;
+        var id = setInterval(function () {
+            u._n(t);
+            clearInterval(id);
+        }, this.dt);
+    };
+    DelayOperator.prototype._e = function (err) {
+        var u = this.out;
+        if (!u)
+            return;
+        var id = setInterval(function () {
+            u._e(err);
+            clearInterval(id);
+        }, this.dt);
+    };
+    DelayOperator.prototype._c = function () {
+        var u = this.out;
+        if (!u)
+            return;
+        var id = setInterval(function () {
+            u._c();
+            clearInterval(id);
+        }, this.dt);
+    };
+    return DelayOperator;
+}());
+/**
+ * Delays periodic events by a given time period.
+ *
+ * Marble diagram:
+ *
+ * ```text
+ * 1----2--3--4----5|
+ *     delay(60)
+ * ---1----2--3--4----5|
+ * ```
+ *
+ * Example:
+ *
+ * ```js
+ * import fromDiagram from 'xstream/extra/fromDiagram'
+ * import delay from 'xstream/extra/delay'
+ *
+ * const stream = fromDiagram('1----2--3--4----5|')
+ *  .compose(delay(60))
+ *
+ * stream.addListener({
+ *   next: i => console.log(i),
+ *   error: err => console.error(err),
+ *   complete: () => console.log('completed')
+ * })
+ * ```
+ *
+ * ```text
+ * > 1  (after 60 ms)
+ * > 2  (after 160 ms)
+ * > 3  (after 220 ms)
+ * > 4  (after 280 ms)
+ * > 5  (after 380 ms)
+ * > completed
+ * ```
+ *
+ * @param {number} period The amount of silence required in milliseconds.
+ * @return {Stream}
+ */
+function delay(period) {
+    return function delayOperator(ins) {
+        return new core_1.Stream(new DelayOperator(period, ins));
+    };
+}
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = delay;
+
+},{"../core":369}],371:[function(require,module,exports){
+"use strict";
 var core_1 = require('./core');
 exports.Stream = core_1.Stream;
 exports.MemoryStream = core_1.MemoryStream;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = core_1.Stream;
 
-},{"./core":369}],371:[function(require,module,exports){
+},{"./core":369}],372:[function(require,module,exports){
 'use strict';
 
 require('babel-polyfill');
@@ -13504,17 +13598,32 @@ var _xstream = require('xstream');
 
 var _xstream2 = _interopRequireDefault(_xstream);
 
+var _delay = require('xstream/extra/delay');
+
+var _delay2 = _interopRequireDefault(_delay);
+
 var _xstreamRun = require('@cycle/xstream-run');
 
 var _dom = require('@cycle/dom');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+;
+
+
 function main(_ref) {
   var dom = _ref.dom;
 
+  var newGame$ = dom.select('.new').events('click').map(function (x) {
+    return true;
+  }).startWith(true);
+  var cellClicks$ = dom.select('.cell').events('click').map(function (ev) {
+    return parseInt((ev.target.tagName == 'SPAN' ? ev.target.parentElement : ev.target).attributes['data-index'].value);
+  });
   var grid = [];
-  var puzzle$ = _xstream2.default.periodic(200).map(function (x) {
+  for (var i = 0; i < 25; i++) {
+    grid.push(i);
+  }var puzzle$ = newGame$.map(function (x) {
     var puzzle = [];
     var maxSize = 9;
     for (var i = 0; i < maxSize; i++) {
@@ -13524,12 +13633,37 @@ function main(_ref) {
       }puzzle.push(nextNumber);
     }
     return puzzle;
+  }).startWith([]);
+  var userInputAllowed$ = newGame$.compose((0, _delay2.default)(4000)).map(function (x) {
+    return true;
+  }).startWith(false);
+  var userSelectedCells$ = _xstream2.default.combine(userInputAllowed$, cellClicks$).map(function (a) {
+    return {
+      userInputAllowed: a[0],
+      clicked: a[1]
+    };
+  }).filter(function (x) {
+    return x.userInputAllowed;
+  }).map(function (x) {
+    return x.clicked;
+  }).fold(function (selectedCells, clicked) {
+    selectedCells = selectedCells || [];
+    var index = selectedCells.indexOf(clicked);
+    if (index === -1) selectedCells.push(clicked);else selectedCells.splice(index, 1);
+    return selectedCells;
+  }, []);
+  var state$ = _xstream2.default.combine(puzzle$, userInputAllowed$, userSelectedCells$).map(function (a) {
+    return {
+      puzzle: a[0],
+      userInputAllowed: a[1],
+      userSelectedCells: a[2]
+    };
   });
-  for (var i = 0; i < 25; i++) {
-    grid.push(i);
-  }var vtree$ = puzzle$.map(function (puzzle) {
-    return (0, _dom.div)('#root', [(0, _dom.div)('.container', [(0, _dom.div)('.title.bar', [(0, _dom.h1)(['Recall']), (0, _dom.ul)('.actions', [(0, _dom.li)('.new', 'New'), (0, _dom.li)('.reset', 'Reset')])]), (0, _dom.div)('.grid', grid.map(function (x) {
-      return (0, _dom.div)('.cell' + (puzzle.indexOf(x) !== -1 ? '.highlighted' : ''), [(0, _dom.span)()]);
+  var vtree$ = state$.map(function (state) {
+    return (0, _dom.div)('#root', [(0, _dom.div)('.container', [(0, _dom.div)('.title.bar', [(0, _dom.h1)(['Recall']), (0, _dom.ul)('.actions', [(0, _dom.li)('.new', 'New'), (0, _dom.li)('.reset', 'Reset')])]), (0, _dom.div)('.before.grid', [(0, _dom.p)(['Click on the nine tiles you see to win!'])]), (0, _dom.div)('.grid', grid.map(function (x) {
+      return (0, _dom.div)('.cell' + (!state.userInputAllowed && state.puzzle.indexOf(x) !== -1 ? '.highlighted' : '') + (state.userInputAllowed && state.userSelectedCells.indexOf(x) !== -1 ? '.selected' : ''), {
+        attrs: { 'data-index': x }
+      }, [(0, _dom.span)()]);
     }))])]);
   });
   var sinks = {
@@ -13544,4 +13678,4 @@ var drivers = {
 
 (0, _xstreamRun.run)(main, drivers);
 
-},{"@cycle/dom":10,"@cycle/xstream-run":68,"babel-polyfill":71,"xstream":370}]},{},[371]);
+},{"@cycle/dom":10,"@cycle/xstream-run":68,"babel-polyfill":71,"xstream":371,"xstream/extra/delay":370}]},{},[372]);
