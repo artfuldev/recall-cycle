@@ -6,6 +6,7 @@
   "dependencies": {
     "@cycle/dom": "^10.0.5",
     "@cycle/xstream-run": "^3.0.3",
+    "immutable": "^3.8.1",
     "xstream": "^5.1.0"
   },
   "devDependencies": {
