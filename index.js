@@ -30,8 +30,8 @@ function main({ dom }) {
             // li('.undo', 'Undo')
           ])
         ]),
-        div('.grid', grid.map((x, i) =>
-          div('.cell' + (puzzle.indexOf(i) !== -1 ? '.highlighted' : ''), [
+        div('.grid', grid.map((x) =>
+          div('.cell' + (puzzle.indexOf(x) !== -1 ? '.highlighted' : ''), [
             span()
           ])
         ))

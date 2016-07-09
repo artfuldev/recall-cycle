@@ -13528,8 +13528,8 @@ function main(_ref) {
   for (var i = 0; i < 25; i++) {
     grid.push(i);
   }var vtree$ = puzzle$.map(function (puzzle) {
-    return (0, _dom.div)('#root', [(0, _dom.div)('.container', [(0, _dom.div)('.title.bar', [(0, _dom.h1)(['Recall']), (0, _dom.ul)('.actions', [(0, _dom.li)('.new', 'New'), (0, _dom.li)('.reset', 'Reset')])]), (0, _dom.div)('.grid', grid.map(function (x, i) {
-      return (0, _dom.div)('.cell' + (puzzle.indexOf(i) !== -1 ? '.highlighted' : ''), [(0, _dom.span)()]);
+    return (0, _dom.div)('#root', [(0, _dom.div)('.container', [(0, _dom.div)('.title.bar', [(0, _dom.h1)(['Recall']), (0, _dom.ul)('.actions', [(0, _dom.li)('.new', 'New'), (0, _dom.li)('.reset', 'Reset')])]), (0, _dom.div)('.grid', grid.map(function (x) {
+      return (0, _dom.div)('.cell' + (puzzle.indexOf(x) !== -1 ? '.highlighted' : ''), [(0, _dom.span)()]);
     }))])]);
   });
   var sinks = {
