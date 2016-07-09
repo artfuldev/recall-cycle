@@ -2,7 +2,7 @@ import "babel-polyfill";
 import xs from 'xstream';;
 import delay from 'xstream/extra/delay';
 import { run } from '@cycle/xstream-run';
-import { div, h1, ul, li, p, span, makeDOMDriver } from '@cycle/dom';
+import { div, h1, ul, li, a, p, span, makeDOMDriver } from '@cycle/dom';
 
 function main({ dom }) {
   const newGame$ = dom.select('.new').events('click')
@@ -56,8 +56,8 @@ function main({ dom }) {
         div('.title.bar', [
           h1(['Recall']),
           ul('.actions', [
-            li('.new', 'New'),
-            li('.reset', 'Reset'),
+            li([a('.new', 'New')]),
+            li([a('.reset', 'Reset')]),
             // li('.undo', 'Undo')
           ])
         ]),

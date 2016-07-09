@@ -40,10 +40,6 @@ h1 {
     margin: 0;
 }
 
-.before.grid p {
-    margin-bottom: 20px;
-}
-
 .actions {
     float: right;
     list-style: none;
@@ -55,11 +51,29 @@ h1 {
 
 .actions li {
     display: inline-block;
-    margin-left: 20px;
-    padding: 10px;
+}
+
+a {
+    text-decoration: none;
+    color: white;
+    cursor: pointer;
     text-transform: uppercase;
+    margin-left: 20px;
+    padding: 10px 20px;
     font-weight: 700;
     font-size: 1em;
+    border: 1px solid white;
+    border-radius: 2px;
+}
+
+a:hover {
+    text-decoration: none;
+    color:white;
+    cursor: pointer;
+}
+
+.before.grid p {
+    margin-bottom: 20px;
 }
 
 .cell {
