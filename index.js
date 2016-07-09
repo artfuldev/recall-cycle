@@ -88,17 +88,15 @@ function model(actions) {
   for (var i = 0; i < 25; i++)
     grid.push(i);
   const reducer$ = reducers(actions);
-  const state$ = actions.any$
-    .mapTo(Immutable.Map(
+  const initialState = Immutable.Map(
       {
         grid,
         puzzle: [],
         allowed: false,
         selected: []
       }
-    ))
-    .map(state => reducer$.fold((next, reducer) => reducer(next), state))
-    .flatten();
+    );
+  const state$ = reducer$.fold((next, reducer) => reducer(next), initialState);
   return state$;
 }
 

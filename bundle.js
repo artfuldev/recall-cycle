@@ -18673,16 +18673,15 @@ function model(actions) {
   for (var i = 0; i < 25; i++) {
     grid.push(i);
   }var reducer$ = reducers(actions);
-  var state$ = actions.any$.mapTo(_immutable2.default.Map({
+  var initialState = _immutable2.default.Map({
     grid: grid,
     puzzle: [],
     allowed: false,
     selected: []
-  })).map(function (state) {
-    return reducer$.fold(function (next, reducer) {
-      return reducer(next);
-    }, state);
-  }).flatten();
+  });
+  var state$ = reducer$.fold(function (next, reducer) {
+    return reducer(next);
+  }, initialState);
   return state$;
 }
 
