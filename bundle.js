@@ -13639,9 +13639,11 @@ function main(_ref) {
     }
     return puzzle;
   }).startWith([]);
-  var userInputAllowed$ = newGame$.compose((0, _delay2.default)(4000)).map(function (x) {
+  var userInputAllowed$ = _xstream2.default.merge(newGame$.map(function (x) {
+    return false;
+  }), newGame$.compose((0, _delay2.default)(4000)).map(function (x) {
     return true;
-  }).startWith(false);
+  })).startWith(false);
   var userSelectedCells$ = userInputAllowed$.map(function (allowed) {
     return cellClicks$.filter(function () {
       return allowed;
@@ -13660,11 +13662,11 @@ function main(_ref) {
     };
   });
   var vtree$ = state$.map(function (state) {
-    return (0, _dom.div)('#root', [(0, _dom.div)('.container', [(0, _dom.div)('.title.bar', [(0, _dom.h1)(['Recall']), (0, _dom.ul)('.actions', [(0, _dom.li)([(0, _dom.a)('.new', 'New')]), (0, _dom.li)([(0, _dom.a)('.reset', 'Reset')])])]), (0, _dom.div)('.before.grid', [(0, _dom.p)(['Click on the nine tiles you see to win!'])]), (0, _dom.div)('.grid', grid.map(function (x) {
+    return (0, _dom.div)('#root', [(0, _dom.div)('.container', [(0, _dom.div)('.title.bar', [(0, _dom.h1)(['Recall']), (0, _dom.ul)('.actions', [(0, _dom.li)([(0, _dom.a)('.new', 'New')]), (0, _dom.li)([(0, _dom.a)('.reset', 'Reset')])])]), (0, _dom.div)('.before.grid', [(0, _dom.p)(['Click on the nine tiles you see to win!'])]), (0, _dom.div)('.panel', [(0, _dom.div)('.grid', grid.map(function (x) {
       return (0, _dom.div)('.cell' + (!state.userInputAllowed && state.puzzle.indexOf(x) !== -1 ? '.highlighted' : '') + (state.userInputAllowed && state.userSelectedCells.indexOf(x) !== -1 ? '.selected' : ''), {
         attrs: { 'data-index': x }
       }, [(0, _dom.span)()]);
-    }))])]);
+    }))])])]);
   });
   var sinks = {
     dom: vtree$

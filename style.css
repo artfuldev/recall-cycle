@@ -76,6 +76,14 @@ a:hover {
     margin-bottom: 20px;
 }
 
+.container, .panel, .grid {
+    overflow: auto;
+}
+
+.panel {
+    position: relative;
+}
+
 .cell {
     height: 20%;
     width: 20%;

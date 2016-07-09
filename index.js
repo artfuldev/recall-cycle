@@ -42,7 +42,7 @@ function main({ dom }) {
     }
     return puzzle;
   }).startWith([]);
-  const userInputAllowed$ = newGame$.compose(delay(4000)).map(x => true).startWith(false);
+  const userInputAllowed$ = xs.merge(newGame$.map(x => false), newGame$.compose(delay(4000)).map(x => true)).startWith(false);
   const userSelectedCells$ = userInputAllowed$.map(allowed => cellClicks$.filter(() => allowed)).flatten()
     .fold((selectedCells, clicked) => {
       selectedCells = selectedCells || [];
@@ -74,13 +74,15 @@ function main({ dom }) {
         div('.before.grid', [
           p(['Click on the nine tiles you see to win!'])
         ]),
-        div('.grid', grid.map((x) =>
-          div('.cell'
-            + ((!state.userInputAllowed && state.puzzle.indexOf(x) !== -1) ? '.highlighted' : '')
-            + ((state.userInputAllowed && state.userSelectedCells.indexOf(x) !== -1) ? '.selected' : ''), {
-              attrs: { 'data-index': x }
-            }, [span()])
-        ))
+        div('.panel', [
+          div('.grid', grid.map((x) =>
+            div('.cell'
+              + ((!state.userInputAllowed && state.puzzle.indexOf(x) !== -1) ? '.highlighted' : '')
+              + ((state.userInputAllowed && state.userSelectedCells.indexOf(x) !== -1) ? '.selected' : ''), {
+                attrs: { 'data-index': x }
+              }, [span()])
+          ))
+        ])
       ])
     ]));
   const sinks = {
