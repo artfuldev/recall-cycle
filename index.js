@@ -5,9 +5,21 @@ import { div, h1, ul, li, span, makeDOMDriver } from '@cycle/dom';
 
 function main({ dom }) {
   const grid = [];
-  for(var i=0; i<25; i++)
+  const puzzle$ = xs.periodic(200)
+    .map(x => {
+      const puzzle = [];
+      const maxSize = 9;
+      for (var i = 0; i < maxSize; i++) {
+        var nextNumber = Math.floor(Math.random() * 25);
+        while (puzzle.indexOf(nextNumber) !== -1)
+          nextNumber = Math.floor(Math.random() * 25);
+        puzzle.push(nextNumber);
+      }
+      return puzzle;
+    });
+  for (var i = 0; i < 25; i++)
     grid.push(i);
-  const vtree$ = xs.of(
+  const vtree$ = puzzle$.map(puzzle =>
     div('#root', [
       div('.container', [
         div('.title.bar', [
@@ -18,13 +30,11 @@ function main({ dom }) {
             // li('.undo', 'Undo')
           ])
         ]),
-        div('.grid', [
-          div('.panel', grid.map(x =>
-            div('.cell', [
-              span()
-            ])
-          ))
-        ])
+        div('.grid', grid.map((x, i) =>
+          div('.cell' + (puzzle.indexOf(i) !== -1 ? '.highlighted' : ''), [
+            span()
+          ])
+        ))
       ])
     ]));
   const sinks = {

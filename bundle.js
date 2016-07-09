@@ -13514,11 +13514,24 @@ function main(_ref) {
   var dom = _ref.dom;
 
   var grid = [];
+  var puzzle$ = _xstream2.default.periodic(200).map(function (x) {
+    var puzzle = [];
+    var maxSize = 9;
+    for (var i = 0; i < maxSize; i++) {
+      var nextNumber = Math.floor(Math.random() * 25);
+      while (puzzle.indexOf(nextNumber) !== -1) {
+        nextNumber = Math.floor(Math.random() * 25);
+      }puzzle.push(nextNumber);
+    }
+    return puzzle;
+  });
   for (var i = 0; i < 25; i++) {
     grid.push(i);
-  }var vtree$ = _xstream2.default.of((0, _dom.div)('#root', [(0, _dom.div)('.container', [(0, _dom.div)('.title.bar', [(0, _dom.h1)(['Recall']), (0, _dom.ul)('.actions', [(0, _dom.li)('.new', 'New'), (0, _dom.li)('.reset', 'Reset')])]), (0, _dom.div)('.grid', [(0, _dom.div)('.panel', grid.map(function (x) {
-    return (0, _dom.div)('.cell', [(0, _dom.span)()]);
-  }))])])]));
+  }var vtree$ = puzzle$.map(function (puzzle) {
+    return (0, _dom.div)('#root', [(0, _dom.div)('.container', [(0, _dom.div)('.title.bar', [(0, _dom.h1)(['Recall']), (0, _dom.ul)('.actions', [(0, _dom.li)('.new', 'New'), (0, _dom.li)('.reset', 'Reset')])]), (0, _dom.div)('.grid', grid.map(function (x, i) {
+      return (0, _dom.div)('.cell' + (puzzle.indexOf(i) !== -1 ? '.highlighted' : ''), [(0, _dom.span)()]);
+    }))])]);
+  });
   var sinks = {
     dom: vtree$
   };
