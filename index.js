@@ -35,8 +35,7 @@ function intent({ dom }) {
   return {
     newGame$,
     reset$,
-    selectCell$,
-    any$: xs.merge(newGame$, reset$, selectCell$)
+    selectCell$
   };
 }
 

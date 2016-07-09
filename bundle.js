@@ -18617,8 +18617,7 @@ function intent(_ref) {
   return {
     newGame$: newGame$,
     reset$: reset$,
-    selectCell$: selectCell$,
-    any$: _xstream2.default.merge(newGame$, reset$, selectCell$)
+    selectCell$: selectCell$
   };
 }
 
