@@ -13638,8 +13638,8 @@ function main(_ref) {
       }puzzle.push(nextNumber);
     }
     return puzzle;
-  }).startWith([]);
-  var userInputAllowed$ = _xstream2.default.merge(newGame$.mapTo(false), newGame$.compose((0, _delay2.default)(4000)).mapTo(true)).startWith(false);
+  });
+  var userInputAllowed$ = _xstream2.default.merge(newGame$.mapTo(false), newGame$.compose((0, _delay2.default)(4000)).mapTo(true));
   var userSelectedCells$ = _xstream2.default.merge(userInputAllowed$.map(function (allowed) {
     return cellClicks$.filter(function () {
       return allowed;

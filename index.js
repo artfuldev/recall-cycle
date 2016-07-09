@@ -40,8 +40,8 @@ function main({ dom }) {
       puzzle.push(nextNumber);
     }
     return puzzle;
-  }).startWith([]);
-  const userInputAllowed$ = xs.merge(newGame$.mapTo(false), newGame$.compose(delay(4000)).mapTo(true)).startWith(false);
+  });
+  const userInputAllowed$ = xs.merge(newGame$.mapTo(false), newGame$.compose(delay(4000)).mapTo(true));
   const userSelectedCells$ = xs.merge(userInputAllowed$.map(allowed => cellClicks$.filter(() => allowed)).flatten()
     .fold((selectedCells, clicked) => {
       selectedCells = selectedCells || [];
