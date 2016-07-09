@@ -13621,14 +13621,14 @@ function main(_ref) {
   var reset$ = dom.select('.reset').events('click').map(function (ev) {
     ev.preventDefault();
     return true;
-  }).startWith(true);
+  });
   var cellClicks$ = dom.select('.cell').events('click').map(function (ev) {
     return parseInt((ev.target.tagName == 'SPAN' ? ev.target.parentElement : ev.target).attributes['data-index'].value);
   });
   var grid = [];
   for (var i = 0; i < 25; i++) {
     grid.push(i);
-  }var puzzle$ = newGame$.map(function (x) {
+  }var puzzle$ = newGame$.map(function () {
     var puzzle = [];
     var maxSize = 9;
     for (var i = 0; i < maxSize; i++) {
@@ -13639,12 +13639,8 @@ function main(_ref) {
     }
     return puzzle;
   }).startWith([]);
-  var userInputAllowed$ = _xstream2.default.merge(newGame$.map(function (x) {
-    return false;
-  }), newGame$.compose((0, _delay2.default)(4000)).map(function (x) {
-    return true;
-  })).startWith(false);
-  var userSelectedCells$ = userInputAllowed$.map(function (allowed) {
+  var userInputAllowed$ = _xstream2.default.merge(newGame$.mapTo(false), newGame$.compose((0, _delay2.default)(4000)).mapTo(true)).startWith(false);
+  var userSelectedCells$ = _xstream2.default.merge(userInputAllowed$.map(function (allowed) {
     return cellClicks$.filter(function () {
       return allowed;
     });
@@ -13653,7 +13649,7 @@ function main(_ref) {
     var index = selectedCells.indexOf(clicked);
     if (index === -1) selectedCells.push(clicked);else selectedCells.splice(index, 1);
     return selectedCells;
-  }, []);
+  }, []), reset$.mapTo([]));
   var state$ = _xstream2.default.combine(puzzle$, userInputAllowed$, userSelectedCells$).map(function (a) {
     return {
       puzzle: a[0],

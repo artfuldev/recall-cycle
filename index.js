@@ -19,8 +19,7 @@ function main({ dom }) {
     .map(ev => {
       ev.preventDefault();
       return true;
-    })
-    .startWith(true);
+    });
   const cellClicks$ = dom
     .select('.cell')
     .events('click')
@@ -31,7 +30,7 @@ function main({ dom }) {
   const grid = [];
   for (var i = 0; i < 25; i++)
     grid.push(i);
-  const puzzle$ = newGame$.map(x => {
+  const puzzle$ = newGame$.map(() => {
     const puzzle = [];
     const maxSize = 9;
     for (var i = 0; i < maxSize; i++) {
@@ -42,8 +41,8 @@ function main({ dom }) {
     }
     return puzzle;
   }).startWith([]);
-  const userInputAllowed$ = xs.merge(newGame$.map(x => false), newGame$.compose(delay(4000)).map(x => true)).startWith(false);
-  const userSelectedCells$ = userInputAllowed$.map(allowed => cellClicks$.filter(() => allowed)).flatten()
+  const userInputAllowed$ = xs.merge(newGame$.mapTo(false), newGame$.compose(delay(4000)).mapTo(true)).startWith(false);
+  const userSelectedCells$ = xs.merge(userInputAllowed$.map(allowed => cellClicks$.filter(() => allowed)).flatten()
     .fold((selectedCells, clicked) => {
       selectedCells = selectedCells || [];
       var index = selectedCells.indexOf(clicked);
@@ -52,7 +51,7 @@ function main({ dom }) {
       else
         selectedCells.splice(index, 1);
       return selectedCells;
-    }, []);
+    }, []), reset$.mapTo([]));
   const state$ = xs.combine(puzzle$, userInputAllowed$, userSelectedCells$).map(a => {
     return {
       puzzle: a[0],
