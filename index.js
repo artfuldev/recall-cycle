@@ -5,9 +5,25 @@ import { run } from '@cycle/xstream-run';
 import { div, h1, ul, li, a, p, span, makeDOMDriver } from '@cycle/dom';
 
 function main({ dom }) {
-  const newGame$ = dom.select('.new').events('click')
-    .map(x => true).startWith(true);
-  const cellClicks$ = dom.select('.cell').events('click')
+  const newGame$ = dom
+    .select('.new')
+    .events('click')
+    .map(ev => {
+      ev.preventDefault();
+      return true;
+    })
+    .startWith(true);
+  const reset$ = dom
+    .select('.reset')
+    .events('click')
+    .map(ev => {
+      ev.preventDefault();
+      return true;
+    })
+    .startWith(true);
+  const cellClicks$ = dom
+    .select('.cell')
+    .events('click')
     .map(ev => parseInt(
       (ev.target.tagName == 'SPAN'
         ? ev.target.parentElement
@@ -27,13 +43,7 @@ function main({ dom }) {
     return puzzle;
   }).startWith([]);
   const userInputAllowed$ = newGame$.compose(delay(4000)).map(x => true).startWith(false);
-  const userSelectedCells$ = xs.combine(userInputAllowed$, cellClicks$).map(a => {
-    return {
-      userInputAllowed: a[0],
-      clicked: a[1]
-    };
-  }).filter(x => x.userInputAllowed)
-    .map(x => x.clicked)
+  const userSelectedCells$ = userInputAllowed$.map(allowed => cellClicks$.filter(() => allowed)).flatten()
     .fold((selectedCells, clicked) => {
       selectedCells = selectedCells || [];
       var index = selectedCells.indexOf(clicked);

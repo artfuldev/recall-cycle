@@ -13614,7 +13614,12 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function main(_ref) {
   var dom = _ref.dom;
 
-  var newGame$ = dom.select('.new').events('click').map(function (x) {
+  var newGame$ = dom.select('.new').events('click').map(function (ev) {
+    ev.preventDefault();
+    return true;
+  }).startWith(true);
+  var reset$ = dom.select('.reset').events('click').map(function (ev) {
+    ev.preventDefault();
     return true;
   }).startWith(true);
   var cellClicks$ = dom.select('.cell').events('click').map(function (ev) {
@@ -13637,16 +13642,11 @@ function main(_ref) {
   var userInputAllowed$ = newGame$.compose((0, _delay2.default)(4000)).map(function (x) {
     return true;
   }).startWith(false);
-  var userSelectedCells$ = _xstream2.default.combine(userInputAllowed$, cellClicks$).map(function (a) {
-    return {
-      userInputAllowed: a[0],
-      clicked: a[1]
-    };
-  }).filter(function (x) {
-    return x.userInputAllowed;
-  }).map(function (x) {
-    return x.clicked;
-  }).fold(function (selectedCells, clicked) {
+  var userSelectedCells$ = userInputAllowed$.map(function (allowed) {
+    return cellClicks$.filter(function () {
+      return allowed;
+    });
+  }).flatten().fold(function (selectedCells, clicked) {
     selectedCells = selectedCells || [];
     var index = selectedCells.indexOf(clicked);
     if (index === -1) selectedCells.push(clicked);else selectedCells.splice(index, 1);
