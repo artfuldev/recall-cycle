@@ -89,10 +89,6 @@ h1 {
     font-weight: 700;
 }
 
-.cell.highlighted {
+.cell.highlighted, .cell.selected {
     background: #68efad;
-}
-
-.cell.selected {
-    background: #7b1fa2;
 }
