@@ -41,69 +41,72 @@ function intent({ dom }) {
 
 function reducers(actions) {
 
-  const puzzleReducer$ = actions.newGame$.map(x =>
-    state => {
-      const puzzle = [];
-      const maxSize = 9;
-      for (var i = 0; i < maxSize; i++) {
-        var nextNumber = Math.floor(Math.random() * 25);
-        while (puzzle.indexOf(nextNumber) !== -1)
-          nextNumber = Math.floor(Math.random() * 25);
-        puzzle.push(nextNumber);
-      }
-      return state.set('puzzle', puzzle);
-    });
-
-  const allowedReducer$ = xs.merge(
-    actions.newGame$.map(x => state => state.set('allowed', false)),
-    actions.newGame$.compose(delay(4000)).map(x => state => state.set('allowed', true))
+  const newGameReducer$ = xs.merge(
+    actions.newGame$
+      .map(x =>
+        state => {
+          const puzzle = [];
+          const maxSize = 9;
+          for (var i = 0; i < maxSize; i++) {
+            var nextNumber = Math.floor(Math.random() * 25);
+            while (puzzle.indexOf(nextNumber) !== -1)
+              nextNumber = Math.floor(Math.random() * 25);
+            puzzle.push(nextNumber);
+          }
+          return state
+            .set('puzzle', puzzle)
+            .set('allowed', false)
+            .set('over', false)
+            .set('result', null)
+            .set('selected', []);
+        }),
+    actions.newGame$
+      .compose(delay(4000))
+      .map(x => state => state.set('allowed', true))
   );
 
-  const selectedReducer$ = xs.merge(actions.selectCell$.map(clicked =>
-    state => {
-      const allowed = state.get('allowed');
-      if (!allowed)
-        return state;
-      const selected = state.get('selected');
-      state.set('selected', selected || []);
-      var index = selected.indexOf(clicked);
-      if (index === -1)
-        return state.set('selected', selected.concat(clicked));
-      else
-        return state.set('selected', selected.filter(x => x != clicked));
-    }),
-    actions.reset$.map(x => state => state.set('selected', [])),
-    actions.newGame$.map(x => state => state.set('selected', []))
-  );
+  const resetReducer$ =
+    actions.reset$
+      .map(x => state => state.set('selected', []))
 
-  const gameOverReducer$ = actions.selectCell$.map(() =>
-  state => {
-    const selected = state.get('selected');
-    if(selected.length < 9)
-      return state;
-    const puzzle = state.get('puzzle');
-    const won = selected.every(s => puzzle.indexOf(s) !== -1);
-    var score = state.get('score');
-    const result = {
-      correct: selected.filter(s => puzzle.indexOf(s) !== -1),
-      wrong: selected.filter(s => puzzle.indexOf(s) === -1),
-      missed: puzzle.filter(p => selected.indexOf(p) === -1)
-    };
-    if(won)
-      score += 1;
-    return state
-      .set('selected', [])
-      .set('allowed', false)
-      .set('over', won ? 'won': 'lost')
-      .set('score', score)
-      .set('result', result);
-  });
+  const selectCellReducer$ =
+    actions.selectCell$
+      .map(clicked =>
+        state => {
+          const allowed = state.get('allowed');
+          if (!allowed)
+            return state;
+          var selected = state.get('selected');
+          state.set('selected', selected || []);
+          var index = selected.indexOf(clicked);
+          if (index === -1)
+            selected = selected.concat(clicked);
+          else
+            selected = selected.filter(x => x != clicked);
+          if (selected.length < 9)
+            return state.set('selected', selected);
+          const puzzle = state.get('puzzle');
+          const won = selected.every(s => puzzle.indexOf(s) !== -1);
+          var score = state.get('score');
+          const result = {
+            correct: selected.filter(s => puzzle.indexOf(s) !== -1),
+            wrong: selected.filter(s => puzzle.indexOf(s) === -1),
+            missed: puzzle.filter(p => selected.indexOf(p) === -1)
+          };
+          if (won)
+            score += 1;
+          return state
+            .set('selected', selected)
+            .set('allowed', false)
+            .set('over', won ? 'won' : 'lost')
+            .set('score', score)
+            .set('result', result);
+        });
 
   return xs.merge(
-    puzzleReducer$,
-    allowedReducer$,
-    selectedReducer$,
-    gameOverReducer$
+    newGameReducer$,
+    resetReducer$,
+    selectCellReducer$
   );
 }
 
@@ -113,16 +116,16 @@ function model(actions) {
     grid.push(i);
   const reducer$ = reducers(actions);
   const initialState = Immutable.Map(
-      {
-        grid,
-        puzzle: [],
-        allowed: false,
-        selected: [],
-        over: false,
-        score: 0,
-        result: null
-      }
-    );
+    {
+      grid,
+      puzzle: [],
+      allowed: false,
+      selected: [],
+      over: false,
+      score: 0,
+      result: null
+    }
+  );
   const state$ = reducer$.fold((next, reducer) => reducer(next), initialState);
   return state$;
 }
@@ -134,6 +137,11 @@ function view(state$) {
     const puzzle = state.get('puzzle');
     const selected = state.get('selected');
     const score = state.get('score');
+    const over = state.get('over');
+    const result = state.get('result') || {};
+    const correct = result.correct;
+    const wrong = result.wrong;
+    const missed = result.missed;
     return div('#root', [
       div('.container', [
         div('.title.bar', [
@@ -150,8 +158,11 @@ function view(state$) {
         div('.panel', [
           div('.grid', grid.map((x) =>
             div('.cell'
-              + ((!allowed && puzzle.indexOf(x) !== -1) ? '.highlighted' : '')
-              + ((allowed && selected.indexOf(x) !== -1) ? '.selected' : ''), {
+              + ((!allowed && !over && puzzle.indexOf(x) !== -1) ? '.highlighted' : '')
+              + ((allowed && !over && selected.indexOf(x) !== -1) ? '.selected' : '')
+              + ((over && correct.indexOf(x) !== -1) ? '.correct' : '')
+              + ((over && wrong.indexOf(x) !== -1) ? '.wrong' : '')
+              + ((over && missed.indexOf(x) !== -1) ? '.missed' : ''), {
                 attrs: { 'data-index': x }
               }, [span()])
           ))

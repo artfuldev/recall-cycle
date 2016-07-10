@@ -18623,7 +18623,7 @@ function intent(_ref) {
 
 function reducers(actions) {
 
-  var puzzleReducer$ = actions.newGame$.map(function (x) {
+  var newGameReducer$ = _xstream2.default.merge(actions.newGame$.map(function (x) {
     return function (state) {
       var puzzle = [];
       var maxSize = 9;
@@ -18633,13 +18633,7 @@ function reducers(actions) {
           nextNumber = Math.floor(Math.random() * 25);
         }puzzle.push(nextNumber);
       }
-      return state.set('puzzle', puzzle);
-    };
-  });
-
-  var allowedReducer$ = _xstream2.default.merge(actions.newGame$.map(function (x) {
-    return function (state) {
-      return state.set('allowed', false);
+      return state.set('puzzle', puzzle).set('allowed', false).set('over', false).set('result', null).set('selected', []);
     };
   }), actions.newGame$.compose((0, _delay2.default)(4000)).map(function (x) {
     return function (state) {
@@ -18647,31 +18641,23 @@ function reducers(actions) {
     };
   }));
 
-  var selectedReducer$ = _xstream2.default.merge(actions.selectCell$.map(function (clicked) {
+  var resetReducer$ = actions.reset$.map(function (x) {
+    return function (state) {
+      return state.set('selected', []);
+    };
+  });
+
+  var selectCellReducer$ = actions.selectCell$.map(function (clicked) {
     return function (state) {
       var allowed = state.get('allowed');
       if (!allowed) return state;
       var selected = state.get('selected');
       state.set('selected', selected || []);
       var index = selected.indexOf(clicked);
-      if (index === -1) return state.set('selected', selected.concat(clicked));else return state.set('selected', selected.filter(function (x) {
+      if (index === -1) selected = selected.concat(clicked);else selected = selected.filter(function (x) {
         return x != clicked;
-      }));
-    };
-  }), actions.reset$.map(function (x) {
-    return function (state) {
-      return state.set('selected', []);
-    };
-  }), actions.newGame$.map(function (x) {
-    return function (state) {
-      return state.set('selected', []);
-    };
-  }));
-
-  var gameOverReducer$ = actions.selectCell$.map(function () {
-    return function (state) {
-      var selected = state.get('selected');
-      if (selected.length < 9) return state;
+      });
+      if (selected.length < 9) return state.set('selected', selected);
       var puzzle = state.get('puzzle');
       var won = selected.every(function (s) {
         return puzzle.indexOf(s) !== -1;
@@ -18689,11 +18675,11 @@ function reducers(actions) {
         })
       };
       if (won) score += 1;
-      return state.set('selected', []).set('allowed', false).set('over', won ? 'won' : 'lost').set('score', score).set('result', result);
+      return state.set('selected', selected).set('allowed', false).set('over', won ? 'won' : 'lost').set('score', score).set('result', result);
     };
   });
 
-  return _xstream2.default.merge(puzzleReducer$, allowedReducer$, selectedReducer$, gameOverReducer$);
+  return _xstream2.default.merge(newGameReducer$, resetReducer$, selectCellReducer$);
 }
 
 function model(actions) {
@@ -18723,8 +18709,13 @@ function view(state$) {
     var puzzle = state.get('puzzle');
     var selected = state.get('selected');
     var score = state.get('score');
+    var over = state.get('over');
+    var result = state.get('result') || {};
+    var correct = result.correct;
+    var wrong = result.wrong;
+    var missed = result.missed;
     return (0, _dom.div)('#root', [(0, _dom.div)('.container', [(0, _dom.div)('.title.bar', [(0, _dom.h1)(['Recall']), (0, _dom.ul)('.actions', [(0, _dom.li)([(0, _dom.a)('.new', 'New')]), (0, _dom.li)([(0, _dom.a)('.reset', 'Reset')])])]), (0, _dom.div)('.before.grid', [(0, _dom.p)(['Click on the nine tiles you see to win! Score: ' + score])]), (0, _dom.div)('.panel', [(0, _dom.div)('.grid', grid.map(function (x) {
-      return (0, _dom.div)('.cell' + (!allowed && puzzle.indexOf(x) !== -1 ? '.highlighted' : '') + (allowed && selected.indexOf(x) !== -1 ? '.selected' : ''), {
+      return (0, _dom.div)('.cell' + (!allowed && !over && puzzle.indexOf(x) !== -1 ? '.highlighted' : '') + (allowed && !over && selected.indexOf(x) !== -1 ? '.selected' : '') + (over && correct.indexOf(x) !== -1 ? '.correct' : '') + (over && wrong.indexOf(x) !== -1 ? '.wrong' : '') + (over && missed.indexOf(x) !== -1 ? '.missed' : ''), {
         attrs: { 'data-index': x }
       }, [(0, _dom.span)()]);
     }))])])]);

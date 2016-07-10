@@ -111,6 +111,14 @@ a:hover {
     font-weight: 700;
 }
 
-.cell.highlighted, .cell.selected {
+.cell.highlighted, .cell.selected, .cell.correct {
     background: #68efad;
+}
+
+.cell.wrong {
+    background: #ff8a80;
+}
+
+.cell.missed {
+    background: #ffd180;
 }
