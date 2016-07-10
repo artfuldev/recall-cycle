@@ -84,13 +84,19 @@ function reducers(actions) {
     const puzzle = state.get('puzzle');
     const won = selected.every(s => puzzle.indexOf(s) !== -1);
     var score = state.get('score');
+    const result = {
+      correct: selected.filter(s => puzzle.indexOf(s) !== -1),
+      wrong: selected.filter(s => puzzle.indexOf(s) === -1),
+      missed: puzzle.filter(p => selected.indexOf(p) === -1)
+    };
     if(won)
       score += 1;
     return state
       .set('selected', [])
       .set('allowed', false)
       .set('over', won ? 'won': 'lost')
-      .set('score', score);
+      .set('score', score)
+      .set('result', result);
   });
 
   return xs.merge(
@@ -113,7 +119,8 @@ function model(actions) {
         allowed: false,
         selected: [],
         over: false,
-        score: 0
+        score: 0,
+        result: null
       }
     );
   const state$ = reducer$.fold((next, reducer) => reducer(next), initialState);

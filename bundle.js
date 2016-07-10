@@ -18677,8 +18677,19 @@ function reducers(actions) {
         return puzzle.indexOf(s) !== -1;
       });
       var score = state.get('score');
+      var result = {
+        correct: selected.filter(function (s) {
+          return puzzle.indexOf(s) !== -1;
+        }),
+        wrong: selected.filter(function (s) {
+          return puzzle.indexOf(s) === -1;
+        }),
+        missed: puzzle.filter(function (p) {
+          return selected.indexOf(p) === -1;
+        })
+      };
       if (won) score += 1;
-      return state.set('selected', []).set('allowed', false).set('over', won ? 'won' : 'lost').set('score', score);
+      return state.set('selected', []).set('allowed', false).set('over', won ? 'won' : 'lost').set('score', score).set('result', result);
     };
   });
 
@@ -18696,7 +18707,8 @@ function model(actions) {
     allowed: false,
     selected: [],
     over: false,
-    score: 0
+    score: 0,
+    result: null
   });
   var state$ = reducer$.fold(function (next, reducer) {
     return reducer(next);
