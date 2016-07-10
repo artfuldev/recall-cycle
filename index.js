@@ -125,6 +125,7 @@ function view(state$) {
     const allowed = state.get('allowed');
     const puzzle = state.get('puzzle');
     const selected = state.get('selected');
+    const score = state.get('score');
     return div('#root', [
       div('.container', [
         div('.title.bar', [
@@ -136,7 +137,7 @@ function view(state$) {
           ])
         ]),
         div('.before.grid', [
-          p(['Click on the nine tiles you see to win!'])
+          p(['Click on the nine tiles you see to win! Score: ' + score])
         ]),
         div('.panel', [
           div('.grid', grid.map((x) =>

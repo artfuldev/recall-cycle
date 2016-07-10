@@ -18706,7 +18706,8 @@ function view(state$) {
     var allowed = state.get('allowed');
     var puzzle = state.get('puzzle');
     var selected = state.get('selected');
-    return (0, _dom.div)('#root', [(0, _dom.div)('.container', [(0, _dom.div)('.title.bar', [(0, _dom.h1)(['Recall']), (0, _dom.ul)('.actions', [(0, _dom.li)([(0, _dom.a)('.new', 'New')]), (0, _dom.li)([(0, _dom.a)('.reset', 'Reset')])])]), (0, _dom.div)('.before.grid', [(0, _dom.p)(['Click on the nine tiles you see to win!'])]), (0, _dom.div)('.panel', [(0, _dom.div)('.grid', grid.map(function (x) {
+    var score = state.get('score');
+    return (0, _dom.div)('#root', [(0, _dom.div)('.container', [(0, _dom.div)('.title.bar', [(0, _dom.h1)(['Recall']), (0, _dom.ul)('.actions', [(0, _dom.li)([(0, _dom.a)('.new', 'New')]), (0, _dom.li)([(0, _dom.a)('.reset', 'Reset')])])]), (0, _dom.div)('.before.grid', [(0, _dom.p)(['Click on the nine tiles you see to win! Score: ' + score])]), (0, _dom.div)('.panel', [(0, _dom.div)('.grid', grid.map(function (x) {
       return (0, _dom.div)('.cell' + (!allowed && puzzle.indexOf(x) !== -1 ? '.highlighted' : '') + (allowed && selected.indexOf(x) !== -1 ? '.selected' : ''), {
         attrs: { 'data-index': x }
       }, [(0, _dom.span)()]);
