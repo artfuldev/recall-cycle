@@ -72,7 +72,8 @@ function reducers(actions) {
       else
         return state.set('selected', selected.filter(x => x != clicked));
     }),
-    actions.reset$.map(x => state => state.set('selected', []))
+    actions.reset$.map(x => state => state.set('selected', [])),
+    actions.newGame$.map(x => state => state.set('selected', []))
   );
 
   const gameOverReducer$ = actions.selectCell$.map(() =>

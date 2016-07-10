@@ -18662,6 +18662,10 @@ function reducers(actions) {
     return function (state) {
       return state.set('selected', []);
     };
+  }), actions.newGame$.map(function (x) {
+    return function (state) {
+      return state.set('selected', []);
+    };
   }));
 
   var gameOverReducer$ = actions.selectCell$.map(function () {
