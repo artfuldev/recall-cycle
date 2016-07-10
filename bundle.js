@@ -18664,7 +18664,21 @@ function reducers(actions) {
     };
   }));
 
-  return _xstream2.default.merge(puzzleReducer$, allowedReducer$, selectedReducer$);
+  var gameOverReducer$ = actions.selectCell$.map(function () {
+    return function (state) {
+      var selected = state.get('selected');
+      if (selected.length < 9) return state;
+      var puzzle = state.get('puzzle');
+      var won = selected.every(function (s) {
+        return puzzle.indexOf(s) !== -1;
+      });
+      var score = state.get('score');
+      if (won) score += 1;
+      return state.set('selected', []).set('allowed', false).set('over', won ? 'won' : 'lost').set('score', score);
+    };
+  });
+
+  return _xstream2.default.merge(puzzleReducer$, allowedReducer$, selectedReducer$, gameOverReducer$);
 }
 
 function model(actions) {
@@ -18676,7 +18690,9 @@ function model(actions) {
     grid: grid,
     puzzle: [],
     allowed: false,
-    selected: []
+    selected: [],
+    over: false,
+    score: 0
   });
   var state$ = reducer$.fold(function (next, reducer) {
     return reducer(next);

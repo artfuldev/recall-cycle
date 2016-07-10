@@ -75,10 +75,28 @@ function reducers(actions) {
     actions.reset$.map(x => state => state.set('selected', []))
   );
 
+  const gameOverReducer$ = actions.selectCell$.map(() =>
+  state => {
+    const selected = state.get('selected');
+    if(selected.length < 9)
+      return state;
+    const puzzle = state.get('puzzle');
+    const won = selected.every(s => puzzle.indexOf(s) !== -1);
+    var score = state.get('score');
+    if(won)
+      score += 1;
+    return state
+      .set('selected', [])
+      .set('allowed', false)
+      .set('over', won ? 'won': 'lost')
+      .set('score', score);
+  });
+
   return xs.merge(
     puzzleReducer$,
     allowedReducer$,
-    selectedReducer$
+    selectedReducer$,
+    gameOverReducer$
   );
 }
 
@@ -92,7 +110,9 @@ function model(actions) {
         grid,
         puzzle: [],
         allowed: false,
-        selected: []
+        selected: [],
+        over: false,
+        score: 0
       }
     );
   const state$ = reducer$.fold((next, reducer) => reducer(next), initialState);
