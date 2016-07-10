@@ -18623,63 +18623,84 @@ function intent(_ref) {
 
 function reducers(actions) {
 
-  var newGameReducer$ = _xstream2.default.merge(actions.newGame$.map(function (x) {
-    return function (state) {
-      var puzzle = [];
-      var maxSize = 9;
-      for (var i = 0; i < maxSize; i++) {
-        var nextNumber = Math.floor(Math.random() * 25);
-        while (puzzle.indexOf(nextNumber) !== -1) {
-          nextNumber = Math.floor(Math.random() * 25);
-        }puzzle.push(nextNumber);
-      }
-      return state.set('puzzle', puzzle).set('allowed', false).set('over', false).set('result', null).set('selected', []);
-    };
-  }), actions.newGame$.compose((0, _delay2.default)(4000)).map(function (x) {
-    return function (state) {
-      return state.set('allowed', true);
-    };
-  }));
-
-  var resetReducer$ = actions.reset$.map(function (x) {
-    return function (state) {
-      return state.set('selected', []);
-    };
+  var puzzleReducer$ = actions.newGame$.mapTo(function (state) {
+    var puzzle = [];
+    var maxSize = 9;
+    for (var i = 0; i < maxSize; i++) {
+      var nextNumber = Math.floor(Math.random() * 25);
+      while (puzzle.indexOf(nextNumber) !== -1) {
+        nextNumber = Math.floor(Math.random() * 25);
+      }puzzle.push(nextNumber);
+    }
+    return state.set('puzzle', puzzle);
   });
 
-  var selectCellReducer$ = actions.selectCell$.map(function (clicked) {
+  var allowedReducer$ = _xstream2.default.merge(actions.newGame$.mapTo(function (state) {
+    return state.set('allowed', false);
+  }), actions.newGame$.compose((0, _delay2.default)(4000)).mapTo(function (state) {
+    return state.set('allowed', true);
+  }), actions.selectCell$.mapTo(function (state) {
+    var selected = state.get('selected') || [];
+    return selected.length === 9 ? state.set('allowed', false) : state;
+  }));
+
+  var selectedReducer$ = _xstream2.default.merge(actions.newGame$.mapTo(function (state) {
+    return state.set('selected', []);
+  }), actions.reset$.mapTo(function (state) {
+    var allowed = state.get('allowed');
+    return allowed ? state.set('selected', []) : state;
+  }), actions.selectCell$.map(function (clicked) {
     return function (state) {
       var allowed = state.get('allowed');
       if (!allowed) return state;
-      var selected = state.get('selected');
-      state.set('selected', selected || []);
+      var selected = state.get('selected') || [];
       var index = selected.indexOf(clicked);
-      if (index === -1) selected = selected.concat(clicked);else selected = selected.filter(function (x) {
+      if (index === -1) return state.set('selected', selected.concat(clicked));else return state.set('selected', selected.filter(function (x) {
         return x != clicked;
-      });
-      if (selected.length < 9) return state.set('selected', selected);
-      var puzzle = state.get('puzzle');
-      var won = selected.every(function (s) {
-        return puzzle.indexOf(s) !== -1;
-      });
-      var score = state.get('score');
-      var result = {
-        correct: selected.filter(function (s) {
-          return puzzle.indexOf(s) !== -1;
-        }),
-        wrong: selected.filter(function (s) {
-          return puzzle.indexOf(s) === -1;
-        }),
-        missed: puzzle.filter(function (p) {
-          return selected.indexOf(p) === -1;
-        })
-      };
-      if (won) score += 1;
-      return state.set('selected', selected).set('allowed', false).set('over', won ? 'won' : 'lost').set('score', score).set('result', result);
+      }));
     };
+  }));
+
+  var scoreReducer$ = actions.selectCell$.mapTo(function (state) {
+    var over = state.get('over');
+    if (over) return state;
+    var selected = state.get('selected') || [];
+    if (selected.length !== 9) return state;
+    var puzzle = state.get('puzzle') || [];
+    var won = selected.every(function (s) {
+      return puzzle.indexOf(s) !== -1;
+    });
+    var score = state.get('score') || 0;
+    return won ? state.set('score', score + 1) : state;
   });
 
-  return _xstream2.default.merge(newGameReducer$, resetReducer$, selectCellReducer$);
+  var overReducer$ = _xstream2.default.merge(actions.newGame$.mapTo(function (state) {
+    return state.set('over', false);
+  }), actions.selectCell$.mapTo(function (state) {
+    var selected = state.get('selected') || [];
+    return selected.length === 9 ? state.set('over', true) : state;
+  }));
+
+  var resultReducer$ = _xstream2.default.merge(actions.newGame$.mapTo(function (state) {
+    return state.set('result', null);
+  }), actions.selectCell$.mapTo(function (state) {
+    var selected = state.get('selected') || [];
+    var puzzle = state.get('puzzle') || [];
+    var result = {
+      correct: selected.filter(function (s) {
+        return puzzle.indexOf(s) !== -1;
+      }),
+      wrong: selected.filter(function (s) {
+        return puzzle.indexOf(s) === -1;
+      }),
+      missed: puzzle.filter(function (p) {
+        return selected.indexOf(p) === -1;
+      })
+    };
+    return state.set('result', result);
+  }));
+
+  return _xstream2.default.merge(puzzleReducer$, allowedReducer$, selectedReducer$, scoreReducer$, overReducer$, resultReducer$);
 }
 
 function model(actions) {
