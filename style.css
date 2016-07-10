@@ -122,3 +122,22 @@ a:hover {
 .cell.missed {
     background: #ffd180;
 }
+
+.cell.correct span::after, .cell.wrong span::after, .cell.missed span::after {
+    position: absolute;
+    bottom: 4px;
+    right: 4px;
+    color: rgba(0,0,0,0.5);
+}
+
+.cell.correct span::after {
+    content: 'correct';
+}
+
+.cell.wrong span::after {
+    content: 'wrong';
+}
+
+.cell.missed span::after {
+    content: 'missed';
+}
