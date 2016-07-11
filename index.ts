@@ -3,40 +3,7 @@ import delay from 'xstream/extra/delay';
 import { run } from '@cycle/xstream-run';
 import { div, h1, ul, li, a, p, span, makeDOMDriver } from '@cycle/dom';
 import { Map } from 'immutable';
-
-function intent({ dom }) {
-
-  const newGame$ = dom
-    .select('.new')
-    .events('click')
-    .map(ev => {
-      ev.preventDefault();
-      return true;
-    })
-    .startWith(true);
-
-  const reset$ = dom
-    .select('.reset')
-    .events('click')
-    .map(ev => {
-      ev.preventDefault();
-      return true;
-    });
-
-  const selectCell$ = dom
-    .select('.cell span')
-    .events('click')
-    .map(ev => {
-      ev.preventDefault();
-      return parseInt(ev.target.parentElement.attributes['data-index'].value);
-    });
-
-  return {
-    newGame$,
-    reset$,
-    selectCell$
-  };
-}
+import intent from './intent';
 
 function reducers(actions) {
 
