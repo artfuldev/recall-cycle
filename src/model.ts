@@ -1,7 +1,8 @@
 import reducers from './reducers';
 import { Map } from 'immutable';
+import { Intent } from './intent';
 
-function model(actions) {
+function model(actions: Intent) {
   var grid = [];
   for (var i = 0; i < 25; i++)
     grid.push(i);
