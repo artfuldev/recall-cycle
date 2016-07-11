@@ -1,7 +1,8 @@
 import xs from 'xstream';
 import delay from 'xstream/extra/delay';
+import { Intent } from './intent';
 
-function reducers(actions) {
+function reducers(actions: Intent) {
 
   const puzzleReducer$ =
     actions.newGame$
