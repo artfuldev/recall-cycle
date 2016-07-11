@@ -65,13 +65,13 @@ export const InitialState = new State({
   result: InitialResult
 });
 
-function reducers(actions: IIntent): Stream<(state: State) => State> {
+function reducers(actions: IIntent): Stream<(state: IState) => IState> {
   // alias
   const xs = Stream;
 
   const puzzleReducer$ =
     actions.newGame$
-      .mapTo((state: State) => {
+      .mapTo((state: IState) => {
         const puzzle = [];
         const maxSize = 9;
         for (var i = 0; i < maxSize; i++) {
@@ -80,46 +80,46 @@ function reducers(actions: IIntent): Stream<(state: State) => State> {
             nextNumber = Math.floor(Math.random() * 25);
           puzzle.push(nextNumber);
         }
-        return state.set('puzzle', puzzle) as State;
+        return (state as State).set('puzzle', puzzle) as State;
       });
 
   const allowedReducer$ = xs.merge(
     actions.newGame$
-      .mapTo((state: State) => state.set('allowed', false) as State),
+      .mapTo((state: IState) => (state as State).set('allowed', false) as State),
     actions.newGame$
       .compose(delay(4000))
-      .mapTo((state: State) => state.set('allowed', true) as State),
+      .mapTo((state: IState) => (state as State).set('allowed', true) as State),
     actions.selectCell$
-      .mapTo((state: State) => {
+      .mapTo((state: IState) => {
         const selected = state.selected || [];
         return selected.length === 9
-          ? state.set('allowed', false) as State
+          ? (state as State).set('allowed', false) as State
           : state;
       })
   );
 
   const selectedReducer$ = xs.merge(
     actions.newGame$
-      .mapTo((state: State) => state.set('selected', []) as State),
+      .mapTo((state: IState) => (state as State).set('selected', []) as State),
     actions.reset$
-      .mapTo((state: State) => {
+      .mapTo((state: IState) => {
         const allowed = state.allowed;
         return allowed
-          ? state.set('selected', []) as State
+          ? (state as State).set('selected', []) as State
           : state;
       }),
     actions.selectCell$
       .map(clicked =>
-        (state: State) => {
+        (state: IState) => {
           const allowed = state.allowed;
           if (!allowed)
             return state;
           var selected = state.selected || [];
           var index = selected.indexOf(clicked);
           if (index === -1)
-            return state.set('selected', selected.concat(clicked)) as State;
+            return (state as State).set('selected', selected.concat(clicked)) as State;
           else
-            return state.set('selected', selected.filter(x => x != clicked)) as State;
+            return (state as State).set('selected', selected.filter(x => x != clicked)) as State;
         })
   );
 
@@ -142,21 +142,21 @@ function reducers(actions: IIntent): Stream<(state: State) => State> {
 
   const overReducer$ = xs.merge(
     actions.newGame$
-      .mapTo((state: State) => state.set('over', false) as State),
+      .mapTo((state: IState) => (state as State).set('over', false) as State),
     actions.selectCell$
-      .mapTo((state: State) => {
+      .mapTo((state: IState) => {
         const selected = state.selected || [];
         return selected.length === 9
-          ? state.set('over', true) as State
+          ? (state as State).set('over', true) as State
           : state;
       })
   );
 
   const resultReducer$ = xs.merge(
     actions.newGame$
-      .mapTo((state: State) => state.set('result', InitialResult) as State),
+      .mapTo((state: IState) => (state as State).set('result', InitialResult) as State),
     actions.selectCell$
-      .mapTo((state: State) => {
+      .mapTo((state: IState) => {
         const selected = state.selected || [];
         const puzzle = state.puzzle || [];
         const result = new Result({
@@ -164,7 +164,7 @@ function reducers(actions: IIntent): Stream<(state: State) => State> {
           wrong: selected.filter(s => puzzle.indexOf(s) === -1),
           missed: puzzle.filter(p => selected.indexOf(p) === -1)
         });
-        return state.set('result', result) as State;
+        return (state as State).set('result', result) as State;
       })
   );
 
