@@ -1,5 +1,3 @@
-import xs from 'xstream';
-import delay from 'xstream/extra/delay';
 import { run } from '@cycle/xstream-run';
 import { makeDOMDriver } from '@cycle/dom';
 import intent from './intent';

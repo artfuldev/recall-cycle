@@ -1,8 +1,8 @@
 import { ISources } from './definitions';
-import { Stream, MemoryStream } from 'xstream';
+import { Stream } from 'xstream';
 
 export interface IIntent {
-  newGame$: MemoryStream<boolean>
+  newGame$: Stream<boolean>
   reset$: Stream<boolean>
   selectCell$: Stream<number>
 }
@@ -34,7 +34,11 @@ function intent(sources: ISources): IIntent {
     .events('click')
     .map(ev => {
       ev.preventDefault();
-      return parseInt((ev.target as HTMLElement).parentElement.attributes['data-index'].value);
+      return parseInt(
+        (ev.target as HTMLElement)
+          .parentElement
+          .attributes['data-index']
+          .value);
     });
 
   return {

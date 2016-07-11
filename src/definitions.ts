@@ -1,5 +1,4 @@
 import { DOMSource } from '@cycle/dom/xstream-typings';
-import { Record } from 'immutable';
 
 export interface ISources {
     dom: DOMSource
