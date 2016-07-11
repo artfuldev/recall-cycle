@@ -1,8 +1,10 @@
-import xs from 'xstream';
+import Stream from 'xstream';
 import delay from 'xstream/extra/delay';
 import { Intent } from './intent';
 
-function reducers(actions: Intent) {
+function reducers(actions: Intent): Stream<(state: any) => any> {
+  // alias
+  const xs = Stream;
 
   const puzzleReducer$ =
     actions.newGame$
