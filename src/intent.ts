@@ -1,4 +1,4 @@
-import { Sources } from './definitions';
+import { ISources } from './definitions';
 import { Stream, MemoryStream } from 'xstream';
 
 export interface Intent {
@@ -8,7 +8,7 @@ export interface Intent {
 }
 
 
-function intent(sources: Sources): Intent {
+function intent(sources: ISources): Intent {
 
   const dom = sources.dom;
 

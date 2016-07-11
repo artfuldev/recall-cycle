@@ -3,7 +3,7 @@ import { Stream } from 'xstream';
 import { div, h1, ul, li, a, p, span, VNode} from '@cycle/dom';
 import { IState } from './definitions';
 
-export interface Sinks {
+export interface ISinks {
   dom: Stream<VNode>
 }
 
@@ -26,7 +26,7 @@ function renderCell(index: number, state: IState): VNode {
   return div(classes + '.cell', { attrs: { 'data-index': index } }, [span()]);
 }
 
-function view(state$: Stream<IState>): Sinks {
+function view(state$: Stream<IState>): ISinks {
   const vtree$ = state$.map(state => {
     const grid = state.grid;
     const score = state.score;
