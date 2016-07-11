@@ -1,24 +1,12 @@
-import reducers from './reducers';
+import reducers, { InitialState } from './reducers';
 import { Map } from 'immutable';
 import { Intent } from './intent';
+import { Stream } from 'xstream';
+import { IState } from './definitions';
 
-function model(actions: Intent) {
-  var grid = [];
-  for (var i = 0; i < 25; i++)
-    grid.push(i);
+function model(actions: Intent): Stream<IState> {
   const reducer$ = reducers(actions);
-  const initialState = Map(
-    {
-      grid,
-      puzzle: [],
-      allowed: false,
-      selected: [],
-      over: false,
-      score: 0,
-      result: null
-    }
-  );
-  const state$ = reducer$.fold((next, reducer) => reducer(next), initialState);
+  const state$ = reducer$.fold((next, reducer) => reducer(next), InitialState);
   return state$;
 }
 

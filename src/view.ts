@@ -1,15 +1,21 @@
 
-import { div, h1, ul, li, a, p, span} from '@cycle/dom';
+import { Stream } from 'xstream';
+import { div, h1, ul, li, a, p, span, VNode} from '@cycle/dom';
+import { IState } from './definitions';
 
-function view(state$) {
+export interface Sinks {
+  dom: Stream<VNode>
+}
+
+function view(state$: Stream<IState>): Sinks {
   const vtree$ = state$.map(state => {
-    const grid = state.get('grid');
-    const allowed = state.get('allowed');
-    const puzzle = state.get('puzzle');
-    const selected = state.get('selected');
-    const score = state.get('score');
-    const over = state.get('over');
-    const result = state.get('result') || {};
+    const grid = state.grid;
+    const allowed = state.allowed;
+    const puzzle = state.puzzle;
+    const selected = state.selected;
+    const score = state.score;
+    const over = state.over;
+    const result = state.result;
     const correct = result.correct;
     const wrong = result.wrong;
     const missed = result.missed;

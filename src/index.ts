@@ -11,8 +11,6 @@ function main(sources: Sources) {
   return view(model(intent(sources)));
 }
 
-const drivers = {
+run(main, {
   dom: makeDOMDriver('#app')
-};
-
-run(main, drivers);
+});
