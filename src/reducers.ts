@@ -63,7 +63,7 @@ export const InitialState = new State({
   over: false,
   score: 0,
   result: InitialResult
-});
+}) as IState;
 
 function reducers(actions: IIntent): Stream<(state: IState) => IState> {
   // alias
