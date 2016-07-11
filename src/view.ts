@@ -1,11 +1,7 @@
 
 import { Stream } from 'xstream';
 import { div, h1, ul, li, a, p, span, VNode} from '@cycle/dom';
-import { IState } from './definitions';
-
-export interface ISinks {
-  dom: Stream<VNode>
-}
+import { IState, ISinks } from './definitions';
 
 function renderCell(index: number, state: IState): VNode {
   var classes = '';
