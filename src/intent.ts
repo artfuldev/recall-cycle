@@ -1,14 +1,14 @@
 import { ISources } from './definitions';
 import { Stream, MemoryStream } from 'xstream';
 
-export interface Intent {
+export interface IIntent {
   newGame$: MemoryStream<boolean>
   reset$: Stream<boolean>
   selectCell$: Stream<number>
 }
 
 
-function intent(sources: ISources): Intent {
+function intent(sources: ISources): IIntent {
 
   const dom = sources.dom;
 

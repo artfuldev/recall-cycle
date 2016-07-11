@@ -1,6 +1,6 @@
 import Stream from 'xstream';
 import delay from 'xstream/extra/delay';
-import { Intent } from './intent';
+import { IIntent } from './intent';
 import { IResult, IState } from './definitions';
 import { Record } from 'immutable';
 
@@ -65,7 +65,7 @@ export const InitialState = new State({
   result: InitialResult
 });
 
-function reducers(actions: Intent): Stream<(state: State) => State> {
+function reducers(actions: IIntent): Stream<(state: State) => State> {
   // alias
   const xs = Stream;
 
