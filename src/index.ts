@@ -4,10 +4,10 @@ import { run } from '@cycle/xstream-run';
 import { makeDOMDriver } from '@cycle/dom';
 import intent from './intent';
 import model from './model';
-import view from './view';
+import view, { Sinks } from './view';
 import { Sources } from './definitions';
 
-function main(sources: Sources) {
+function main(sources: Sources): Sinks {
   return view(model(intent(sources)));
 }
 
