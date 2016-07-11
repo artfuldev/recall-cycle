@@ -1,4 +1,3 @@
-import "babel-polyfill";
 import xs from 'xstream';
 import delay from 'xstream/extra/delay';
 import { run } from '@cycle/xstream-run';
