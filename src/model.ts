@@ -1,5 +1,4 @@
 import reducers, { InitialState } from './reducers';
-import { Map } from 'immutable';
 import { IIntent } from './intent';
 import { Stream } from 'xstream';
 import { IState } from './definitions';
