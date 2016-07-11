@@ -7,18 +7,29 @@ export interface Sinks {
   dom: Stream<VNode>
 }
 
+function renderCell(index: number, state: IState): VNode {
+  var classes = '';
+  if(state.over && state.result) {
+    if(state.result.correct.indexOf(index) > -1)
+      classes += '.correct';
+    else if(state.result.wrong.indexOf(index) > -1)
+      classes += '.wrong';
+    else if(state.result.missed.indexOf(index) > -1)
+      classes += '.missed';
+  }
+  else {
+    if(!state.allowed && state.puzzle.indexOf(index) > -1)
+      classes += '.highlighted';
+    else if(state.allowed && state.selected.indexOf(index) > -1)
+      classes += '.selected';
+  }
+  return div(classes + '.cell', { attrs: { 'data-index': index } }, [span()]);
+}
+
 function view(state$: Stream<IState>): Sinks {
   const vtree$ = state$.map(state => {
     const grid = state.grid;
-    const allowed = state.allowed;
-    const puzzle = state.puzzle;
-    const selected = state.selected;
     const score = state.score;
-    const over = state.over;
-    const result = state.result;
-    const correct = result.correct;
-    const wrong = result.wrong;
-    const missed = result.missed;
     return div('#root', [
       div('.container', [
         div('.title.bar', [
@@ -33,16 +44,7 @@ function view(state$: Stream<IState>): Sinks {
           p(['Click on the nine tiles you see to win! Score: ' + score])
         ]),
         div('.panel', [
-          div('.grid', grid.map((x) =>
-            div('.cell'
-              + ((!allowed && !over && puzzle.indexOf(x) !== -1) ? '.highlighted' : '')
-              + ((allowed && !over && selected.indexOf(x) !== -1) ? '.selected' : '')
-              + ((over && correct.indexOf(x) !== -1) ? '.correct' : '')
-              + ((over && wrong.indexOf(x) !== -1) ? '.wrong' : '')
-              + ((over && missed.indexOf(x) !== -1) ? '.missed' : ''), {
-                attrs: { 'data-index': x }
-              }, [span()])
-          ))
+          div('.grid', grid.map((x) => renderCell(x, state)))
         ])
       ])
     ]);
