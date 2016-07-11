@@ -1,8 +1,4 @@
-import { DOMSource } from '@cycle/dom/xstream-typings';
-
-interface Sources {
-    dom: DOMSource
-}
+import { Sources } from './definitions';
 
 function intent(sources: Sources) {
 
