@@ -2,29 +2,8 @@ import xs from 'xstream';
 import delay from 'xstream/extra/delay';
 import { run } from '@cycle/xstream-run';
 import { div, h1, ul, li, a, p, span, makeDOMDriver } from '@cycle/dom';
-import { Map } from 'immutable';
 import intent from './intent';
-import reducers from './reducers';
-
-function model(actions) {
-  var grid = [];
-  for (var i = 0; i < 25; i++)
-    grid.push(i);
-  const reducer$ = reducers(actions);
-  const initialState = Map(
-    {
-      grid,
-      puzzle: [],
-      allowed: false,
-      selected: [],
-      over: false,
-      score: 0,
-      result: null
-    }
-  );
-  const state$ = reducer$.fold((next, reducer) => reducer(next), initialState);
-  return state$;
-}
+import model from './model';
 
 function view(state$) {
   const vtree$ = state$.map(state => {
