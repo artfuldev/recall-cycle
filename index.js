@@ -1,7 +1,6 @@
 "use strict";
 require("babel-polyfill");
 var xstream_1 = require('xstream');
-;
 var delay_1 = require('xstream/extra/delay');
 var xstream_run_1 = require('@cycle/xstream-run');
 var dom_1 = require('@cycle/dom');
