@@ -4,10 +4,9 @@
         "**/.git": true,
         "**/.svn": true,
         "**/.DS_Store": true,
-        "**/*.js": { "when": "$(basename).ts"},
         "node_modules": true,
-        "typings": true,
-        "bundle.js": true,
+        "js": true,
+        "**/*.js": { "when": "$(basename).ts"},
         "**/*.js.map": true
     }
 }
