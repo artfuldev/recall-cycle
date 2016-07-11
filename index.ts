@@ -1,5 +1,5 @@
 import "babel-polyfill";
-import xs from 'xstream';;
+import xs from 'xstream';
 import delay from 'xstream/extra/delay';
 import { run } from '@cycle/xstream-run';
 import { div, h1, ul, li, a, p, span, makeDOMDriver } from '@cycle/dom';
