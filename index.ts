@@ -3,7 +3,7 @@ import xs from 'xstream';
 import delay from 'xstream/extra/delay';
 import { run } from '@cycle/xstream-run';
 import { div, h1, ul, li, a, p, span, makeDOMDriver } from '@cycle/dom';
-import Immutable from 'immutable';
+import { Map } from 'immutable';
 
 function intent({ dom }) {
 
@@ -155,7 +155,7 @@ function model(actions) {
   for (var i = 0; i < 25; i++)
     grid.push(i);
   const reducer$ = reducers(actions);
-  const initialState = Immutable.Map(
+  const initialState = Map(
     {
       grid,
       puzzle: [],

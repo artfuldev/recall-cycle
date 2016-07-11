@@ -121,7 +121,7 @@ function model(actions) {
     for (var i = 0; i < 25; i++)
         grid.push(i);
     var reducer$ = reducers(actions);
-    var initialState = immutable_1.default.Map({
+    var initialState = immutable_1.Map({
         grid: grid,
         puzzle: [],
         allowed: false,
