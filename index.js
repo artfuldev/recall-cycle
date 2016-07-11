@@ -1,226 +1,187 @@
-import "babel-polyfill";
-import xs from 'xstream';;
-import delay from 'xstream/extra/delay';
-import { run } from '@cycle/xstream-run';
-import { div, h1, ul, li, a, p, span, makeDOMDriver } from '@cycle/dom';
-import Immutable from 'immutable';
-
-function intent({ dom }) {
-
-  const newGame$ = dom
-    .select('.new')
-    .events('click')
-    .map(ev => {
-      ev.preventDefault();
-      return true;
+"use strict";
+require("babel-polyfill");
+var xstream_1 = require('xstream');
+;
+var delay_1 = require('xstream/extra/delay');
+var xstream_run_1 = require('@cycle/xstream-run');
+var dom_1 = require('@cycle/dom');
+var immutable_1 = require('immutable');
+function intent(_a) {
+    var dom = _a.dom;
+    var newGame$ = dom
+        .select('.new')
+        .events('click')
+        .map(function (ev) {
+        ev.preventDefault();
+        return true;
     })
-    .startWith(true);
-
-  const reset$ = dom
-    .select('.reset')
-    .events('click')
-    .map(ev => {
-      ev.preventDefault();
-      return true;
+        .startWith(true);
+    var reset$ = dom
+        .select('.reset')
+        .events('click')
+        .map(function (ev) {
+        ev.preventDefault();
+        return true;
     });
-
-  const selectCell$ = dom
-    .select('.cell span')
-    .events('click')
-    .map(ev => {
-      ev.preventDefault();
-      return parseInt(ev.target.parentElement.attributes['data-index'].value);
+    var selectCell$ = dom
+        .select('.cell span')
+        .events('click')
+        .map(function (ev) {
+        ev.preventDefault();
+        return parseInt(ev.target.parentElement.attributes['data-index'].value);
     });
-
-  return {
-    newGame$,
-    reset$,
-    selectCell$
-  };
+    return {
+        newGame$: newGame$,
+        reset$: reset$,
+        selectCell$: selectCell$
+    };
 }
-
 function reducers(actions) {
-
-  const puzzleReducer$ =
-    actions.newGame$
-      .mapTo(state => {
-        const puzzle = [];
-        const maxSize = 9;
+    var puzzleReducer$ = actions.newGame$
+        .mapTo(function (state) {
+        var puzzle = [];
+        var maxSize = 9;
         for (var i = 0; i < maxSize; i++) {
-          var nextNumber = Math.floor(Math.random() * 25);
-          while (puzzle.indexOf(nextNumber) !== -1)
-            nextNumber = Math.floor(Math.random() * 25);
-          puzzle.push(nextNumber);
+            var nextNumber = Math.floor(Math.random() * 25);
+            while (puzzle.indexOf(nextNumber) !== -1)
+                nextNumber = Math.floor(Math.random() * 25);
+            puzzle.push(nextNumber);
         }
         return state.set('puzzle', puzzle);
-      });
-
-  const allowedReducer$ = xs.merge(
-    actions.newGame$
-      .mapTo(state => state.set('allowed', false)),
-    actions.newGame$
-      .compose(delay(4000))
-      .mapTo(state => state.set('allowed', true)),
-    actions.selectCell$
-      .mapTo(state => {
-        const selected = state.get('selected') || [];
+    });
+    var allowedReducer$ = xstream_1.default.merge(actions.newGame$
+        .mapTo(function (state) { return state.set('allowed', false); }), actions.newGame$
+        .compose(delay_1.default(4000))
+        .mapTo(function (state) { return state.set('allowed', true); }), actions.selectCell$
+        .mapTo(function (state) {
+        var selected = state.get('selected') || [];
         return selected.length === 9
-          ? state.set('allowed', false)
-          : state;
-      })
-  );
-
-  const selectedReducer$ = xs.merge(
-    actions.newGame$
-      .mapTo(state => state.set('selected', [])),
-    actions.reset$
-      .mapTo(state => {
-        const allowed = state.get('allowed');
+            ? state.set('allowed', false)
+            : state;
+    }));
+    var selectedReducer$ = xstream_1.default.merge(actions.newGame$
+        .mapTo(function (state) { return state.set('selected', []); }), actions.reset$
+        .mapTo(function (state) {
+        var allowed = state.get('allowed');
         return allowed
-          ? state.set('selected', [])
-          : state;
-      }),
-    actions.selectCell$
-      .map(clicked =>
-        state => {
-          const allowed = state.get('allowed');
-          if (!allowed)
-            return state;
-          var selected = state.get('selected') || [];
-          var index = selected.indexOf(clicked);
-          if (index === -1)
-            return state.set('selected', selected.concat(clicked));
-          else
-            return state.set('selected', selected.filter(x => x != clicked));
-        })
-  );
-
-  const scoreReducer$ =
-    actions.selectCell$
-      .mapTo(state => {
-        const over = state.get('over');
+            ? state.set('selected', [])
+            : state;
+    }), actions.selectCell$
+        .map(function (clicked) {
+        return function (state) {
+            var allowed = state.get('allowed');
+            if (!allowed)
+                return state;
+            var selected = state.get('selected') || [];
+            var index = selected.indexOf(clicked);
+            if (index === -1)
+                return state.set('selected', selected.concat(clicked));
+            else
+                return state.set('selected', selected.filter(function (x) { return x != clicked; }));
+        };
+    }));
+    var scoreReducer$ = actions.selectCell$
+        .mapTo(function (state) {
+        var over = state.get('over');
         if (over)
-          return state;
-        const selected = state.get('selected') || [];
+            return state;
+        var selected = state.get('selected') || [];
         if (selected.length !== 9)
-          return state;
-        const puzzle = state.get('puzzle') || [];
-        const won = selected.every(s => puzzle.indexOf(s) !== -1);
-        const score = state.get('score') || 0;
+            return state;
+        var puzzle = state.get('puzzle') || [];
+        var won = selected.every(function (s) { return puzzle.indexOf(s) !== -1; });
+        var score = state.get('score') || 0;
         return won
-          ? state.set('score', score + 1)
-          : state;
-      });
-
-  const overReducer$ = xs.merge(
-    actions.newGame$
-      .mapTo(state => state.set('over', false)),
-    actions.selectCell$
-      .mapTo(state => {
-        const selected = state.get('selected') || [];
+            ? state.set('score', score + 1)
+            : state;
+    });
+    var overReducer$ = xstream_1.default.merge(actions.newGame$
+        .mapTo(function (state) { return state.set('over', false); }), actions.selectCell$
+        .mapTo(function (state) {
+        var selected = state.get('selected') || [];
         return selected.length === 9
-          ? state.set('over', true)
-          : state;
-      })
-  );
-
-  const resultReducer$ = xs.merge(
-    actions.newGame$
-      .mapTo(state => state.set('result', null)),
-    actions.selectCell$
-      .mapTo(state => {
-        const selected = state.get('selected') || [];
-        const puzzle = state.get('puzzle') || [];
-        const result = {
-          correct: selected.filter(s => puzzle.indexOf(s) !== -1),
-          wrong: selected.filter(s => puzzle.indexOf(s) === -1),
-          missed: puzzle.filter(p => selected.indexOf(p) === -1)
+            ? state.set('over', true)
+            : state;
+    }));
+    var resultReducer$ = xstream_1.default.merge(actions.newGame$
+        .mapTo(function (state) { return state.set('result', null); }), actions.selectCell$
+        .mapTo(function (state) {
+        var selected = state.get('selected') || [];
+        var puzzle = state.get('puzzle') || [];
+        var result = {
+            correct: selected.filter(function (s) { return puzzle.indexOf(s) !== -1; }),
+            wrong: selected.filter(function (s) { return puzzle.indexOf(s) === -1; }),
+            missed: puzzle.filter(function (p) { return selected.indexOf(p) === -1; })
         };
         return state.set('result', result);
-      })
-  );
-
-  return xs.merge(
-    puzzleReducer$,
-    allowedReducer$,
-    selectedReducer$,
-    scoreReducer$,
-    overReducer$,
-    resultReducer$
-  );
+    }));
+    return xstream_1.default.merge(puzzleReducer$, allowedReducer$, selectedReducer$, scoreReducer$, overReducer$, resultReducer$);
 }
-
 function model(actions) {
-  var grid = [];
-  for (var i = 0; i < 25; i++)
-    grid.push(i);
-  const reducer$ = reducers(actions);
-  const initialState = Immutable.Map(
-    {
-      grid,
-      puzzle: [],
-      allowed: false,
-      selected: [],
-      over: false,
-      score: 0,
-      result: null
-    }
-  );
-  const state$ = reducer$.fold((next, reducer) => reducer(next), initialState);
-  return state$;
+    var grid = [];
+    for (var i = 0; i < 25; i++)
+        grid.push(i);
+    var reducer$ = reducers(actions);
+    var initialState = immutable_1.default.Map({
+        grid: grid,
+        puzzle: [],
+        allowed: false,
+        selected: [],
+        over: false,
+        score: 0,
+        result: null
+    });
+    var state$ = reducer$.fold(function (next, reducer) { return reducer(next); }, initialState);
+    return state$;
 }
-
 function view(state$) {
-  const vtree$ = state$.map(state => {
-    const grid = state.get('grid');
-    const allowed = state.get('allowed');
-    const puzzle = state.get('puzzle');
-    const selected = state.get('selected');
-    const score = state.get('score');
-    const over = state.get('over');
-    const result = state.get('result') || {};
-    const correct = result.correct;
-    const wrong = result.wrong;
-    const missed = result.missed;
-    return div('#root', [
-      div('.container', [
-        div('.title.bar', [
-          h1(['Recall']),
-          ul('.actions', [
-            li([a('.new', 'New')]),
-            li([a('.reset', 'Reset')]),
-            // li('.undo', 'Undo')
-          ])
-        ]),
-        div('.before.grid', [
-          p(['Click on the nine tiles you see to win! Score: ' + score])
-        ]),
-        div('.panel', [
-          div('.grid', grid.map((x) =>
-            div('.cell'
-              + ((!allowed && !over && puzzle.indexOf(x) !== -1) ? '.highlighted' : '')
-              + ((allowed && !over && selected.indexOf(x) !== -1) ? '.selected' : '')
-              + ((over && correct.indexOf(x) !== -1) ? '.correct' : '')
-              + ((over && wrong.indexOf(x) !== -1) ? '.wrong' : '')
-              + ((over && missed.indexOf(x) !== -1) ? '.missed' : ''), {
-                attrs: { 'data-index': x }
-              }, [span()])
-          ))
-        ])
-      ])
-    ]);
-  });
-  return {
-    dom: vtree$
-  };
+    var vtree$ = state$.map(function (state) {
+        var grid = state.get('grid');
+        var allowed = state.get('allowed');
+        var puzzle = state.get('puzzle');
+        var selected = state.get('selected');
+        var score = state.get('score');
+        var over = state.get('over');
+        var result = state.get('result') || {};
+        var correct = result.correct;
+        var wrong = result.wrong;
+        var missed = result.missed;
+        return dom_1.div('#root', [
+            dom_1.div('.container', [
+                dom_1.div('.title.bar', [
+                    dom_1.h1(['Recall']),
+                    dom_1.ul('.actions', [
+                        dom_1.li([dom_1.a('.new', 'New')]),
+                        dom_1.li([dom_1.a('.reset', 'Reset')]),
+                    ])
+                ]),
+                dom_1.div('.before.grid', [
+                    dom_1.p(['Click on the nine tiles you see to win! Score: ' + score])
+                ]),
+                dom_1.div('.panel', [
+                    dom_1.div('.grid', grid.map(function (x) {
+                        return dom_1.div('.cell'
+                            + ((!allowed && !over && puzzle.indexOf(x) !== -1) ? '.highlighted' : '')
+                            + ((allowed && !over && selected.indexOf(x) !== -1) ? '.selected' : '')
+                            + ((over && correct.indexOf(x) !== -1) ? '.correct' : '')
+                            + ((over && wrong.indexOf(x) !== -1) ? '.wrong' : '')
+                            + ((over && missed.indexOf(x) !== -1) ? '.missed' : ''), {
+                            attrs: { 'data-index': x }
+                        }, [dom_1.span()]);
+                    }))
+                ])
+            ])
+        ]);
+    });
+    return {
+        dom: vtree$
+    };
 }
-
 function main(sources) {
-  return view(model(intent(sources)));
+    return view(model(intent(sources)));
 }
-
-const drivers = {
-  dom: makeDOMDriver('#app')
+var drivers = {
+    dom: dom_1.makeDOMDriver('#app')
 };
-
-run(main, drivers);
+xstream_run_1.run(main, drivers);
+//# sourceMappingURL=index.js.map
