@@ -1,8 +1,8 @@
 var webpack = require('webpack');  
 module.exports = {  
-  entry: './index.ts',
+  entry: './src/index.ts',
   output: {
-    filename: 'bundle.js'
+    filename: './js/app.js'
   },
   // Turn on sourcemaps
   devtool: 'source-map',
