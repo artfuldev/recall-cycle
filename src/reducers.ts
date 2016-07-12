@@ -48,11 +48,6 @@ class State extends StateRecord implements IState {
   }
 }
 
-
-var grid = [];
-for (var i = 0; i < 25; i++)
-  grid.push(i);
-
 export const InitialState = new State({
   puzzle: [],
   allowed: false,
