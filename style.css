@@ -21,20 +21,16 @@ html, body {
 }
 
 .container {
-    padding-top: 80px;
-    width: 90%;
-    max-width: 500px;
-    margin: 20px auto 0;
-}
-
-.title.bar {
-    position: relative;
     width: 100%;
-    margin-bottom: 20px;
+    max-width: 540px;
+    margin: 0 auto;
+    padding: 20px;
+    padding-top: 80px;
 }
 
 h1 {
-    display: inline-block;
+    display: block;
+    float: left;
     font-weight: 100;
     font-size: 3em;
     margin: 0;
@@ -49,32 +45,93 @@ h1 {
     bottom: 0;
 }
 
-.actions li {
+.scores {
+    float: right;
+    text-align: right;
+}
+
+.score {
+    position: relative;
     display: inline-block;
+    background: white;
+    padding: 15px 25px;
+    font-size: 1.5em;
+    line-height: 3em;
+    font-weight: bold;
+    border-radius: 3px;
+    color: #9c27b0;
+    margin-top: 8px;
+    text-align: center;
+    margin-left: 5px;
+    width: 3em;
+    height: 2.5em;
+}
+
+.score span {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 4px;
+    padding-top: 10px;
+}
+
+.score span::after {
+    position: absolute;
+    width: 100%;
+    top: 10px;
+    left: 0;
+    text-transform: uppercase;
+    font-size: 13px;
+    line-height: 13px;
+    text-align: center;
+}
+
+.current.score span::after {
+    content: 'score'
+}
+
+.best.score span::after {
+    content: 'best';
+}
+
+.info {
+    clear: left;
+}
+
+.info p {
+    margin-bottom: 20px;
+    float:left;
+    line-height: 3em;
 }
 
 a {
-    text-decoration: none;
-    color: white;
-    cursor: pointer;
     text-transform: uppercase;
-    margin-left: 20px;
-    padding: 10px 20px;
-    font-weight: 700;
-    font-size: 1em;
     border: 1px solid white;
     border-radius: 2px;
 }
 
 a:hover {
     text-decoration: none;
-    color:white;
+    background: white;
+    color:#9c27b0;
     cursor: pointer;
 }
 
-.before.grid p {
-    margin-bottom: 20px;
+a.new {
+    border: 1px solid white;
+    border-radius: 3px;
+    padding: 0 28px;
+    text-decoration: none;
+    height: 3em;
+    line-height: 3em;
+    cursor: pointer;
+    display: block;
+    text-align: center;
+    float: right;
 }
+
 
 .container, .panel, .grid {
     overflow: auto;
@@ -82,6 +139,7 @@ a:hover {
 
 .panel {
     position: relative;
+    clear: left;
 }
 
 .cell {

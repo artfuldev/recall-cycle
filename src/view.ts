@@ -1,6 +1,6 @@
 
 import { Stream } from 'xstream';
-import { div, h1, ul, li, a, p, span, VNode} from '@cycle/dom';
+import { div, h1, p, strong, a, span, VNode} from '@cycle/dom';
 import { IState, ISinks } from './definitions';
 
 function renderCell(index: number, state: IState): VNode {
@@ -25,19 +25,22 @@ function renderCell(index: number, state: IState): VNode {
 function view(state$: Stream<IState>): ISinks {
   const vtree$ = state$.map(state => {
     const grid = state.grid;
-    const score = state.score;
+    const score = state.score.toString();
     return div('#root', [
       div('.container', [
         div('.title.bar', [
           h1(['Recall']),
-          ul('.actions', [
-            li([a('.new', 'New')]),
-            li([a('.reset', 'Reset')]),
-            // li('.undo', 'Undo')
+          div('.scores', [
+            div('.current.score', [span([score])]),
+            div('.best.score', [span([score])])
           ])
         ]),
-        div('.before.grid', [
-          p(['Click on the nine tiles you see to win! Score: ' + score])
+        div('.info', [
+          p([
+            'Click on the ',
+            strong(['nine tiles you see']),
+            ' to win!']),
+          a('.new', 'New Game')
         ]),
         div('.panel', [
           div('.grid', grid.map((x) => renderCell(x, state)))
