@@ -27,7 +27,6 @@ const InitialResult = new Result({
 });
 
 const StateRecord = Record({
-  grid: [],
   puzzle: [],
   allowed: false,
   selected: [],
@@ -37,7 +36,6 @@ const StateRecord = Record({
 });
 
 class State extends StateRecord implements IState {
-  grid: Array<number>
   puzzle: Array<number>
   allowed: boolean
   selected: Array<number>
@@ -56,7 +54,6 @@ for (var i = 0; i < 25; i++)
   grid.push(i);
 
 export const InitialState = new State({
-  grid: grid,
   puzzle: [],
   allowed: false,
   selected: [],

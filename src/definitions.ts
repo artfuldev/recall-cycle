@@ -17,7 +17,6 @@ export interface IResult {
 }
 
 export interface IState {
-    grid: Array<number>
     puzzle: Array<number>
     allowed: boolean
     selected: Array<number>
