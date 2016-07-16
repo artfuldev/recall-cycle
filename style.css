@@ -107,21 +107,13 @@ h1 {
 }
 
 a {
-    text-transform: uppercase;
-    border: 1px solid white;
-    border-radius: 2px;
-}
-
-a:hover {
-    text-decoration: none;
-    background: white;
-    color:#9c27b0;
-    cursor: pointer;
+    color: white;
 }
 
 a.new {
+    text-transform: uppercase;
+    border-radius: 2px;
     border: 1px solid white;
-    border-radius: 3px;
     padding: 0 28px;
     text-decoration: none;
     height: 3em;
@@ -132,6 +124,12 @@ a.new {
     float: right;
 }
 
+a.new:hover {
+    text-decoration: none;
+    background: white;
+    color:#9c27b0;
+    cursor: pointer;
+}
 
 .container, .panel, .grid {
     overflow: auto;
@@ -198,4 +196,31 @@ a.new {
 
 .cell.missed span::after {
     content: 'missed';
+}
+
+header, footer {
+    overflow: auto;
+}
+
+main {
+    margin-bottom: 20px;
+}
+
+footer {
+    padding: 20px 0;
+    text-align: center;
+}
+
+.cycle::before {
+    background: url('http://cycle.js.org/img/cyclejs_logo.svg');
+    content: '';
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    vertical-align: middle;
+    margin-right: 3px;
+}
+
+footer div {
+    margin-top: 10px;
 }
