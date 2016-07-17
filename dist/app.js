@@ -159,7 +159,7 @@
 	        }
 	        return puzzle;
 	    }).remember();
-	    var selectedCellsReducer$ = xs.merge(actions.newGame$
+	    var selectedCellsReducer$ = xs.merge(puzzle$
 	        .mapTo(function () { return new Array(); }), actions.reset$
 	        .mapTo(function () { return new Array(); }), actions.selectCell$
 	        .map(function (clicked) {
@@ -172,14 +172,14 @@
 	    }));
 	    var selectedCells$ = reduce(selectedCellsReducer$, new Array())
 	        .remember();
-	    var allowed$ = xs.merge(actions.newGame$
-	        .mapTo(false), actions.newGame$
+	    var allowed$ = xs.merge(puzzle$
+	        .mapTo(false), puzzle$
 	        .compose(delay_1.default(4000))
 	        .mapTo(true)).remember();
 	    var over$ = selectedCells$
 	        .map(function (selected) { return selected.length === 9; })
 	        .compose(dropRepeats_1.default(function (prev, next) { return prev === next; }));
-	    var result$ = xs.merge(actions.newGame$
+	    var result$ = xs.merge(puzzle$
 	        .mapTo(null), over$
 	        .filter(Boolean)
 	        .map(function () {

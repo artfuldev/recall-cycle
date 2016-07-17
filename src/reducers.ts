@@ -30,7 +30,7 @@ function reducers(actions: IIntent): IState {
 
   const selectedCellsReducer$ =
     xs.merge(
-      actions.newGame$
+      puzzle$
         .mapTo(() => new Array<number>()),
       actions.reset$
         .mapTo(() => new Array<number>()),
@@ -49,9 +49,9 @@ function reducers(actions: IIntent): IState {
 
   const allowed$ =
     xs.merge(
-      actions.newGame$
+      puzzle$
         .mapTo(false),
-      actions.newGame$
+      puzzle$
         .compose(delay(4000))
         .mapTo(true)
     ).remember();
@@ -63,7 +63,7 @@ function reducers(actions: IIntent): IState {
 
   const result$ =
     xs.merge(
-      actions.newGame$
+      puzzle$
         .mapTo(null),
       over$
         .filter(Boolean)
