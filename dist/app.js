@@ -1,17 +1,8277 @@
-!function(t){function e(r){if(n[r])return n[r].exports;var i=n[r]={exports:{},id:r,loaded:!1};return t[r].call(i.exports,i,i.exports,e),i.loaded=!0,i.exports}var n={};return e.m=t,e.c=n,e.p="",e(0)}([function(t,e,n){"use strict";var r=n(1),i=n(78),o=n(10);i.run(r["default"],{dom:o.makeDOMDriver("#app")})},function(t,e,n){"use strict";function r(t){return u["default"](o["default"](i["default"](t)))}var i=n(2),o=n(3),u=n(9);Object.defineProperty(e,"__esModule",{value:!0}),e["default"]=r},function(t,e){"use strict";function n(t){var e=t.dom,n=e.select(".new").events("click").map(function(t){return t.preventDefault(),!0}).startWith(!0),r=e.select(".reset").events("click").map(function(t){return t.preventDefault(),!0}),i=e.select(".cell span").events("click").map(function(t){return t.preventDefault(),parseInt(t.target.parentElement.attributes["data-index"].value)});return{newGame$:n,reset$:r,selectCell$:i}}Object.defineProperty(e,"__esModule",{value:!0}),e["default"]=n},function(t,e,n){"use strict";function r(t){var e=i["default"](t),n=e.fold(function(t,e){return e(t)},i.InitialState);return n}var i=n(4);Object.defineProperty(e,"__esModule",{value:!0}),e["default"]=r},function(t,e,n){"use strict";function r(t){var e=o["default"],n=t.newGame$.mapTo(function(t){for(var e=[],n=9,r=0;r<n;r++){for(var i=Math.floor(25*Math.random());e.indexOf(i)!==-1;)i=Math.floor(25*Math.random());e.push(i)}return t.set("puzzle",e)}),r=e.merge(t.newGame$.mapTo(function(t){return t.set("allowed",!1)}),t.newGame$.compose(u["default"](4e3)).mapTo(function(t){return t.set("allowed",!0)}),t.selectCell$.mapTo(function(t){var e=t.selected||[];return 9===e.length?t.set("allowed",!1):t})),i=e.merge(t.newGame$.mapTo(function(t){return t.set("selected",[])}),t.reset$.mapTo(function(t){var e=t.allowed;return e?t.set("selected",[]):t}),t.selectCell$.map(function(t){return function(e){var n=e.allowed;if(!n)return e;var r=e.selected||[],i=r.indexOf(t);return i===-1?e.set("selected",r.concat(t)):e.set("selected",r.filter(function(e){return e!=t}))}})),s=t.selectCell$.mapTo(function(t){var e=t.over;if(e)return t;var n=t.selected||[];if(9!==n.length)return t;var r=t.puzzle||[],i=n.every(function(t){return r.indexOf(t)!==-1}),o=t.score||0;return i?t.set("score",o+1):t}),a=e.merge(t.newGame$.mapTo(function(t){return t.set("over",!1)}),t.selectCell$.mapTo(function(t){var e=t.selected||[];return 9===e.length?t.set("over",!0):t})),h=e.merge(t.newGame$.mapTo(function(t){return t.set("result",f)}),t.selectCell$.mapTo(function(t){var e=t.selected||[],n=t.puzzle||[],r=new c({correct:e.filter(function(t){return n.indexOf(t)!==-1}),wrong:e.filter(function(t){return n.indexOf(t)===-1}),missed:n.filter(function(t){return e.indexOf(t)===-1})});return t.set("result",r)}));return e.merge(n,r,i,s,a,h)}var i=this&&this.__extends||function(t,e){function n(){this.constructor=t}for(var r in e)e.hasOwnProperty(r)&&(t[r]=e[r]);t.prototype=null===e?Object.create(e):(n.prototype=e.prototype,new n)},o=n(5),u=n(7),s=n(8),a=s.Record({correct:[],wrong:[],missed:[]}),c=function(t){function e(e){t.call(this,e)}return i(e,t),e}(a),f=new c({correct:[],wrong:[],missed:[]}),h=s.Record({puzzle:[],allowed:!1,selected:[],over:!1,score:0,result:null}),l=function(t){function e(e){t.call(this,e)}return i(e,t),e}(h);e.InitialState=new l({puzzle:[],allowed:!1,selected:[],over:!1,score:0,result:f}),Object.defineProperty(e,"__esModule",{value:!0}),e["default"]=r},function(t,e,n){"use strict";var r=n(6);e.Stream=r.Stream,e.MemoryStream=r.MemoryStream,Object.defineProperty(e,"__esModule",{value:!0}),e["default"]=r.Stream},function(t,e){"use strict";function n(){}function r(t){for(var e=t.length,n=Array(e),r=0;r<e;++r)n[r]=t[r];return n}function i(t){t._start=function(t){t.next=t._n,t.error=t._e,t.complete=t._c,this.start(t)},t._stop=t.stop}function o(t,e){return function(n){return t(e(n))}}function u(t,e){return function(n){return t(n)&&e(n)}}var s=this&&this.__extends||function(t,e){function n(){this.constructor=t}for(var r in e)e.hasOwnProperty(r)&&(t[r]=e[r]);t.prototype=null===e?Object.create(e):(n.prototype=e.prototype,new n)},a={};e.emptyIL={_n:n,_e:n,_c:n};var c=function(){function t(t){this.insArr=t,this.type="merge",this.out=null,this.ac=t.length}return t.prototype._start=function(t){this.out=t;for(var e=this.insArr,n=e.length,r=0;r<n;r++)e[r]._add(this)},t.prototype._stop=function(){for(var t=this.insArr,e=t.length,n=0;n<e;n++)t[n]._remove(this);this.out=null,this.ac=e},t.prototype._n=function(t){var e=this.out;e&&e._n(t)},t.prototype._e=function(t){var e=this.out;e&&e._e(t)},t.prototype._c=function(){if(0===--this.ac){var t=this.out;if(!t)return;t._c()}},t}();e.MergeProducer=c;var f=function(){function t(t,e,n){this.i=t,this.out=e,this.p=n,n.ils.push(this)}return t.prototype._n=function(t){var e=this.p,n=this.out;n&&e.up(t,this.i)&&n._n(e.vals)},t.prototype._e=function(t){var e=this.out;e&&e._e(t)},t.prototype._c=function(){var t=this.p;t.out&&0===--t.Nc&&t.out._c()},t}();e.CombineListener=f;var h=function(){function t(t){this.insArr=t,this.type="combine",this.out=null,this.ils=[];for(var e=this.Nc=this.Nn=t.length,n=this.vals=new Array(e),r=0;r<e;r++)n[r]=a}return t.prototype.up=function(t,e){var n=this.vals[e],r=this.Nn?n===a?--this.Nn:this.Nn:0;return this.vals[e]=t,0===r},t.prototype._start=function(t){this.out=t;var e=this.insArr,n=e.length;if(0===n)t._n([]),t._c();else for(var r=0;r<n;r++)e[r]._add(new f(r,t,this))},t.prototype._stop=function(){for(var t=this.insArr,e=this.Nc=this.Nn=t.length,n=this.vals=new Array(e),r=0;r<e;r++)t[r]._remove(this.ils[r]),n[r]=a;this.out=null,this.ils=[]},t}();e.CombineProducer=h;var l=function(){function t(t){this.a=t,this.type="fromArray"}return t.prototype._start=function(t){for(var e=this.a,n=0,r=e.length;n<r;n++)t._n(e[n]);t._c()},t.prototype._stop=function(){},t}();e.FromArrayProducer=l;var p=function(){function t(t){this.p=t,this.type="fromPromise",this.on=!1}return t.prototype._start=function(t){var e=this;this.on=!0,this.p.then(function(n){e.on&&(t._n(n),t._c())},function(e){t._e(e)}).then(null,function(t){setTimeout(function(){throw t})})},t.prototype._stop=function(){this.on=!1},t}();e.FromPromiseProducer=p;var d=function(){function t(t){this.period=t,this.type="periodic",this.intervalID=-1,this.i=0}return t.prototype._start=function(t){function e(){t._n(n.i++)}var n=this;this.intervalID=setInterval(e,this.period)},t.prototype._stop=function(){this.intervalID!==-1&&clearInterval(this.intervalID),this.intervalID=-1,this.i=0},t}();e.PeriodicProducer=d;var v=function(){function t(t,e){this.ins=e,this.type="debug",this.out=null,this.s=null,this.l=null,"string"==typeof t?this.l=t:this.s=t}return t.prototype._start=function(t){this.out=t,this.ins._add(this)},t.prototype._stop=function(){this.ins._remove(this),this.out=null},t.prototype._n=function(t){var e=this.out;if(e){var n=this.s,r=this.l;if(n)try{n(t)}catch(i){e._e(i)}else r?console.log(r+":",t):console.log(t);e._n(t)}},t.prototype._e=function(t){var e=this.out;e&&e._e(t)},t.prototype._c=function(){var t=this.out;t&&t._c()},t}();e.DebugOperator=v;var _=function(){function t(t,e){this.max=t,this.ins=e,this.type="drop",this.out=null,this.dropped=0}return t.prototype._start=function(t){this.out=t,this.ins._add(this)},t.prototype._stop=function(){this.ins._remove(this),this.out=null,this.dropped=0},t.prototype._n=function(t){var e=this.out;e&&this.dropped++>=this.max&&e._n(t)},t.prototype._e=function(t){var e=this.out;e&&e._e(t)},t.prototype._c=function(){var t=this.out;t&&t._c()},t}();e.DropOperator=_;var y=function(){function t(t,e){this.out=t,this.op=e}return t.prototype._n=function(t){this.op.end()},t.prototype._e=function(t){this.out._e(t)},t.prototype._c=function(){this.op.end()},t}(),m=function(){function t(t,n){this.o=t,this.ins=n,this.type="endWhen",this.out=null,this.oil=e.emptyIL}return t.prototype._start=function(t){this.out=t,this.o._add(this.oil=new y(t,this)),this.ins._add(this)},t.prototype._stop=function(){this.ins._remove(this),this.o._remove(this.oil),this.out=null,this.oil=null},t.prototype.end=function(){var t=this.out;t&&t._c()},t.prototype._n=function(t){var e=this.out;e&&e._n(t)},t.prototype._e=function(t){var e=this.out;e&&e._e(t)},t.prototype._c=function(){this.end()},t}();e.EndWhenOperator=m;var g=function(){function t(t,e){this.passes=t,this.ins=e,this.type="filter",this.out=null}return t.prototype._start=function(t){this.out=t,this.ins._add(this)},t.prototype._stop=function(){this.ins._remove(this),this.out=null},t.prototype._n=function(t){var e=this.out;if(e)try{this.passes(t)&&e._n(t)}catch(n){e._e(n)}},t.prototype._e=function(t){var e=this.out;e&&e._e(t)},t.prototype._c=function(){var t=this.out;t&&t._c()},t}();e.FilterOperator=g;var w=function(){function t(t,e){this.out=t,this.op=e}return t.prototype._n=function(t){this.out._n(t)},t.prototype._e=function(t){this.out._e(t)},t.prototype._c=function(){this.op.inner=null,this.op.less()},t}(),b=function(){function t(t){this.ins=t,this.type="flatten",this.inner=null,this.il=null,this.open=!0,this.out=null}return t.prototype._start=function(t){this.out=t,this.ins._add(this)},t.prototype._stop=function(){this.ins._remove(this),this.inner&&this.inner._remove(this.il),this.inner=null,this.il=null,this.open=!0,this.out=null},t.prototype.less=function(){var t=this.out;t&&(this.open||this.inner||t._c())},t.prototype._n=function(t){var e=this.out;if(e){var n=this,r=n.inner,i=n.il;r&&i&&r._remove(i),(this.inner=t)._add(this.il=new w(e,this))}},t.prototype._e=function(t){var e=this.out;e&&e._e(t)},t.prototype._c=function(){this.open=!1,this.less()},t}();e.FlattenOperator=b;var S=function(){function t(t,e,n){this.f=t,this.seed=e,this.ins=n,this.type="fold",this.out=null,this.acc=e}return t.prototype._start=function(t){this.out=t,t._n(this.acc),this.ins._add(this)},t.prototype._stop=function(){this.ins._remove(this),this.out=null,this.acc=this.seed},t.prototype._n=function(t){var e=this.out;if(e)try{e._n(this.acc=this.f(this.acc,t))}catch(n){e._e(n)}},t.prototype._e=function(t){var e=this.out;e&&e._e(t)},t.prototype._c=function(){var t=this.out;t&&t._c()},t}();e.FoldOperator=S;var x=function(){function t(t){this.ins=t,this.type="last",this.out=null,this.has=!1,this.val=a}return t.prototype._start=function(t){this.out=t,this.ins._add(this)},t.prototype._stop=function(){this.ins._remove(this),this.out=null,this.has=!1,this.val=a},t.prototype._n=function(t){this.has=!0,this.val=t},t.prototype._e=function(t){var e=this.out;e&&e._e(t)},t.prototype._c=function(){var t=this.out;t&&(this.has?(t._n(this.val),t._c()):t._e("TODO show proper error"))},t}();e.LastOperator=x;var O=function(){function t(t,e){this.out=t,this.op=e}return t.prototype._n=function(t){this.out._n(t)},t.prototype._e=function(t){this.out._e(t)},t.prototype._c=function(){this.op.inner=null,this.op.less()},t}(),E=function(){function t(t){this.mapOp=t,this.inner=null,this.il=null,this.open=!0,this.out=null,this.type=t.type+"+flatten",this.ins=t.ins}return t.prototype._start=function(t){this.out=t,this.mapOp.ins._add(this)},t.prototype._stop=function(){this.mapOp.ins._remove(this),this.inner&&this.inner._remove(this.il),this.inner=null,this.il=null,this.open=!0,this.out=null},t.prototype.less=function(){if(!this.open&&!this.inner){var t=this.out;if(!t)return;t._c()}},t.prototype._n=function(t){var e=this.out;if(e){var n=this,r=n.inner,i=n.il;r&&i&&r._remove(i);try{(this.inner=this.mapOp.project(t))._add(this.il=new O(e,this))}catch(o){e._e(o)}}},t.prototype._e=function(t){var e=this.out;e&&e._e(t)},t.prototype._c=function(){this.open=!1,this.less()},t}();e.MapFlattenOperator=E;var I=function(){function t(t,e){this.project=t,this.ins=e,this.type="map",this.out=null}return t.prototype._start=function(t){this.out=t,this.ins._add(this)},t.prototype._stop=function(){this.ins._remove(this),this.out=null},t.prototype._n=function(t){var e=this.out;if(e)try{e._n(this.project(t))}catch(n){e._e(n)}},t.prototype._e=function(t){var e=this.out;e&&e._e(t)},t.prototype._c=function(){var t=this.out;t&&t._c()},t}();e.MapOperator=I;var M=function(t){function e(e,n,r){t.call(this,n,r),this.passes=e,this.type="filter+map"}return s(e,t),e.prototype._n=function(e){this.passes(e)&&t.prototype._n.call(this,e)},e}(I);e.FilterMapOperator=M;var j=function(){function t(t){this.ins=t,this.type="remember",this.out=e.emptyIL}return t.prototype._start=function(t){this.out=t,this.ins._add(t)},t.prototype._stop=function(){this.ins._remove(this.out),this.out=null},t}();e.RememberOperator=j;var z=function(){function t(t,e){this.fn=t,this.ins=e,this.type="replaceError",this.out=a}return t.prototype._start=function(t){this.out=t,this.ins._add(this)},t.prototype._stop=function(){this.ins._remove(this),this.out=null},t.prototype._n=function(t){var e=this.out;e&&e._n(t)},t.prototype._e=function(t){var e=this.out;if(e)try{this.ins._remove(this),(this.ins=this.fn(t))._add(this)}catch(n){e._e(n)}},t.prototype._c=function(){var t=this.out;t&&t._c()},t}();e.ReplaceErrorOperator=z;var k=function(){function t(t,n){this.ins=t,this.value=n,this.type="startWith",this.out=e.emptyIL}return t.prototype._start=function(t){this.out=t,this.out._n(this.value),this.ins._add(t)},t.prototype._stop=function(){this.ins._remove(this.out),this.out=null},t}();e.StartWithOperator=k;var D=function(){function t(t,e){this.max=t,this.ins=e,this.type="take",this.out=null,this.taken=0}return t.prototype._start=function(t){this.out=t,this.ins._add(this)},t.prototype._stop=function(){this.ins._remove(this),this.out=null,this.taken=0},t.prototype._n=function(t){var e=this.out;e&&(this.taken++<this.max-1?e._n(t):(e._n(t),e._c()))},t.prototype._e=function(t){var e=this.out;e&&e._e(t)},t.prototype._c=function(){var t=this.out;t&&t._c()},t}();e.TakeOperator=D;var A=function(){function t(t){this._stopID=a,this._prod=t,this._ils=[],this._target=null,this._err=null}return t.prototype._n=function(t){var e=this._ils,n=e.length;if(1==n)e[0]._n(t);else for(var i=r(e),o=0;o<n;o++)i[o]._n(t)},t.prototype._e=function(t){if(!this._err){this._err=t;var e=this._ils,n=e.length;if(1==n)e[0]._e(t);else for(var i=r(e),o=0;o<n;o++)i[o]._e(t);this._x()}},t.prototype._c=function(){var t=this._ils,e=t.length;if(1==e)t[0]._c();else for(var n=r(t),i=0;i<e;i++)n[i]._c();this._x()},t.prototype._x=function(){0!==this._ils.length&&(this._prod&&this._prod._stop(),this._err=null,this._ils=[])},t.prototype._lateStop=function(){this._prod._stop(),this._err=null},t.prototype._add=function(t){var e=this._target;if(e)return e._add(t);var n=this._ils;if(n.push(t),1===n.length){this._stopID!==a&&(clearTimeout(this._stopID),this._stopID=a);var r=this._prod;r&&r._start(this)}},t.prototype._remove=function(t){var e=this,n=this._target;if(n)return n._remove(t);var r=this._ils,i=r.indexOf(t);i>-1&&(r.splice(i,1),this._prod&&r.length<=0?(this._err=null,this._stopID=setTimeout(function(){return e._lateStop()})):1===r.length&&this._pruneCycles())},t.prototype._pruneCycles=function(){this._hasNoSinks(this,[])&&this._remove(this._ils[0])},t.prototype._hasNoSinks=function(t,e){if(e.indexOf(t)!==-1)return!0;if(t.out===this)return!0;if(t.out)return this._hasNoSinks(t.out,e.concat(t));if(t._ils){for(var n=0,r=t._ils.length;n<r;n++)if(!this._hasNoSinks(t._ils[n],e.concat(t)))return!1;return!0}return!1},t.prototype.ctor=function(){return this instanceof q?q:t},t.prototype.addListener=function(t){if("function"!=typeof t.next||"function"!=typeof t.error||"function"!=typeof t.complete)throw new Error("stream.addListener() requires all three next, error, and complete functions.");t._n=t.next,t._e=t.error,t._c=t.complete,this._add(t)},t.prototype.removeListener=function(t){this._remove(t)},t.create=function(e){if(e){if("function"!=typeof e.start||"function"!=typeof e.stop)throw new Error("producer requires both start and stop functions");i(e)}return new t(e)},t.createWithMemory=function(t){return t&&i(t),new q(t)},t.never=function(){return new t({_start:n,_stop:n})},t.empty=function(){return new t({_start:function(t){t._c()},_stop:n})},t["throw"]=function(e){return new t({_start:function(t){t._e(e)},_stop:n})},t.of=function(){for(var e=[],n=0;n<arguments.length;n++)e[n-0]=arguments[n];return t.fromArray(e)},t.fromArray=function(e){return new t(new l(e))},t.fromPromise=function(e){return new t(new p(e))},t.periodic=function(e){return new t(new d(e))},t.merge=function(){for(var e=[],n=0;n<arguments.length;n++)e[n-0]=arguments[n];return new t(new c(e))},t.prototype._map=function(t){var e=this._prod,n=this.ctor();return new n(e instanceof g?new M(e.passes,t,e.ins):e instanceof M?new M(e.passes,o(t,e.project),e.ins):e instanceof I?new I(o(t,e.project),e.ins):new I(t,this))},t.prototype.map=function(t){return this._map(t)},t.prototype.mapTo=function(t){var e=this.map(function(){return t}),n=e._prod;return n.type=n.type.replace("map","mapTo"),e},t.prototype.filter=function(e){var n=this._prod;return new t(n instanceof g?new g(u(e,n.passes),n.ins):new g(e,this))},t.prototype.take=function(t){return new(this.ctor())(new D(t,this))},t.prototype.drop=function(e){return new t(new _(e,this))},t.prototype.last=function(){return new t(new x(this))},t.prototype.startWith=function(t){return new q(new k(this,t))},t.prototype.endWhen=function(t){return new(this.ctor())(new m(t,this))},t.prototype.fold=function(t,e){return new q(new S(t,e,this))},t.prototype.replaceError=function(t){return new(this.ctor())(new z(t,this))},t.prototype.flatten=function(){var e=this._prod;return new t(e instanceof I&&!(e instanceof M)?new E(e):new b(this))},t.prototype.compose=function(t){return t(this)},t.prototype.remember=function(){return new q(new j(this))},t.prototype.debug=function(t){return new(this.ctor())(new v(t,this))},t.prototype.imitate=function(t){if(t instanceof q)throw new Error("A MemoryStream was given to imitate(), but it only supports a Stream. Read more about this restriction here: https://github.com/staltz/xstream#faq");this._target=t;for(var e=this._ils,n=e.length,r=0;r<n;r++)t._add(e[r]);this._ils=[]},t.prototype.shamefullySendNext=function(t){this._n(t)},t.prototype.shamefullySendError=function(t){this._e(t)},t.prototype.shamefullySendComplete=function(){this._c()},t.combine=function(){for(var e=[],n=0;n<arguments.length;n++)e[n-0]=arguments[n];return new t(new h(e))},t}();e.Stream=A;var q=function(t){function e(e){t.call(this,e),this._has=!1}return s(e,t),e.prototype._n=function(e){this._v=e,this._has=!0,t.prototype._n.call(this,e)},e.prototype._add=function(e){this._has&&e._n(this._v),t.prototype._add.call(this,e)},e.prototype._lateStop=function(){this._has=!1,t.prototype._lateStop.call(this)},e.prototype._x=function(){this._has=!1,t.prototype._x.call(this)},e.prototype.map=function(t){return this._map(t)},e.prototype.mapTo=function(e){return t.prototype.mapTo.call(this,e)},e.prototype.take=function(e){return t.prototype.take.call(this,e)},e.prototype.endWhen=function(e){return t.prototype.endWhen.call(this,e)},e.prototype.replaceError=function(e){return t.prototype.replaceError.call(this,e)},e.prototype.debug=function(e){return t.prototype.debug.call(this,e)},e}(A);e.MemoryStream=q,Object.defineProperty(e,"__esModule",{value:!0}),e["default"]=A},function(t,e,n){"use strict";function r(t){return function(e){return new i.Stream(new o(t,e))}}var i=n(6),o=function(){function t(t,e){this.dt=t,this.ins=e,this.type="delay",this.out=null}return t.prototype._start=function(t){this.out=t,this.ins._add(this)},t.prototype._stop=function(){this.ins._remove(this),this.out=null},t.prototype._n=function(t){var e=this.out;if(e)var n=setInterval(function(){e._n(t),clearInterval(n)},this.dt)},t.prototype._e=function(t){var e=this.out;if(e)var n=setInterval(function(){e._e(t),clearInterval(n)},this.dt)},t.prototype._c=function(){var t=this.out;if(t)var e=setInterval(function(){t._c(),clearInterval(e)},this.dt)},t}();Object.defineProperty(e,"__esModule",{value:!0}),e["default"]=r},function(t,e,n){!function(e,n){t.exports=n()}(this,function(){"use strict";function t(t,e){e&&(t.prototype=Object.create(e.prototype)),t.prototype.constructor=t}function e(t){return o(t)?t:z(t)}function n(t){return u(t)?t:k(t)}function r(t){return s(t)?t:D(t)}function i(t){return o(t)&&!a(t)?t:A(t)}function o(t){return!(!t||!t[cn])}function u(t){return!(!t||!t[fn])}function s(t){return!(!t||!t[hn])}function a(t){return u(t)||s(t)}function c(t){return!(!t||!t[ln])}function f(t){return t.value=!1,t}function h(t){t&&(t.value=!0)}function l(){}function p(t,e){e=e||0;for(var n=Math.max(0,t.length-e),r=new Array(n),i=0;i<n;i++)r[i]=t[i+e];return r}function d(t){return void 0===t.size&&(t.size=t.__iterate(_)),t.size}function v(t,e){if("number"!=typeof e){var n=e>>>0;if(""+n!==e||4294967295===n)return NaN;e=n}return e<0?d(t)+e:e}function _(){return!0}function y(t,e,n){return(0===t||void 0!==n&&t<=-n)&&(void 0===e||void 0!==n&&e>=n)}function m(t,e){return w(t,e,0)}function g(t,e){return w(t,e,e)}function w(t,e,n){return void 0===t?n:t<0?Math.max(0,e+t):void 0===e?t:Math.min(e,t)}function b(t){this.next=t}function S(t,e,n,r){var i=0===t?e:1===t?n:[e,n];return r?r.value=i:r={value:i,done:!1},r}function x(){return{value:void 0,done:!0}}function O(t){return!!M(t)}function E(t){return t&&"function"==typeof t.next}function I(t){var e=M(t);return e&&e.call(t)}function M(t){var e=t&&(xn&&t[xn]||t[On]);if("function"==typeof e)return e}function j(t){return t&&"number"==typeof t.length}function z(t){return null===t||void 0===t?L():o(t)?t.toSeq():$(t)}function k(t){return null===t||void 0===t?L().toKeyedSeq():o(t)?u(t)?t.toSeq():t.fromEntrySeq():P(t)}function D(t){return null===t||void 0===t?L():o(t)?u(t)?t.entrySeq():t.toIndexedSeq():F(t)}function A(t){return(null===t||void 0===t?L():o(t)?u(t)?t.entrySeq():t:F(t)).toSetSeq()}function q(t){this._array=t,this.size=t.length}function C(t){var e=Object.keys(t);this._object=t,this._keys=e,this.size=e.length}function T(t){this._iterable=t,this.size=t.length||t.size}function N(t){this._iterator=t,this._iteratorCache=[]}function R(t){return!(!t||!t[In])}function L(){return Mn||(Mn=new q([]))}function P(t){var e=Array.isArray(t)?new q(t).fromEntrySeq():E(t)?new N(t).fromEntrySeq():O(t)?new T(t).fromEntrySeq():"object"==typeof t?new C(t):void 0;if(!e)throw new TypeError("Expected Array or iterable object of [k, v] entries, or keyed object: "+t);return e}function F(t){var e=U(t);if(!e)throw new TypeError("Expected Array or iterable object of values: "+t);return e}function $(t){var e=U(t)||"object"==typeof t&&new C(t);if(!e)throw new TypeError("Expected Array or iterable object of values, or keyed object: "+t);return e}function U(t){return j(t)?new q(t):E(t)?new N(t):O(t)?new T(t):void 0}function B(t,e,n,r){var i=t._cache;if(i){for(var o=i.length-1,u=0;u<=o;u++){var s=i[n?o-u:u];if(e(s[1],r?s[0]:u,t)===!1)return u+1}return u}return t.__iterateUncached(e,n)}function K(t,e,n,r){var i=t._cache;if(i){var o=i.length-1,u=0;return new b(function(){var t=i[n?o-u:u];return u++>o?x():S(e,r?t[0]:u-1,t[1])})}return t.__iteratorUncached(e,n)}function W(t,e){return e?H(e,t,"",{"":t}):V(t)}function H(t,e,n,r){return Array.isArray(e)?t.call(r,n,D(e).map(function(n,r){return H(t,n,r,e)})):G(e)?t.call(r,n,k(e).map(function(n,r){return H(t,n,r,e)})):e}function V(t){return Array.isArray(t)?D(t).map(V).toList():G(t)?k(t).map(V).toMap():t}function G(t){return t&&(t.constructor===Object||void 0===t.constructor)}function J(t,e){if(t===e||t!==t&&e!==e)return!0;if(!t||!e)return!1;if("function"==typeof t.valueOf&&"function"==typeof e.valueOf){if(t=t.valueOf(),e=e.valueOf(),t===e||t!==t&&e!==e)return!0;if(!t||!e)return!1}return!("function"!=typeof t.equals||"function"!=typeof e.equals||!t.equals(e))}function Z(t,e){if(t===e)return!0;if(!o(e)||void 0!==t.size&&void 0!==e.size&&t.size!==e.size||void 0!==t.__hash&&void 0!==e.__hash&&t.__hash!==e.__hash||u(t)!==u(e)||s(t)!==s(e)||c(t)!==c(e))return!1;if(0===t.size&&0===e.size)return!0;var n=!a(t);if(c(t)){var r=t.entries();return e.every(function(t,e){var i=r.next().value;return i&&J(i[1],t)&&(n||J(i[0],e))})&&r.next().done}var i=!1;if(void 0===t.size)if(void 0===e.size)"function"==typeof t.cacheResult&&t.cacheResult();else{i=!0;var f=t;t=e,e=f}var h=!0,l=e.__iterate(function(e,r){if(n?!t.has(e):i?!J(e,t.get(r,yn)):!J(t.get(r,yn),e))return h=!1,!1});return h&&t.size===l}function X(t,e){if(!(this instanceof X))return new X(t,e);if(this._value=t,this.size=void 0===e?1/0:Math.max(0,e),0===this.size){if(jn)return jn;jn=this}}function Y(t,e){if(!t)throw new Error(e)}function Q(t,e,n){if(!(this instanceof Q))return new Q(t,e,n);if(Y(0!==n,"Cannot step a Range by 0"),t=t||0,void 0===e&&(e=1/0),n=void 0===n?1:Math.abs(n),e<t&&(n=-n),this._start=t,this._end=e,this._step=n,this.size=Math.max(0,Math.ceil((e-t)/n-1)+1),0===this.size){if(zn)return zn;zn=this}}function tt(){throw TypeError("Abstract")}function et(){}function nt(){}function rt(){}function it(t){return t>>>1&1073741824|3221225471&t}function ot(t){if(t===!1||null===t||void 0===t)return 0;if("function"==typeof t.valueOf&&(t=t.valueOf(),t===!1||null===t||void 0===t))return 0;if(t===!0)return 1;var e=typeof t;if("number"===e){if(t!==t||t===1/0)return 0;var n=0|t;for(n!==t&&(n^=4294967295*t);t>4294967295;)t/=4294967295,n^=t;return it(n)}if("string"===e)return t.length>Rn?ut(t):st(t);if("function"==typeof t.hashCode)return t.hashCode();if("object"===e)return at(t);if("function"==typeof t.toString)return st(t.toString());throw new Error("Value type "+e+" cannot be hashed.")}function ut(t){var e=Fn[t];return void 0===e&&(e=st(t),Pn===Ln&&(Pn=0,Fn={}),Pn++,Fn[t]=e),e}function st(t){for(var e=0,n=0;n<t.length;n++)e=31*e+t.charCodeAt(n)|0;return it(e)}function at(t){var e;if(Cn&&(e=kn.get(t),void 0!==e))return e;if(e=t[Nn],void 0!==e)return e;if(!qn){if(e=t.propertyIsEnumerable&&t.propertyIsEnumerable[Nn],void 0!==e)return e;if(e=ct(t),void 0!==e)return e}if(e=++Tn,1073741824&Tn&&(Tn=0),Cn)kn.set(t,e);else{if(void 0!==An&&An(t)===!1)throw new Error("Non-extensible objects are not allowed as keys.");if(qn)Object.defineProperty(t,Nn,{enumerable:!1,configurable:!1,writable:!1,value:e});else if(void 0!==t.propertyIsEnumerable&&t.propertyIsEnumerable===t.constructor.prototype.propertyIsEnumerable)t.propertyIsEnumerable=function(){return this.constructor.prototype.propertyIsEnumerable.apply(this,arguments)},t.propertyIsEnumerable[Nn]=e;else{if(void 0===t.nodeType)throw new Error("Unable to set a non-enumerable property on object.");t[Nn]=e}}return e}function ct(t){if(t&&t.nodeType>0)switch(t.nodeType){case 1:return t.uniqueID;case 9:return t.documentElement&&t.documentElement.uniqueID}}function ft(t){Y(t!==1/0,"Cannot perform this action with an infinite size.")}function ht(t){return null===t||void 0===t?St():lt(t)&&!c(t)?t:St().withMutations(function(e){var r=n(t);ft(r.size),r.forEach(function(t,n){return e.set(n,t)})})}function lt(t){return!(!t||!t[$n])}function pt(t,e){this.ownerID=t,this.entries=e}function dt(t,e,n){this.ownerID=t,this.bitmap=e,this.nodes=n}function vt(t,e,n){this.ownerID=t,this.count=e,this.nodes=n}function _t(t,e,n){this.ownerID=t,this.keyHash=e,this.entries=n}function yt(t,e,n){this.ownerID=t,this.keyHash=e,this.entry=n}function mt(t,e,n){this._type=e,this._reverse=n,this._stack=t._root&&wt(t._root)}function gt(t,e){return S(t,e[0],e[1])}function wt(t,e){return{node:t,index:0,__prev:e}}function bt(t,e,n,r){var i=Object.create(Un);return i.size=t,i._root=e,i.__ownerID=n,i.__hash=r,i.__altered=!1,i}function St(){return Bn||(Bn=bt(0))}function xt(t,e,n){var r,i;if(t._root){var o=f(mn),u=f(gn);if(r=Ot(t._root,t.__ownerID,0,void 0,e,n,o,u),!u.value)return t;i=t.size+(o.value?n===yn?-1:1:0)}else{if(n===yn)return t;i=1,r=new pt(t.__ownerID,[[e,n]])}return t.__ownerID?(t.size=i,t._root=r,t.__hash=void 0,t.__altered=!0,t):r?bt(i,r):St()}function Ot(t,e,n,r,i,o,u,s){return t?t.update(e,n,r,i,o,u,s):o===yn?t:(h(s),h(u),new yt(e,r,[i,o]))}function Et(t){return t.constructor===yt||t.constructor===_t}function It(t,e,n,r,i){if(t.keyHash===r)return new _t(e,r,[t.entry,i]);var o,u=(0===n?t.keyHash:t.keyHash>>>n)&_n,s=(0===n?r:r>>>n)&_n,a=u===s?[It(t,e,n+dn,r,i)]:(o=new yt(e,r,i),u<s?[t,o]:[o,t]);return new dt(e,1<<u|1<<s,a)}function Mt(t,e,n,r){t||(t=new l);for(var i=new yt(t,ot(n),[n,r]),o=0;o<e.length;o++){var u=e[o];i=i.update(t,0,void 0,u[0],u[1])}return i}function jt(t,e,n,r){for(var i=0,o=0,u=new Array(n),s=0,a=1,c=e.length;s<c;s++,a<<=1){var f=e[s];void 0!==f&&s!==r&&(i|=a,u[o++]=f)}return new dt(t,i,u)}function zt(t,e,n,r,i){for(var o=0,u=new Array(vn),s=0;0!==n;s++,n>>>=1)u[s]=1&n?e[o++]:void 0;return u[r]=i,new vt(t,o+1,u)}function kt(t,e,r){for(var i=[],u=0;u<r.length;u++){var s=r[u],a=n(s);o(s)||(a=a.map(function(t){return W(t)})),i.push(a)}return qt(t,e,i)}function Dt(t,e,n){return t&&t.mergeDeep&&o(e)?t.mergeDeep(e):J(t,e)?t:e}function At(t){return function(e,n,r){if(e&&e.mergeDeepWith&&o(n))return e.mergeDeepWith(t,n);var i=t(e,n,r);return J(e,i)?e:i}}function qt(t,e,n){return n=n.filter(function(t){return 0!==t.size}),0===n.length?t:0!==t.size||t.__ownerID||1!==n.length?t.withMutations(function(t){for(var r=e?function(n,r){t.update(r,yn,function(t){return t===yn?n:e(t,n,r)})}:function(e,n){t.set(n,e)},i=0;i<n.length;i++)n[i].forEach(r)}):t.constructor(n[0])}function Ct(t,e,n,r){var i=t===yn,o=e.next();if(o.done){var u=i?n:t,s=r(u);return s===u?t:s}Y(i||t&&t.set,"invalid keyPath");var a=o.value,c=i?yn:t.get(a,yn),f=Ct(c,e,n,r);return f===c?t:f===yn?t.remove(a):(i?St():t).set(a,f)}function Tt(t){return t-=t>>1&1431655765,t=(858993459&t)+(t>>2&858993459),t=t+(t>>4)&252645135,t+=t>>8,t+=t>>16,127&t}function Nt(t,e,n,r){var i=r?t:p(t);return i[e]=n,i}function Rt(t,e,n,r){var i=t.length+1;if(r&&e+1===i)return t[e]=n,t;for(var o=new Array(i),u=0,s=0;s<i;s++)s===e?(o[s]=n,u=-1):o[s]=t[s+u];return o}function Lt(t,e,n){var r=t.length-1;if(n&&e===r)return t.pop(),t;for(var i=new Array(r),o=0,u=0;u<r;u++)u===e&&(o=1),i[u]=t[u+o];return i}function Pt(t){var e=Kt();if(null===t||void 0===t)return e;if(Ft(t))return t;var n=r(t),i=n.size;return 0===i?e:(ft(i),i>0&&i<vn?Bt(0,i,dn,null,new $t(n.toArray())):e.withMutations(function(t){t.setSize(i),n.forEach(function(e,n){return t.set(n,e)})}))}function Ft(t){return!(!t||!t[Vn])}function $t(t,e){this.array=t,this.ownerID=e}function Ut(t,e){function n(t,e,n){return 0===e?r(t,n):i(t,e,n)}function r(t,n){var r=n===s?a&&a.array:t&&t.array,i=n>o?0:o-n,c=u-n;return c>vn&&(c=vn),function(){if(i===c)return Zn;var t=e?--c:i++;return r&&r[t]}}function i(t,r,i){var s,a=t&&t.array,c=i>o?0:o-i>>r,f=(u-i>>r)+1;return f>vn&&(f=vn),function(){for(;;){if(s){var t=s();if(t!==Zn)return t;s=null}if(c===f)return Zn;var o=e?--f:c++;s=n(a&&a[o],r-dn,i+(o<<r))}}}var o=t._origin,u=t._capacity,s=Xt(u),a=t._tail;return n(t._root,t._level,0)}function Bt(t,e,n,r,i,o,u){var s=Object.create(Gn);return s.size=e-t,s._origin=t,s._capacity=e,s._level=n,s._root=r,s._tail=i,s.__ownerID=o,s.__hash=u,s.__altered=!1,s}function Kt(){return Jn||(Jn=Bt(0,0,dn))}function Wt(t,e,n){if(e=v(t,e),e!==e)return t;if(e>=t.size||e<0)return t.withMutations(function(t){e<0?Jt(t,e).set(0,n):Jt(t,0,e+1).set(e,n)});e+=t._origin;var r=t._tail,i=t._root,o=f(gn);return e>=Xt(t._capacity)?r=Ht(r,t.__ownerID,0,e,n,o):i=Ht(i,t.__ownerID,t._level,e,n,o),o.value?t.__ownerID?(t._root=i,t._tail=r,t.__hash=void 0,t.__altered=!0,t):Bt(t._origin,t._capacity,t._level,i,r):t}function Ht(t,e,n,r,i,o){var u=r>>>n&_n,s=t&&u<t.array.length;if(!s&&void 0===i)return t;var a;if(n>0){var c=t&&t.array[u],f=Ht(c,e,n-dn,r,i,o);return f===c?t:(a=Vt(t,e),a.array[u]=f,a)}return s&&t.array[u]===i?t:(h(o),a=Vt(t,e),void 0===i&&u===a.array.length-1?a.array.pop():a.array[u]=i,a)}function Vt(t,e){return e&&t&&e===t.ownerID?t:new $t(t?t.array.slice():[],e)}function Gt(t,e){if(e>=Xt(t._capacity))return t._tail;if(e<1<<t._level+dn){for(var n=t._root,r=t._level;n&&r>0;)n=n.array[e>>>r&_n],r-=dn;return n}}function Jt(t,e,n){void 0!==e&&(e=0|e),void 0!==n&&(n=0|n);var r=t.__ownerID||new l,i=t._origin,o=t._capacity,u=i+e,s=void 0===n?o:n<0?o+n:i+n;
-if(u===i&&s===o)return t;if(u>=s)return t.clear();for(var a=t._level,c=t._root,f=0;u+f<0;)c=new $t(c&&c.array.length?[void 0,c]:[],r),a+=dn,f+=1<<a;f&&(u+=f,i+=f,s+=f,o+=f);for(var h=Xt(o),p=Xt(s);p>=1<<a+dn;)c=new $t(c&&c.array.length?[c]:[],r),a+=dn;var d=t._tail,v=p<h?Gt(t,s-1):p>h?new $t([],r):d;if(d&&p>h&&u<o&&d.array.length){c=Vt(c,r);for(var _=c,y=a;y>dn;y-=dn){var m=h>>>y&_n;_=_.array[m]=Vt(_.array[m],r)}_.array[h>>>dn&_n]=d}if(s<o&&(v=v&&v.removeAfter(r,0,s)),u>=p)u-=p,s-=p,a=dn,c=null,v=v&&v.removeBefore(r,0,u);else if(u>i||p<h){for(f=0;c;){var g=u>>>a&_n;if(g!==p>>>a&_n)break;g&&(f+=(1<<a)*g),a-=dn,c=c.array[g]}c&&u>i&&(c=c.removeBefore(r,a,u-f)),c&&p<h&&(c=c.removeAfter(r,a,p-f)),f&&(u-=f,s-=f)}return t.__ownerID?(t.size=s-u,t._origin=u,t._capacity=s,t._level=a,t._root=c,t._tail=v,t.__hash=void 0,t.__altered=!0,t):Bt(u,s,a,c,v)}function Zt(t,e,n){for(var i=[],u=0,s=0;s<n.length;s++){var a=n[s],c=r(a);c.size>u&&(u=c.size),o(a)||(c=c.map(function(t){return W(t)})),i.push(c)}return u>t.size&&(t=t.setSize(u)),qt(t,e,i)}function Xt(t){return t<vn?0:t-1>>>dn<<dn}function Yt(t){return null===t||void 0===t?ee():Qt(t)?t:ee().withMutations(function(e){var r=n(t);ft(r.size),r.forEach(function(t,n){return e.set(n,t)})})}function Qt(t){return lt(t)&&c(t)}function te(t,e,n,r){var i=Object.create(Yt.prototype);return i.size=t?t.size:0,i._map=t,i._list=e,i.__ownerID=n,i.__hash=r,i}function ee(){return Xn||(Xn=te(St(),Kt()))}function ne(t,e,n){var r,i,o=t._map,u=t._list,s=o.get(e),a=void 0!==s;if(n===yn){if(!a)return t;u.size>=vn&&u.size>=2*o.size?(i=u.filter(function(t,e){return void 0!==t&&s!==e}),r=i.toKeyedSeq().map(function(t){return t[0]}).flip().toMap(),t.__ownerID&&(r.__ownerID=i.__ownerID=t.__ownerID)):(r=o.remove(e),i=s===u.size-1?u.pop():u.set(s,void 0))}else if(a){if(n===u.get(s)[1])return t;r=o,i=u.set(s,[e,n])}else r=o.set(e,u.size),i=u.set(u.size,[e,n]);return t.__ownerID?(t.size=r.size,t._map=r,t._list=i,t.__hash=void 0,t):te(r,i)}function re(t,e){this._iter=t,this._useKeys=e,this.size=t.size}function ie(t){this._iter=t,this.size=t.size}function oe(t){this._iter=t,this.size=t.size}function ue(t){this._iter=t,this.size=t.size}function se(t){var e=je(t);return e._iter=t,e.size=t.size,e.flip=function(){return t},e.reverse=function(){var e=t.reverse.apply(this);return e.flip=function(){return t.reverse()},e},e.has=function(e){return t.includes(e)},e.includes=function(e){return t.has(e)},e.cacheResult=ze,e.__iterateUncached=function(e,n){var r=this;return t.__iterate(function(t,n){return e(n,t,r)!==!1},n)},e.__iteratorUncached=function(e,n){if(e===Sn){var r=t.__iterator(e,n);return new b(function(){var t=r.next();if(!t.done){var e=t.value[0];t.value[0]=t.value[1],t.value[1]=e}return t})}return t.__iterator(e===bn?wn:bn,n)},e}function ae(t,e,n){var r=je(t);return r.size=t.size,r.has=function(e){return t.has(e)},r.get=function(r,i){var o=t.get(r,yn);return o===yn?i:e.call(n,o,r,t)},r.__iterateUncached=function(r,i){var o=this;return t.__iterate(function(t,i,u){return r(e.call(n,t,i,u),i,o)!==!1},i)},r.__iteratorUncached=function(r,i){var o=t.__iterator(Sn,i);return new b(function(){var i=o.next();if(i.done)return i;var u=i.value,s=u[0];return S(r,s,e.call(n,u[1],s,t),i)})},r}function ce(t,e){var n=je(t);return n._iter=t,n.size=t.size,n.reverse=function(){return t},t.flip&&(n.flip=function(){var e=se(t);return e.reverse=function(){return t.flip()},e}),n.get=function(n,r){return t.get(e?n:-1-n,r)},n.has=function(n){return t.has(e?n:-1-n)},n.includes=function(e){return t.includes(e)},n.cacheResult=ze,n.__iterate=function(e,n){var r=this;return t.__iterate(function(t,n){return e(t,n,r)},!n)},n.__iterator=function(e,n){return t.__iterator(e,!n)},n}function fe(t,e,n,r){var i=je(t);return r&&(i.has=function(r){var i=t.get(r,yn);return i!==yn&&!!e.call(n,i,r,t)},i.get=function(r,i){var o=t.get(r,yn);return o!==yn&&e.call(n,o,r,t)?o:i}),i.__iterateUncached=function(i,o){var u=this,s=0;return t.__iterate(function(t,o,a){if(e.call(n,t,o,a))return s++,i(t,r?o:s-1,u)},o),s},i.__iteratorUncached=function(i,o){var u=t.__iterator(Sn,o),s=0;return new b(function(){for(;;){var o=u.next();if(o.done)return o;var a=o.value,c=a[0],f=a[1];if(e.call(n,f,c,t))return S(i,r?c:s++,f,o)}})},i}function he(t,e,n){var r=ht().asMutable();return t.__iterate(function(i,o){r.update(e.call(n,i,o,t),0,function(t){return t+1})}),r.asImmutable()}function le(t,e,n){var r=u(t),i=(c(t)?Yt():ht()).asMutable();t.__iterate(function(o,u){i.update(e.call(n,o,u,t),function(t){return t=t||[],t.push(r?[u,o]:o),t})});var o=Me(t);return i.map(function(e){return Oe(t,o(e))})}function pe(t,e,n,r){var i=t.size;if(void 0!==e&&(e=0|e),void 0!==n&&(n=n===1/0?i:0|n),y(e,n,i))return t;var o=m(e,i),u=g(n,i);if(o!==o||u!==u)return pe(t.toSeq().cacheResult(),e,n,r);var s,a=u-o;a===a&&(s=a<0?0:a);var c=je(t);return c.size=0===s?s:t.size&&s||void 0,!r&&R(t)&&s>=0&&(c.get=function(e,n){return e=v(this,e),e>=0&&e<s?t.get(e+o,n):n}),c.__iterateUncached=function(e,n){var i=this;if(0===s)return 0;if(n)return this.cacheResult().__iterate(e,n);var u=0,a=!0,c=0;return t.__iterate(function(t,n){if(!a||!(a=u++<o))return c++,e(t,r?n:c-1,i)!==!1&&c!==s}),c},c.__iteratorUncached=function(e,n){if(0!==s&&n)return this.cacheResult().__iterator(e,n);var i=0!==s&&t.__iterator(e,n),u=0,a=0;return new b(function(){for(;u++<o;)i.next();if(++a>s)return x();var t=i.next();return r||e===bn?t:e===wn?S(e,a-1,void 0,t):S(e,a-1,t.value[1],t)})},c}function de(t,e,n){var r=je(t);return r.__iterateUncached=function(r,i){var o=this;if(i)return this.cacheResult().__iterate(r,i);var u=0;return t.__iterate(function(t,i,s){return e.call(n,t,i,s)&&++u&&r(t,i,o)}),u},r.__iteratorUncached=function(r,i){var o=this;if(i)return this.cacheResult().__iterator(r,i);var u=t.__iterator(Sn,i),s=!0;return new b(function(){if(!s)return x();var t=u.next();if(t.done)return t;var i=t.value,a=i[0],c=i[1];return e.call(n,c,a,o)?r===Sn?t:S(r,a,c,t):(s=!1,x())})},r}function ve(t,e,n,r){var i=je(t);return i.__iterateUncached=function(i,o){var u=this;if(o)return this.cacheResult().__iterate(i,o);var s=!0,a=0;return t.__iterate(function(t,o,c){if(!s||!(s=e.call(n,t,o,c)))return a++,i(t,r?o:a-1,u)}),a},i.__iteratorUncached=function(i,o){var u=this;if(o)return this.cacheResult().__iterator(i,o);var s=t.__iterator(Sn,o),a=!0,c=0;return new b(function(){var t,o,f;do{if(t=s.next(),t.done)return r||i===bn?t:i===wn?S(i,c++,void 0,t):S(i,c++,t.value[1],t);var h=t.value;o=h[0],f=h[1],a&&(a=e.call(n,f,o,u))}while(a);return i===Sn?t:S(i,o,f,t)})},i}function _e(t,e){var r=u(t),i=[t].concat(e).map(function(t){return o(t)?r&&(t=n(t)):t=r?P(t):F(Array.isArray(t)?t:[t]),t}).filter(function(t){return 0!==t.size});if(0===i.length)return t;if(1===i.length){var a=i[0];if(a===t||r&&u(a)||s(t)&&s(a))return a}var c=new q(i);return r?c=c.toKeyedSeq():s(t)||(c=c.toSetSeq()),c=c.flatten(!0),c.size=i.reduce(function(t,e){if(void 0!==t){var n=e.size;if(void 0!==n)return t+n}},0),c}function ye(t,e,n){var r=je(t);return r.__iterateUncached=function(r,i){function u(t,c){var f=this;t.__iterate(function(t,i){return(!e||c<e)&&o(t)?u(t,c+1):r(t,n?i:s++,f)===!1&&(a=!0),!a},i)}var s=0,a=!1;return u(t,0),s},r.__iteratorUncached=function(r,i){var u=t.__iterator(r,i),s=[],a=0;return new b(function(){for(;u;){var t=u.next();if(t.done===!1){var c=t.value;if(r===Sn&&(c=c[1]),e&&!(s.length<e)||!o(c))return n?t:S(r,a++,c,t);s.push(u),u=c.__iterator(r,i)}else u=s.pop()}return x()})},r}function me(t,e,n){var r=Me(t);return t.toSeq().map(function(i,o){return r(e.call(n,i,o,t))}).flatten(!0)}function ge(t,e){var n=je(t);return n.size=t.size&&2*t.size-1,n.__iterateUncached=function(n,r){var i=this,o=0;return t.__iterate(function(t,r){return(!o||n(e,o++,i)!==!1)&&n(t,o++,i)!==!1},r),o},n.__iteratorUncached=function(n,r){var i,o=t.__iterator(bn,r),u=0;return new b(function(){return(!i||u%2)&&(i=o.next(),i.done)?i:u%2?S(n,u++,e):S(n,u++,i.value,i)})},n}function we(t,e,n){e||(e=ke);var r=u(t),i=0,o=t.toSeq().map(function(e,r){return[r,e,i++,n?n(e,r,t):e]}).toArray();return o.sort(function(t,n){return e(t[3],n[3])||t[2]-n[2]}).forEach(r?function(t,e){o[e].length=2}:function(t,e){o[e]=t[1]}),r?k(o):s(t)?D(o):A(o)}function be(t,e,n){if(e||(e=ke),n){var r=t.toSeq().map(function(e,r){return[e,n(e,r,t)]}).reduce(function(t,n){return Se(e,t[1],n[1])?n:t});return r&&r[0]}return t.reduce(function(t,n){return Se(e,t,n)?n:t})}function Se(t,e,n){var r=t(n,e);return 0===r&&n!==e&&(void 0===n||null===n||n!==n)||r>0}function xe(t,n,r){var i=je(t);return i.size=new q(r).map(function(t){return t.size}).min(),i.__iterate=function(t,e){for(var n,r=this.__iterator(bn,e),i=0;!(n=r.next()).done&&t(n.value,i++,this)!==!1;);return i},i.__iteratorUncached=function(t,i){var o=r.map(function(t){return t=e(t),I(i?t.reverse():t)}),u=0,s=!1;return new b(function(){var e;return s||(e=o.map(function(t){return t.next()}),s=e.some(function(t){return t.done})),s?x():S(t,u++,n.apply(null,e.map(function(t){return t.value})))})},i}function Oe(t,e){return R(t)?e:t.constructor(e)}function Ee(t){if(t!==Object(t))throw new TypeError("Expected [K, V] tuple: "+t)}function Ie(t){return ft(t.size),d(t)}function Me(t){return u(t)?n:s(t)?r:i}function je(t){return Object.create((u(t)?k:s(t)?D:A).prototype)}function ze(){return this._iter.cacheResult?(this._iter.cacheResult(),this.size=this._iter.size,this):z.prototype.cacheResult.call(this)}function ke(t,e){return t>e?1:t<e?-1:0}function De(t){var n=I(t);if(!n){if(!j(t))throw new TypeError("Expected iterable or array-like: "+t);n=I(e(t))}return n}function Ae(t,e){var n,r=function(o){if(o instanceof r)return o;if(!(this instanceof r))return new r(o);if(!n){n=!0;var u=Object.keys(t);Te(i,u),i.size=u.length,i._name=e,i._keys=u,i._defaultValues=t}this._map=ht(o)},i=r.prototype=Object.create(Yn);return i.constructor=r,r}function qe(t,e,n){var r=Object.create(Object.getPrototypeOf(t));return r._map=e,r.__ownerID=n,r}function Ce(t){return t._name||t.constructor.name||"Record"}function Te(t,e){try{e.forEach(Ne.bind(void 0,t))}catch(n){}}function Ne(t,e){Object.defineProperty(t,e,{get:function(){return this.get(e)},set:function(t){Y(this.__ownerID,"Cannot set on an immutable record."),this.set(e,t)}})}function Re(t){return null===t||void 0===t?$e():Le(t)&&!c(t)?t:$e().withMutations(function(e){var n=i(t);ft(n.size),n.forEach(function(t){return e.add(t)})})}function Le(t){return!(!t||!t[Qn])}function Pe(t,e){return t.__ownerID?(t.size=e.size,t._map=e,t):e===t._map?t:0===e.size?t.__empty():t.__make(e)}function Fe(t,e){var n=Object.create(tr);return n.size=t?t.size:0,n._map=t,n.__ownerID=e,n}function $e(){return er||(er=Fe(St()))}function Ue(t){return null===t||void 0===t?We():Be(t)?t:We().withMutations(function(e){var n=i(t);ft(n.size),n.forEach(function(t){return e.add(t)})})}function Be(t){return Le(t)&&c(t)}function Ke(t,e){var n=Object.create(nr);return n.size=t?t.size:0,n._map=t,n.__ownerID=e,n}function We(){return rr||(rr=Ke(ee()))}function He(t){return null===t||void 0===t?Je():Ve(t)?t:Je().unshiftAll(t)}function Ve(t){return!(!t||!t[ir])}function Ge(t,e,n,r){var i=Object.create(or);return i.size=t,i._head=e,i.__ownerID=n,i.__hash=r,i.__altered=!1,i}function Je(){return ur||(ur=Ge(0))}function Ze(t,e){var n=function(n){t.prototype[n]=e[n]};return Object.keys(e).forEach(n),Object.getOwnPropertySymbols&&Object.getOwnPropertySymbols(e).forEach(n),t}function Xe(t,e){return e}function Ye(t,e){return[e,t]}function Qe(t){return function(){return!t.apply(this,arguments)}}function tn(t){return function(){return-t.apply(this,arguments)}}function en(t){return"string"==typeof t?JSON.stringify(t):String(t)}function nn(){return p(arguments)}function rn(t,e){return t<e?1:t>e?-1:0}function on(t){if(t.size===1/0)return 0;var e=c(t),n=u(t),r=e?1:0,i=t.__iterate(n?e?function(t,e){r=31*r+sn(ot(t),ot(e))|0}:function(t,e){r=r+sn(ot(t),ot(e))|0}:e?function(t){r=31*r+ot(t)|0}:function(t){r=r+ot(t)|0});return un(i,r)}function un(t,e){return e=Dn(e,3432918353),e=Dn(e<<15|e>>>-15,461845907),e=Dn(e<<13|e>>>-13,5),e=(e+3864292196|0)^t,e=Dn(e^e>>>16,2246822507),e=Dn(e^e>>>13,3266489909),e=it(e^e>>>16)}function sn(t,e){return t^e+2654435769+(t<<6)+(t>>2)|0}var an=Array.prototype.slice;t(n,e),t(r,e),t(i,e),e.isIterable=o,e.isKeyed=u,e.isIndexed=s,e.isAssociative=a,e.isOrdered=c,e.Keyed=n,e.Indexed=r,e.Set=i;var cn="@@__IMMUTABLE_ITERABLE__@@",fn="@@__IMMUTABLE_KEYED__@@",hn="@@__IMMUTABLE_INDEXED__@@",ln="@@__IMMUTABLE_ORDERED__@@",pn="delete",dn=5,vn=1<<dn,_n=vn-1,yn={},mn={value:!1},gn={value:!1},wn=0,bn=1,Sn=2,xn="function"==typeof Symbol&&Symbol.iterator,On="@@iterator",En=xn||On;b.prototype.toString=function(){return"[Iterator]"},b.KEYS=wn,b.VALUES=bn,b.ENTRIES=Sn,b.prototype.inspect=b.prototype.toSource=function(){return this.toString()},b.prototype[En]=function(){return this},t(z,e),z.of=function(){return z(arguments)},z.prototype.toSeq=function(){return this},z.prototype.toString=function(){return this.__toString("Seq {","}")},z.prototype.cacheResult=function(){return!this._cache&&this.__iterateUncached&&(this._cache=this.entrySeq().toArray(),this.size=this._cache.length),this},z.prototype.__iterate=function(t,e){return B(this,t,e,!0)},z.prototype.__iterator=function(t,e){return K(this,t,e,!0)},t(k,z),k.prototype.toKeyedSeq=function(){return this},t(D,z),D.of=function(){return D(arguments)},D.prototype.toIndexedSeq=function(){return this},D.prototype.toString=function(){return this.__toString("Seq [","]")},D.prototype.__iterate=function(t,e){return B(this,t,e,!1)},D.prototype.__iterator=function(t,e){return K(this,t,e,!1)},t(A,z),A.of=function(){return A(arguments)},A.prototype.toSetSeq=function(){return this},z.isSeq=R,z.Keyed=k,z.Set=A,z.Indexed=D;var In="@@__IMMUTABLE_SEQ__@@";z.prototype[In]=!0,t(q,D),q.prototype.get=function(t,e){return this.has(t)?this._array[v(this,t)]:e},q.prototype.__iterate=function(t,e){for(var n=this._array,r=n.length-1,i=0;i<=r;i++)if(t(n[e?r-i:i],i,this)===!1)return i+1;return i},q.prototype.__iterator=function(t,e){var n=this._array,r=n.length-1,i=0;return new b(function(){return i>r?x():S(t,i,n[e?r-i++:i++])})},t(C,k),C.prototype.get=function(t,e){return void 0===e||this.has(t)?this._object[t]:e},C.prototype.has=function(t){return this._object.hasOwnProperty(t)},C.prototype.__iterate=function(t,e){for(var n=this._object,r=this._keys,i=r.length-1,o=0;o<=i;o++){var u=r[e?i-o:o];if(t(n[u],u,this)===!1)return o+1}return o},C.prototype.__iterator=function(t,e){var n=this._object,r=this._keys,i=r.length-1,o=0;return new b(function(){var u=r[e?i-o:o];return o++>i?x():S(t,u,n[u])})},C.prototype[ln]=!0,t(T,D),T.prototype.__iterateUncached=function(t,e){if(e)return this.cacheResult().__iterate(t,e);var n=this._iterable,r=I(n),i=0;if(E(r))for(var o;!(o=r.next()).done&&t(o.value,i++,this)!==!1;);return i},T.prototype.__iteratorUncached=function(t,e){if(e)return this.cacheResult().__iterator(t,e);var n=this._iterable,r=I(n);if(!E(r))return new b(x);var i=0;return new b(function(){var e=r.next();return e.done?e:S(t,i++,e.value)})},t(N,D),N.prototype.__iterateUncached=function(t,e){if(e)return this.cacheResult().__iterate(t,e);for(var n=this._iterator,r=this._iteratorCache,i=0;i<r.length;)if(t(r[i],i++,this)===!1)return i;for(var o;!(o=n.next()).done;){var u=o.value;if(r[i]=u,t(u,i++,this)===!1)break}return i},N.prototype.__iteratorUncached=function(t,e){if(e)return this.cacheResult().__iterator(t,e);var n=this._iterator,r=this._iteratorCache,i=0;return new b(function(){if(i>=r.length){var e=n.next();if(e.done)return e;r[i]=e.value}return S(t,i,r[i++])})};var Mn;t(X,D),X.prototype.toString=function(){return 0===this.size?"Repeat []":"Repeat [ "+this._value+" "+this.size+" times ]"},X.prototype.get=function(t,e){return this.has(t)?this._value:e},X.prototype.includes=function(t){return J(this._value,t)},X.prototype.slice=function(t,e){var n=this.size;return y(t,e,n)?this:new X(this._value,g(e,n)-m(t,n))},X.prototype.reverse=function(){return this},X.prototype.indexOf=function(t){return J(this._value,t)?0:-1},X.prototype.lastIndexOf=function(t){return J(this._value,t)?this.size:-1},X.prototype.__iterate=function(t,e){for(var n=0;n<this.size;n++)if(t(this._value,n,this)===!1)return n+1;return n},X.prototype.__iterator=function(t,e){var n=this,r=0;return new b(function(){return r<n.size?S(t,r++,n._value):x()})},X.prototype.equals=function(t){return t instanceof X?J(this._value,t._value):Z(t)};var jn;t(Q,D),Q.prototype.toString=function(){return 0===this.size?"Range []":"Range [ "+this._start+"..."+this._end+(1!==this._step?" by "+this._step:"")+" ]"},Q.prototype.get=function(t,e){return this.has(t)?this._start+v(this,t)*this._step:e},Q.prototype.includes=function(t){var e=(t-this._start)/this._step;return e>=0&&e<this.size&&e===Math.floor(e)},Q.prototype.slice=function(t,e){return y(t,e,this.size)?this:(t=m(t,this.size),e=g(e,this.size),e<=t?new Q(0,0):new Q(this.get(t,this._end),this.get(e,this._end),this._step))},Q.prototype.indexOf=function(t){var e=t-this._start;if(e%this._step===0){var n=e/this._step;if(n>=0&&n<this.size)return n}return-1},Q.prototype.lastIndexOf=function(t){return this.indexOf(t)},Q.prototype.__iterate=function(t,e){for(var n=this.size-1,r=this._step,i=e?this._start+n*r:this._start,o=0;o<=n;o++){if(t(i,o,this)===!1)return o+1;i+=e?-r:r}return o},Q.prototype.__iterator=function(t,e){var n=this.size-1,r=this._step,i=e?this._start+n*r:this._start,o=0;return new b(function(){var u=i;return i+=e?-r:r,o>n?x():S(t,o++,u)})},Q.prototype.equals=function(t){return t instanceof Q?this._start===t._start&&this._end===t._end&&this._step===t._step:Z(this,t)};var zn;t(tt,e),t(et,tt),t(nt,tt),t(rt,tt),tt.Keyed=et,tt.Indexed=nt,tt.Set=rt;var kn,Dn="function"==typeof Math.imul&&Math.imul(4294967295,2)===-2?Math.imul:function(t,e){t=0|t,e=0|e;var n=65535&t,r=65535&e;return n*r+((t>>>16)*r+n*(e>>>16)<<16>>>0)|0},An=Object.isExtensible,qn=function(){try{return Object.defineProperty({},"@",{}),!0}catch(t){return!1}}(),Cn="function"==typeof WeakMap;Cn&&(kn=new WeakMap);var Tn=0,Nn="__immutablehash__";"function"==typeof Symbol&&(Nn=Symbol(Nn));var Rn=16,Ln=255,Pn=0,Fn={};t(ht,et),ht.of=function(){var t=an.call(arguments,0);return St().withMutations(function(e){for(var n=0;n<t.length;n+=2){if(n+1>=t.length)throw new Error("Missing value for key: "+t[n]);e.set(t[n],t[n+1])}})},ht.prototype.toString=function(){return this.__toString("Map {","}")},ht.prototype.get=function(t,e){return this._root?this._root.get(0,void 0,t,e):e},ht.prototype.set=function(t,e){return xt(this,t,e)},ht.prototype.setIn=function(t,e){return this.updateIn(t,yn,function(){return e})},ht.prototype.remove=function(t){return xt(this,t,yn)},ht.prototype.deleteIn=function(t){return this.updateIn(t,function(){return yn})},ht.prototype.update=function(t,e,n){return 1===arguments.length?t(this):this.updateIn([t],e,n)},ht.prototype.updateIn=function(t,e,n){n||(n=e,e=void 0);var r=Ct(this,De(t),e,n);return r===yn?void 0:r},ht.prototype.clear=function(){return 0===this.size?this:this.__ownerID?(this.size=0,this._root=null,this.__hash=void 0,this.__altered=!0,this):St()},ht.prototype.merge=function(){return kt(this,void 0,arguments)},ht.prototype.mergeWith=function(t){var e=an.call(arguments,1);return kt(this,t,e)},ht.prototype.mergeIn=function(t){var e=an.call(arguments,1);return this.updateIn(t,St(),function(t){return"function"==typeof t.merge?t.merge.apply(t,e):e[e.length-1]})},ht.prototype.mergeDeep=function(){return kt(this,Dt,arguments)},ht.prototype.mergeDeepWith=function(t){var e=an.call(arguments,1);return kt(this,At(t),e)},ht.prototype.mergeDeepIn=function(t){var e=an.call(arguments,1);return this.updateIn(t,St(),function(t){return"function"==typeof t.mergeDeep?t.mergeDeep.apply(t,e):e[e.length-1]})},ht.prototype.sort=function(t){return Yt(we(this,t))},ht.prototype.sortBy=function(t,e){return Yt(we(this,e,t))},ht.prototype.withMutations=function(t){var e=this.asMutable();return t(e),e.wasAltered()?e.__ensureOwner(this.__ownerID):this},ht.prototype.asMutable=function(){return this.__ownerID?this:this.__ensureOwner(new l)},ht.prototype.asImmutable=function(){return this.__ensureOwner()},ht.prototype.wasAltered=function(){return this.__altered},ht.prototype.__iterator=function(t,e){return new mt(this,t,e)},ht.prototype.__iterate=function(t,e){var n=this,r=0;return this._root&&this._root.iterate(function(e){return r++,t(e[1],e[0],n)},e),r},ht.prototype.__ensureOwner=function(t){return t===this.__ownerID?this:t?bt(this.size,this._root,t,this.__hash):(this.__ownerID=t,this.__altered=!1,this)},ht.isMap=lt;var $n="@@__IMMUTABLE_MAP__@@",Un=ht.prototype;Un[$n]=!0,Un[pn]=Un.remove,Un.removeIn=Un.deleteIn,pt.prototype.get=function(t,e,n,r){for(var i=this.entries,o=0,u=i.length;o<u;o++)if(J(n,i[o][0]))return i[o][1];return r},pt.prototype.update=function(t,e,n,r,i,o,u){for(var s=i===yn,a=this.entries,c=0,f=a.length;c<f&&!J(r,a[c][0]);c++);var l=c<f;if(l?a[c][1]===i:s)return this;if(h(u),(s||!l)&&h(o),!s||1!==a.length){if(!l&&!s&&a.length>=Kn)return Mt(t,a,r,i);var d=t&&t===this.ownerID,v=d?a:p(a);return l?s?c===f-1?v.pop():v[c]=v.pop():v[c]=[r,i]:v.push([r,i]),d?(this.entries=v,this):new pt(t,v)}},dt.prototype.get=function(t,e,n,r){void 0===e&&(e=ot(n));var i=1<<((0===t?e:e>>>t)&_n),o=this.bitmap;return 0===(o&i)?r:this.nodes[Tt(o&i-1)].get(t+dn,e,n,r)},dt.prototype.update=function(t,e,n,r,i,o,u){void 0===n&&(n=ot(r));var s=(0===e?n:n>>>e)&_n,a=1<<s,c=this.bitmap,f=0!==(c&a);if(!f&&i===yn)return this;var h=Tt(c&a-1),l=this.nodes,p=f?l[h]:void 0,d=Ot(p,t,e+dn,n,r,i,o,u);if(d===p)return this;if(!f&&d&&l.length>=Wn)return zt(t,l,c,s,d);if(f&&!d&&2===l.length&&Et(l[1^h]))return l[1^h];if(f&&d&&1===l.length&&Et(d))return d;var v=t&&t===this.ownerID,_=f?d?c:c^a:c|a,y=f?d?Nt(l,h,d,v):Lt(l,h,v):Rt(l,h,d,v);return v?(this.bitmap=_,this.nodes=y,this):new dt(t,_,y)},vt.prototype.get=function(t,e,n,r){void 0===e&&(e=ot(n));var i=(0===t?e:e>>>t)&_n,o=this.nodes[i];return o?o.get(t+dn,e,n,r):r},vt.prototype.update=function(t,e,n,r,i,o,u){void 0===n&&(n=ot(r));var s=(0===e?n:n>>>e)&_n,a=i===yn,c=this.nodes,f=c[s];if(a&&!f)return this;var h=Ot(f,t,e+dn,n,r,i,o,u);if(h===f)return this;var l=this.count;if(f){if(!h&&(l--,l<Hn))return jt(t,c,l,s)}else l++;var p=t&&t===this.ownerID,d=Nt(c,s,h,p);return p?(this.count=l,this.nodes=d,this):new vt(t,l,d)},_t.prototype.get=function(t,e,n,r){for(var i=this.entries,o=0,u=i.length;o<u;o++)if(J(n,i[o][0]))return i[o][1];return r},_t.prototype.update=function(t,e,n,r,i,o,u){void 0===n&&(n=ot(r));var s=i===yn;if(n!==this.keyHash)return s?this:(h(u),h(o),It(this,t,e,n,[r,i]));for(var a=this.entries,c=0,f=a.length;c<f&&!J(r,a[c][0]);c++);var l=c<f;if(l?a[c][1]===i:s)return this;if(h(u),(s||!l)&&h(o),s&&2===f)return new yt(t,this.keyHash,a[1^c]);var d=t&&t===this.ownerID,v=d?a:p(a);return l?s?c===f-1?v.pop():v[c]=v.pop():v[c]=[r,i]:v.push([r,i]),d?(this.entries=v,this):new _t(t,this.keyHash,v)},yt.prototype.get=function(t,e,n,r){return J(n,this.entry[0])?this.entry[1]:r},yt.prototype.update=function(t,e,n,r,i,o,u){var s=i===yn,a=J(r,this.entry[0]);return(a?i===this.entry[1]:s)?this:(h(u),s?void h(o):a?t&&t===this.ownerID?(this.entry[1]=i,this):new yt(t,this.keyHash,[r,i]):(h(o),It(this,t,e,ot(r),[r,i])))},pt.prototype.iterate=_t.prototype.iterate=function(t,e){for(var n=this.entries,r=0,i=n.length-1;r<=i;r++)if(t(n[e?i-r:r])===!1)return!1},dt.prototype.iterate=vt.prototype.iterate=function(t,e){for(var n=this.nodes,r=0,i=n.length-1;r<=i;r++){var o=n[e?i-r:r];if(o&&o.iterate(t,e)===!1)return!1}},yt.prototype.iterate=function(t,e){return t(this.entry)},t(mt,b),mt.prototype.next=function(){for(var t=this._type,e=this._stack;e;){var n,r=e.node,i=e.index++;if(r.entry){if(0===i)return gt(t,r.entry)}else if(r.entries){if(n=r.entries.length-1,i<=n)return gt(t,r.entries[this._reverse?n-i:i])}else if(n=r.nodes.length-1,i<=n){var o=r.nodes[this._reverse?n-i:i];if(o){if(o.entry)return gt(t,o.entry);e=this._stack=wt(o,e)}continue}e=this._stack=this._stack.__prev}return x()};var Bn,Kn=vn/4,Wn=vn/2,Hn=vn/4;t(Pt,nt),Pt.of=function(){return this(arguments)},Pt.prototype.toString=function(){return this.__toString("List [","]")},Pt.prototype.get=function(t,e){if(t=v(this,t),t>=0&&t<this.size){t+=this._origin;var n=Gt(this,t);return n&&n.array[t&_n]}return e},Pt.prototype.set=function(t,e){return Wt(this,t,e)},Pt.prototype.remove=function(t){return this.has(t)?0===t?this.shift():t===this.size-1?this.pop():this.splice(t,1):this},Pt.prototype.insert=function(t,e){return this.splice(t,0,e)},Pt.prototype.clear=function(){return 0===this.size?this:this.__ownerID?(this.size=this._origin=this._capacity=0,this._level=dn,this._root=this._tail=null,this.__hash=void 0,this.__altered=!0,this):Kt()},Pt.prototype.push=function(){var t=arguments,e=this.size;return this.withMutations(function(n){Jt(n,0,e+t.length);for(var r=0;r<t.length;r++)n.set(e+r,t[r])})},Pt.prototype.pop=function(){return Jt(this,0,-1)},Pt.prototype.unshift=function(){var t=arguments;return this.withMutations(function(e){Jt(e,-t.length);for(var n=0;n<t.length;n++)e.set(n,t[n])})},Pt.prototype.shift=function(){return Jt(this,1)},Pt.prototype.merge=function(){return Zt(this,void 0,arguments)},Pt.prototype.mergeWith=function(t){var e=an.call(arguments,1);return Zt(this,t,e)},Pt.prototype.mergeDeep=function(){return Zt(this,Dt,arguments)},Pt.prototype.mergeDeepWith=function(t){var e=an.call(arguments,1);return Zt(this,At(t),e)},Pt.prototype.setSize=function(t){return Jt(this,0,t)},Pt.prototype.slice=function(t,e){var n=this.size;return y(t,e,n)?this:Jt(this,m(t,n),g(e,n))},Pt.prototype.__iterator=function(t,e){var n=0,r=Ut(this,e);return new b(function(){var e=r();return e===Zn?x():S(t,n++,e)})},Pt.prototype.__iterate=function(t,e){for(var n,r=0,i=Ut(this,e);(n=i())!==Zn&&t(n,r++,this)!==!1;);return r},Pt.prototype.__ensureOwner=function(t){return t===this.__ownerID?this:t?Bt(this._origin,this._capacity,this._level,this._root,this._tail,t,this.__hash):(this.__ownerID=t,this)},Pt.isList=Ft;var Vn="@@__IMMUTABLE_LIST__@@",Gn=Pt.prototype;Gn[Vn]=!0,Gn[pn]=Gn.remove,Gn.setIn=Un.setIn,Gn.deleteIn=Gn.removeIn=Un.removeIn,Gn.update=Un.update,Gn.updateIn=Un.updateIn,Gn.mergeIn=Un.mergeIn,Gn.mergeDeepIn=Un.mergeDeepIn,Gn.withMutations=Un.withMutations,Gn.asMutable=Un.asMutable,Gn.asImmutable=Un.asImmutable,Gn.wasAltered=Un.wasAltered,$t.prototype.removeBefore=function(t,e,n){if(n===e?1<<e:0===this.array.length)return this;var r=n>>>e&_n;if(r>=this.array.length)return new $t([],t);var i,o=0===r;if(e>0){var u=this.array[r];if(i=u&&u.removeBefore(t,e-dn,n),i===u&&o)return this}if(o&&!i)return this;var s=Vt(this,t);if(!o)for(var a=0;a<r;a++)s.array[a]=void 0;return i&&(s.array[r]=i),s},$t.prototype.removeAfter=function(t,e,n){if(n===(e?1<<e:0)||0===this.array.length)return this;var r=n-1>>>e&_n;if(r>=this.array.length)return this;var i;if(e>0){var o=this.array[r];if(i=o&&o.removeAfter(t,e-dn,n),i===o&&r===this.array.length-1)return this}var u=Vt(this,t);return u.array.splice(r+1),i&&(u.array[r]=i),u};var Jn,Zn={};t(Yt,ht),Yt.of=function(){return this(arguments)},Yt.prototype.toString=function(){return this.__toString("OrderedMap {","}")},Yt.prototype.get=function(t,e){var n=this._map.get(t);return void 0!==n?this._list.get(n)[1]:e},Yt.prototype.clear=function(){return 0===this.size?this:this.__ownerID?(this.size=0,this._map.clear(),this._list.clear(),this):ee()},Yt.prototype.set=function(t,e){return ne(this,t,e)},Yt.prototype.remove=function(t){return ne(this,t,yn)},Yt.prototype.wasAltered=function(){return this._map.wasAltered()||this._list.wasAltered()},Yt.prototype.__iterate=function(t,e){var n=this;return this._list.__iterate(function(e){return e&&t(e[1],e[0],n)},e)},Yt.prototype.__iterator=function(t,e){return this._list.fromEntrySeq().__iterator(t,e)},Yt.prototype.__ensureOwner=function(t){if(t===this.__ownerID)return this;var e=this._map.__ensureOwner(t),n=this._list.__ensureOwner(t);return t?te(e,n,t,this.__hash):(this.__ownerID=t,this._map=e,this._list=n,this)},Yt.isOrderedMap=Qt,Yt.prototype[ln]=!0,Yt.prototype[pn]=Yt.prototype.remove;var Xn;t(re,k),re.prototype.get=function(t,e){return this._iter.get(t,e)},re.prototype.has=function(t){return this._iter.has(t)},re.prototype.valueSeq=function(){return this._iter.valueSeq()},re.prototype.reverse=function(){var t=this,e=ce(this,!0);return this._useKeys||(e.valueSeq=function(){return t._iter.toSeq().reverse()}),e},re.prototype.map=function(t,e){var n=this,r=ae(this,t,e);return this._useKeys||(r.valueSeq=function(){return n._iter.toSeq().map(t,e)}),r},re.prototype.__iterate=function(t,e){var n,r=this;return this._iter.__iterate(this._useKeys?function(e,n){return t(e,n,r)}:(n=e?Ie(this):0,function(i){return t(i,e?--n:n++,r)}),e)},re.prototype.__iterator=function(t,e){if(this._useKeys)return this._iter.__iterator(t,e);var n=this._iter.__iterator(bn,e),r=e?Ie(this):0;return new b(function(){var i=n.next();return i.done?i:S(t,e?--r:r++,i.value,i)})},re.prototype[ln]=!0,t(ie,D),ie.prototype.includes=function(t){return this._iter.includes(t)},ie.prototype.__iterate=function(t,e){var n=this,r=0;return this._iter.__iterate(function(e){return t(e,r++,n)},e)},ie.prototype.__iterator=function(t,e){var n=this._iter.__iterator(bn,e),r=0;return new b(function(){var e=n.next();return e.done?e:S(t,r++,e.value,e)})},t(oe,A),oe.prototype.has=function(t){return this._iter.includes(t)},oe.prototype.__iterate=function(t,e){var n=this;return this._iter.__iterate(function(e){return t(e,e,n)},e)},oe.prototype.__iterator=function(t,e){var n=this._iter.__iterator(bn,e);return new b(function(){var e=n.next();return e.done?e:S(t,e.value,e.value,e)})},t(ue,k),ue.prototype.entrySeq=function(){return this._iter.toSeq()},ue.prototype.__iterate=function(t,e){var n=this;return this._iter.__iterate(function(e){if(e){Ee(e);var r=o(e);return t(r?e.get(1):e[1],r?e.get(0):e[0],n)}},e)},ue.prototype.__iterator=function(t,e){var n=this._iter.__iterator(bn,e);return new b(function(){for(;;){var e=n.next();if(e.done)return e;var r=e.value;if(r){Ee(r);var i=o(r);return S(t,i?r.get(0):r[0],i?r.get(1):r[1],e)}}})},ie.prototype.cacheResult=re.prototype.cacheResult=oe.prototype.cacheResult=ue.prototype.cacheResult=ze,t(Ae,et),Ae.prototype.toString=function(){return this.__toString(Ce(this)+" {","}")},Ae.prototype.has=function(t){return this._defaultValues.hasOwnProperty(t)},Ae.prototype.get=function(t,e){if(!this.has(t))return e;var n=this._defaultValues[t];return this._map?this._map.get(t,n):n},Ae.prototype.clear=function(){if(this.__ownerID)return this._map&&this._map.clear(),this;var t=this.constructor;return t._empty||(t._empty=qe(this,St()))},Ae.prototype.set=function(t,e){if(!this.has(t))throw new Error('Cannot set unknown key "'+t+'" on '+Ce(this));if(this._map&&!this._map.has(t)){var n=this._defaultValues[t];if(e===n)return this}var r=this._map&&this._map.set(t,e);return this.__ownerID||r===this._map?this:qe(this,r)},Ae.prototype.remove=function(t){if(!this.has(t))return this;var e=this._map&&this._map.remove(t);return this.__ownerID||e===this._map?this:qe(this,e)},Ae.prototype.wasAltered=function(){return this._map.wasAltered()},Ae.prototype.__iterator=function(t,e){var r=this;return n(this._defaultValues).map(function(t,e){return r.get(e)}).__iterator(t,e)},Ae.prototype.__iterate=function(t,e){var r=this;return n(this._defaultValues).map(function(t,e){return r.get(e)}).__iterate(t,e)},Ae.prototype.__ensureOwner=function(t){if(t===this.__ownerID)return this;var e=this._map&&this._map.__ensureOwner(t);return t?qe(this,e,t):(this.__ownerID=t,this._map=e,this)};var Yn=Ae.prototype;Yn[pn]=Yn.remove,Yn.deleteIn=Yn.removeIn=Un.removeIn,Yn.merge=Un.merge,Yn.mergeWith=Un.mergeWith,Yn.mergeIn=Un.mergeIn,Yn.mergeDeep=Un.mergeDeep,Yn.mergeDeepWith=Un.mergeDeepWith,Yn.mergeDeepIn=Un.mergeDeepIn,Yn.setIn=Un.setIn,Yn.update=Un.update,Yn.updateIn=Un.updateIn,Yn.withMutations=Un.withMutations,Yn.asMutable=Un.asMutable,Yn.asImmutable=Un.asImmutable,t(Re,rt),Re.of=function(){
-return this(arguments)},Re.fromKeys=function(t){return this(n(t).keySeq())},Re.prototype.toString=function(){return this.__toString("Set {","}")},Re.prototype.has=function(t){return this._map.has(t)},Re.prototype.add=function(t){return Pe(this,this._map.set(t,!0))},Re.prototype.remove=function(t){return Pe(this,this._map.remove(t))},Re.prototype.clear=function(){return Pe(this,this._map.clear())},Re.prototype.union=function(){var t=an.call(arguments,0);return t=t.filter(function(t){return 0!==t.size}),0===t.length?this:0!==this.size||this.__ownerID||1!==t.length?this.withMutations(function(e){for(var n=0;n<t.length;n++)i(t[n]).forEach(function(t){return e.add(t)})}):this.constructor(t[0])},Re.prototype.intersect=function(){var t=an.call(arguments,0);if(0===t.length)return this;t=t.map(function(t){return i(t)});var e=this;return this.withMutations(function(n){e.forEach(function(e){t.every(function(t){return t.includes(e)})||n.remove(e)})})},Re.prototype.subtract=function(){var t=an.call(arguments,0);if(0===t.length)return this;t=t.map(function(t){return i(t)});var e=this;return this.withMutations(function(n){e.forEach(function(e){t.some(function(t){return t.includes(e)})&&n.remove(e)})})},Re.prototype.merge=function(){return this.union.apply(this,arguments)},Re.prototype.mergeWith=function(t){var e=an.call(arguments,1);return this.union.apply(this,e)},Re.prototype.sort=function(t){return Ue(we(this,t))},Re.prototype.sortBy=function(t,e){return Ue(we(this,e,t))},Re.prototype.wasAltered=function(){return this._map.wasAltered()},Re.prototype.__iterate=function(t,e){var n=this;return this._map.__iterate(function(e,r){return t(r,r,n)},e)},Re.prototype.__iterator=function(t,e){return this._map.map(function(t,e){return e}).__iterator(t,e)},Re.prototype.__ensureOwner=function(t){if(t===this.__ownerID)return this;var e=this._map.__ensureOwner(t);return t?this.__make(e,t):(this.__ownerID=t,this._map=e,this)},Re.isSet=Le;var Qn="@@__IMMUTABLE_SET__@@",tr=Re.prototype;tr[Qn]=!0,tr[pn]=tr.remove,tr.mergeDeep=tr.merge,tr.mergeDeepWith=tr.mergeWith,tr.withMutations=Un.withMutations,tr.asMutable=Un.asMutable,tr.asImmutable=Un.asImmutable,tr.__empty=$e,tr.__make=Fe;var er;t(Ue,Re),Ue.of=function(){return this(arguments)},Ue.fromKeys=function(t){return this(n(t).keySeq())},Ue.prototype.toString=function(){return this.__toString("OrderedSet {","}")},Ue.isOrderedSet=Be;var nr=Ue.prototype;nr[ln]=!0,nr.__empty=We,nr.__make=Ke;var rr;t(He,nt),He.of=function(){return this(arguments)},He.prototype.toString=function(){return this.__toString("Stack [","]")},He.prototype.get=function(t,e){var n=this._head;for(t=v(this,t);n&&t--;)n=n.next;return n?n.value:e},He.prototype.peek=function(){return this._head&&this._head.value},He.prototype.push=function(){if(0===arguments.length)return this;for(var t=this.size+arguments.length,e=this._head,n=arguments.length-1;n>=0;n--)e={value:arguments[n],next:e};return this.__ownerID?(this.size=t,this._head=e,this.__hash=void 0,this.__altered=!0,this):Ge(t,e)},He.prototype.pushAll=function(t){if(t=r(t),0===t.size)return this;ft(t.size);var e=this.size,n=this._head;return t.reverse().forEach(function(t){e++,n={value:t,next:n}}),this.__ownerID?(this.size=e,this._head=n,this.__hash=void 0,this.__altered=!0,this):Ge(e,n)},He.prototype.pop=function(){return this.slice(1)},He.prototype.unshift=function(){return this.push.apply(this,arguments)},He.prototype.unshiftAll=function(t){return this.pushAll(t)},He.prototype.shift=function(){return this.pop.apply(this,arguments)},He.prototype.clear=function(){return 0===this.size?this:this.__ownerID?(this.size=0,this._head=void 0,this.__hash=void 0,this.__altered=!0,this):Je()},He.prototype.slice=function(t,e){if(y(t,e,this.size))return this;var n=m(t,this.size),r=g(e,this.size);if(r!==this.size)return nt.prototype.slice.call(this,t,e);for(var i=this.size-n,o=this._head;n--;)o=o.next;return this.__ownerID?(this.size=i,this._head=o,this.__hash=void 0,this.__altered=!0,this):Ge(i,o)},He.prototype.__ensureOwner=function(t){return t===this.__ownerID?this:t?Ge(this.size,this._head,t,this.__hash):(this.__ownerID=t,this.__altered=!1,this)},He.prototype.__iterate=function(t,e){if(e)return this.reverse().__iterate(t);for(var n=0,r=this._head;r&&t(r.value,n++,this)!==!1;)r=r.next;return n},He.prototype.__iterator=function(t,e){if(e)return this.reverse().__iterator(t);var n=0,r=this._head;return new b(function(){if(r){var e=r.value;return r=r.next,S(t,n++,e)}return x()})},He.isStack=Ve;var ir="@@__IMMUTABLE_STACK__@@",or=He.prototype;or[ir]=!0,or.withMutations=Un.withMutations,or.asMutable=Un.asMutable,or.asImmutable=Un.asImmutable,or.wasAltered=Un.wasAltered;var ur;e.Iterator=b,Ze(e,{toArray:function(){ft(this.size);var t=new Array(this.size||0);return this.valueSeq().__iterate(function(e,n){t[n]=e}),t},toIndexedSeq:function(){return new ie(this)},toJS:function(){return this.toSeq().map(function(t){return t&&"function"==typeof t.toJS?t.toJS():t}).__toJS()},toJSON:function(){return this.toSeq().map(function(t){return t&&"function"==typeof t.toJSON?t.toJSON():t}).__toJS()},toKeyedSeq:function(){return new re(this,(!0))},toMap:function(){return ht(this.toKeyedSeq())},toObject:function(){ft(this.size);var t={};return this.__iterate(function(e,n){t[n]=e}),t},toOrderedMap:function(){return Yt(this.toKeyedSeq())},toOrderedSet:function(){return Ue(u(this)?this.valueSeq():this)},toSet:function(){return Re(u(this)?this.valueSeq():this)},toSetSeq:function(){return new oe(this)},toSeq:function(){return s(this)?this.toIndexedSeq():u(this)?this.toKeyedSeq():this.toSetSeq()},toStack:function(){return He(u(this)?this.valueSeq():this)},toList:function(){return Pt(u(this)?this.valueSeq():this)},toString:function(){return"[Iterable]"},__toString:function(t,e){return 0===this.size?t+e:t+" "+this.toSeq().map(this.__toStringMapper).join(", ")+" "+e},concat:function(){var t=an.call(arguments,0);return Oe(this,_e(this,t))},includes:function(t){return this.some(function(e){return J(e,t)})},entries:function(){return this.__iterator(Sn)},every:function(t,e){ft(this.size);var n=!0;return this.__iterate(function(r,i,o){if(!t.call(e,r,i,o))return n=!1,!1}),n},filter:function(t,e){return Oe(this,fe(this,t,e,!0))},find:function(t,e,n){var r=this.findEntry(t,e);return r?r[1]:n},forEach:function(t,e){return ft(this.size),this.__iterate(e?t.bind(e):t)},join:function(t){ft(this.size),t=void 0!==t?""+t:",";var e="",n=!0;return this.__iterate(function(r){n?n=!1:e+=t,e+=null!==r&&void 0!==r?r.toString():""}),e},keys:function(){return this.__iterator(wn)},map:function(t,e){return Oe(this,ae(this,t,e))},reduce:function(t,e,n){ft(this.size);var r,i;return arguments.length<2?i=!0:r=e,this.__iterate(function(e,o,u){i?(i=!1,r=e):r=t.call(n,r,e,o,u)}),r},reduceRight:function(t,e,n){var r=this.toKeyedSeq().reverse();return r.reduce.apply(r,arguments)},reverse:function(){return Oe(this,ce(this,!0))},slice:function(t,e){return Oe(this,pe(this,t,e,!0))},some:function(t,e){return!this.every(Qe(t),e)},sort:function(t){return Oe(this,we(this,t))},values:function(){return this.__iterator(bn)},butLast:function(){return this.slice(0,-1)},isEmpty:function(){return void 0!==this.size?0===this.size:!this.some(function(){return!0})},count:function(t,e){return d(t?this.toSeq().filter(t,e):this)},countBy:function(t,e){return he(this,t,e)},equals:function(t){return Z(this,t)},entrySeq:function(){var t=this;if(t._cache)return new q(t._cache);var e=t.toSeq().map(Ye).toIndexedSeq();return e.fromEntrySeq=function(){return t.toSeq()},e},filterNot:function(t,e){return this.filter(Qe(t),e)},findEntry:function(t,e,n){var r=n;return this.__iterate(function(n,i,o){if(t.call(e,n,i,o))return r=[i,n],!1}),r},findKey:function(t,e){var n=this.findEntry(t,e);return n&&n[0]},findLast:function(t,e,n){return this.toKeyedSeq().reverse().find(t,e,n)},findLastEntry:function(t,e,n){return this.toKeyedSeq().reverse().findEntry(t,e,n)},findLastKey:function(t,e){return this.toKeyedSeq().reverse().findKey(t,e)},first:function(){return this.find(_)},flatMap:function(t,e){return Oe(this,me(this,t,e))},flatten:function(t){return Oe(this,ye(this,t,!0))},fromEntrySeq:function(){return new ue(this)},get:function(t,e){return this.find(function(e,n){return J(n,t)},void 0,e)},getIn:function(t,e){for(var n,r=this,i=De(t);!(n=i.next()).done;){var o=n.value;if(r=r&&r.get?r.get(o,yn):yn,r===yn)return e}return r},groupBy:function(t,e){return le(this,t,e)},has:function(t){return this.get(t,yn)!==yn},hasIn:function(t){return this.getIn(t,yn)!==yn},isSubset:function(t){return t="function"==typeof t.includes?t:e(t),this.every(function(e){return t.includes(e)})},isSuperset:function(t){return t="function"==typeof t.isSubset?t:e(t),t.isSubset(this)},keyOf:function(t){return this.findKey(function(e){return J(e,t)})},keySeq:function(){return this.toSeq().map(Xe).toIndexedSeq()},last:function(){return this.toSeq().reverse().first()},lastKeyOf:function(t){return this.toKeyedSeq().reverse().keyOf(t)},max:function(t){return be(this,t)},maxBy:function(t,e){return be(this,e,t)},min:function(t){return be(this,t?tn(t):rn)},minBy:function(t,e){return be(this,e?tn(e):rn,t)},rest:function(){return this.slice(1)},skip:function(t){return this.slice(Math.max(0,t))},skipLast:function(t){return Oe(this,this.toSeq().reverse().skip(t).reverse())},skipWhile:function(t,e){return Oe(this,ve(this,t,e,!0))},skipUntil:function(t,e){return this.skipWhile(Qe(t),e)},sortBy:function(t,e){return Oe(this,we(this,e,t))},take:function(t){return this.slice(0,Math.max(0,t))},takeLast:function(t){return Oe(this,this.toSeq().reverse().take(t).reverse())},takeWhile:function(t,e){return Oe(this,de(this,t,e))},takeUntil:function(t,e){return this.takeWhile(Qe(t),e)},valueSeq:function(){return this.toIndexedSeq()},hashCode:function(){return this.__hash||(this.__hash=on(this))}});var sr=e.prototype;sr[cn]=!0,sr[En]=sr.values,sr.__toJS=sr.toArray,sr.__toStringMapper=en,sr.inspect=sr.toSource=function(){return this.toString()},sr.chain=sr.flatMap,sr.contains=sr.includes,Ze(n,{flip:function(){return Oe(this,se(this))},mapEntries:function(t,e){var n=this,r=0;return Oe(this,this.toSeq().map(function(i,o){return t.call(e,[o,i],r++,n)}).fromEntrySeq())},mapKeys:function(t,e){var n=this;return Oe(this,this.toSeq().flip().map(function(r,i){return t.call(e,r,i,n)}).flip())}});var ar=n.prototype;ar[fn]=!0,ar[En]=sr.entries,ar.__toJS=sr.toObject,ar.__toStringMapper=function(t,e){return JSON.stringify(e)+": "+en(t)},Ze(r,{toKeyedSeq:function(){return new re(this,(!1))},filter:function(t,e){return Oe(this,fe(this,t,e,!1))},findIndex:function(t,e){var n=this.findEntry(t,e);return n?n[0]:-1},indexOf:function(t){var e=this.keyOf(t);return void 0===e?-1:e},lastIndexOf:function(t){var e=this.lastKeyOf(t);return void 0===e?-1:e},reverse:function(){return Oe(this,ce(this,!1))},slice:function(t,e){return Oe(this,pe(this,t,e,!1))},splice:function(t,e){var n=arguments.length;if(e=Math.max(0|e,0),0===n||2===n&&!e)return this;t=m(t,t<0?this.count():this.size);var r=this.slice(0,t);return Oe(this,1===n?r:r.concat(p(arguments,2),this.slice(t+e)))},findLastIndex:function(t,e){var n=this.findLastEntry(t,e);return n?n[0]:-1},first:function(){return this.get(0)},flatten:function(t){return Oe(this,ye(this,t,!1))},get:function(t,e){return t=v(this,t),t<0||this.size===1/0||void 0!==this.size&&t>this.size?e:this.find(function(e,n){return n===t},void 0,e)},has:function(t){return t=v(this,t),t>=0&&(void 0!==this.size?this.size===1/0||t<this.size:this.indexOf(t)!==-1)},interpose:function(t){return Oe(this,ge(this,t))},interleave:function(){var t=[this].concat(p(arguments)),e=xe(this.toSeq(),D.of,t),n=e.flatten(!0);return e.size&&(n.size=e.size*t.length),Oe(this,n)},keySeq:function(){return Q(0,this.size)},last:function(){return this.get(-1)},skipWhile:function(t,e){return Oe(this,ve(this,t,e,!1))},zip:function(){var t=[this].concat(p(arguments));return Oe(this,xe(this,nn,t))},zipWith:function(t){var e=p(arguments);return e[0]=this,Oe(this,xe(this,t,e))}}),r.prototype[hn]=!0,r.prototype[ln]=!0,Ze(i,{get:function(t,e){return this.has(t)?t:e},includes:function(t){return this.has(t)},keySeq:function(){return this.valueSeq()}}),i.prototype.has=sr.includes,i.prototype.contains=i.prototype.includes,Ze(k,n.prototype),Ze(D,r.prototype),Ze(A,i.prototype),Ze(et,n.prototype),Ze(nt,r.prototype),Ze(rt,i.prototype);var cr={Iterable:e,Seq:z,Collection:tt,Map:ht,OrderedMap:Yt,List:Pt,Stack:He,Set:Re,OrderedSet:Ue,Record:Ae,Range:Q,Repeat:X,is:J,fromJS:W};return cr})},function(t,e,n){"use strict";function r(t,e){var n="";return e.over&&e.result?e.result.correct.indexOf(t)>-1?n+=".correct":e.result.wrong.indexOf(t)>-1?n+=".wrong":e.result.missed.indexOf(t)>-1&&(n+=".missed"):!e.allowed&&e.puzzle.indexOf(t)>-1?n+=".highlighted":e.allowed&&e.selected.indexOf(t)>-1&&(n+=".selected"),o.div(n+".cell",{attrs:{"data-index":t}},[o.span()])}function i(t){var e=t.map(function(t){var e=t.score.toString();return o.div("#root",[o.div(".container",[o.header([o.div(".title.bar",[o.h1(["Recall"]),o.div(".scores",[o.div(".current.score",[o.span([e])]),o.div(".best.score",[o.span([e])])])]),o.div(".info",[o.p(["Click on the ",o.strong(["nine tiles you see"])," to win!"]),o.a(".new","New Game")])]),o.main([o.div(".panel",[o.div(".grid",u.map(function(e){return r(e,t)}))])]),o.footer(["Made with ",o.span(".heart","❤")," using ",o.span(".cycle","Cycle.js")," by ",o.a(".author",{props:{href:"https://github.com/artfuldev"}},"@artfuldev"),o.div([o.a(".source",{props:{href:"https://github.com/artfuldev/recall-cycle/tree/gh-pages/"}},"View Source")])])])])});return{dom:e}}var o=n(10),u=[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24];Object.defineProperty(e,"__esModule",{value:!0}),e["default"]=i},function(t,e,n){"use strict";var r=n(11);e.thunk=r;var i=n(15);e.makeDOMDriver=i.makeDOMDriver;var o=n(41);e.makeHTMLDriver=o.makeHTMLDriver;var u=n(76);e.mockDOMSource=u.mockDOMSource;var s=n(28);e.h=s.h;var a=n(77);e.svg=a["default"].svg,e.a=a["default"].a,e.abbr=a["default"].abbr,e.address=a["default"].address,e.area=a["default"].area,e.article=a["default"].article,e.aside=a["default"].aside,e.audio=a["default"].audio,e.b=a["default"].b,e.base=a["default"].base,e.bdi=a["default"].bdi,e.bdo=a["default"].bdo,e.blockquote=a["default"].blockquote,e.body=a["default"].body,e.br=a["default"].br,e.button=a["default"].button,e.canvas=a["default"].canvas,e.caption=a["default"].caption,e.cite=a["default"].cite,e.code=a["default"].code,e.col=a["default"].col,e.colgroup=a["default"].colgroup,e.dd=a["default"].dd,e.del=a["default"].del,e.dfn=a["default"].dfn,e.dir=a["default"].dir,e.div=a["default"].div,e.dl=a["default"].dl,e.dt=a["default"].dt,e.em=a["default"].em,e.embed=a["default"].embed,e.fieldset=a["default"].fieldset,e.figcaption=a["default"].figcaption,e.figure=a["default"].figure,e.footer=a["default"].footer,e.form=a["default"].form,e.h1=a["default"].h1,e.h2=a["default"].h2,e.h3=a["default"].h3,e.h4=a["default"].h4,e.h5=a["default"].h5,e.h6=a["default"].h6,e.head=a["default"].head,e.header=a["default"].header,e.hgroup=a["default"].hgroup,e.hr=a["default"].hr,e.html=a["default"].html,e.i=a["default"].i,e.iframe=a["default"].iframe,e.img=a["default"].img,e.input=a["default"].input,e.ins=a["default"].ins,e.kbd=a["default"].kbd,e.keygen=a["default"].keygen,e.label=a["default"].label,e.legend=a["default"].legend,e.li=a["default"].li,e.link=a["default"].link,e.main=a["default"].main,e.map=a["default"].map,e.mark=a["default"].mark,e.menu=a["default"].menu,e.meta=a["default"].meta,e.nav=a["default"].nav,e.noscript=a["default"].noscript,e.object=a["default"].object,e.ol=a["default"].ol,e.optgroup=a["default"].optgroup,e.option=a["default"].option,e.p=a["default"].p,e.param=a["default"].param,e.pre=a["default"].pre,e.progress=a["default"].progress,e.q=a["default"].q,e.rp=a["default"].rp,e.rt=a["default"].rt,e.ruby=a["default"].ruby,e.s=a["default"].s,e.samp=a["default"].samp,e.script=a["default"].script,e.section=a["default"].section,e.select=a["default"].select,e.small=a["default"].small,e.source=a["default"].source,e.span=a["default"].span,e.strong=a["default"].strong,e.style=a["default"].style,e.sub=a["default"].sub,e.sup=a["default"].sup,e.table=a["default"].table,e.tbody=a["default"].tbody,e.td=a["default"].td,e.textarea=a["default"].textarea,e.tfoot=a["default"].tfoot,e.th=a["default"].th,e.thead=a["default"].thead,e.title=a["default"].title,e.tr=a["default"].tr,e.u=a["default"].u,e.ul=a["default"].ul,e.video=a["default"].video},function(t,e,n){function r(t){var e=t.data;e.vnode=e.fn.apply(void 0,e.args)}function i(t,e){var n,r=t.data,i=e.data,o=r.args,u=i.args;if(i.vnode=r.vnode,r.fn!==i.fn||o.length!==u.length)return void(i.vnode=i.fn.apply(void 0,u));for(n=0;n<u.length;++n)if(o[n]!==u[n])return void(i.vnode=i.fn.apply(void 0,u))}var o=n(12);t.exports=function(t,e){var n,u=[];for(n=2;n<arguments.length;++n)u[n-2]=arguments[n];return o("thunk"+t,{hook:{init:r,prepatch:i},fn:e,args:u})}},function(t,e,n){function r(t,e){if(t.ns="http://www.w3.org/2000/svg",void 0!==e)for(var n=0;n<e.length;++n)r(e[n].data,e[n].children)}var i=n(13),o=n(14);t.exports=function(t,e,n){var u,s,a,c={};if(3===arguments.length?(c=e,o.array(n)?u=n:o.primitive(n)&&(s=n)):2===arguments.length&&(o.array(e)?u=e:o.primitive(e)?s=e:c=e),o.array(u))for(a=0;a<u.length;++a)o.primitive(u[a])&&(u[a]=i(void 0,void 0,void 0,u[a]));return"s"===t[0]&&"v"===t[1]&&"g"===t[2]&&r(c,u),i(t,c,u,s,void 0)}},function(t,e){t.exports=function(t,e,n,r,i){var o=void 0===e?void 0:e.key;return{sel:t,data:e,children:n,text:r,elm:i,key:o}}},function(t,e){t.exports={array:Array.isArray,primitive:function(t){return"string"==typeof t||"number"==typeof t}}},function(t,e,n){"use strict";function r(t){if(!Array.isArray(t))throw new Error("Optional modules option must be an array for snabbdom modules")}function i(t){if(!t||"function"!=typeof t.addListener||"function"!=typeof t.fold)throw new Error("The DOM driver function expects as input a Stream of virtual DOM elements")}function o(t,e){function n(t,e){i(t);var n=p.makeTransposeVNode(e),r=o?t.map(n).flatten():t,u=r.map(function(t){return g.call(t)}).fold(y,m).drop(1).map(function(t){return t.elm}).compose(function(t){return s["default"].merge(t,s["default"].never())}).startWith(m);return u.addListener({next:function(){},error:function(){},complete:function(){}}),new a.MainDOMSource(u,e,[],_,w)}e||(e={});var o=e.transposition||!1,v=e.modules||h["default"],_=new l.IsolateModule(new Map),y=u.init([_.createModule()].concat(v)),m=f.getElement(t),g=new c.VNodeWrapper(m),w=new Map;return r(v),n.streamAdapter=d["default"],n}var u=n(16),s=n(5),a=n(18),c=n(27),f=n(22),h=n(32),l=n(39),p=n(40),d=n(19);e.makeDOMDriver=o},function(t,e,n){"use strict";function r(t){return void 0===t}function i(t){return void 0!==t}function o(t,e){return t.key===e.key&&t.sel===e.sel}function u(t,e,n){var r,o,u={};for(r=e;r<=n;++r)o=t[r].key,i(o)&&(u[o]=r);return u}function s(t,e){function n(t){return a(e.tagName(t).toLowerCase(),{},[],void 0,t)}function s(t,n){return function(){if(0===--n){var r=e.parentNode(t);e.removeChild(r,t)}}}function p(t,n){var r,o,u=t.data;i(u)&&(i(r=u.hook)&&i(r=r.init)&&r(t),i(r=u.vnode)&&(o=t,t=r));var s,a=t.children,f=t.sel;if(i(f)){var l=f.indexOf("#"),d=f.indexOf(".",l),v=l>0?l:f.length,_=d>0?d:f.length,y=l!==-1||d!==-1?f.slice(0,Math.min(v,_)):f;if(s=t.elm=i(u)&&i(r=u.ns)?e.createElementNS(r,y):e.createElement(y),v<_&&(s.id=f.slice(v+1,_)),d>0&&(s.className=f.slice(_+1).replace(/\./g," ")),c.array(a))for(r=0;r<a.length;++r)e.appendChild(s,p(a[r],n));else c.primitive(t.text)&&e.appendChild(s,e.createTextNode(t.text));for(r=0;r<b.create.length;++r)b.create[r](h,t);r=t.data.hook,i(r)&&(r.create&&r.create(h,t),r.insert&&n.push(t))}else s=t.elm=e.createTextNode(t.text);return i(o)&&(o.elm=t.elm),t.elm}function d(t,n,r,i,o,u){for(;i<=o;++i)e.insertBefore(t,p(r[i],u),n)}function v(t){var e,n,r=t.data;if(i(r)){for(i(e=r.hook)&&i(e=e.destroy)&&e(t),e=0;e<b.destroy.length;++e)b.destroy[e](t);if(i(e=t.children))for(n=0;n<t.children.length;++n)v(t.children[n]);i(e=r.vnode)&&v(e)}}function _(t,n,r,o){for(;r<=o;++r){var u,a,c,f=n[r];if(i(f))if(i(f.sel)){for(v(f),a=b.remove.length+1,c=s(f.elm,a),u=0;u<b.remove.length;++u)b.remove[u](f,c);i(u=f.data)&&i(u=u.hook)&&i(u=u.remove)?u(f,c):c()}else e.removeChild(t,f.elm)}}function y(t,n,i,s){for(var a,c,f,h,l=0,v=0,y=n.length-1,g=n[0],w=n[y],b=i.length-1,S=i[0],x=i[b];l<=y&&v<=b;)r(g)?g=n[++l]:r(w)?w=n[--y]:o(g,S)?(m(g,S,s),g=n[++l],S=i[++v]):o(w,x)?(m(w,x,s),w=n[--y],x=i[--b]):o(g,x)?(m(g,x,s),e.insertBefore(t,g.elm,e.nextSibling(w.elm)),g=n[++l],x=i[--b]):o(w,S)?(m(w,S,s),e.insertBefore(t,w.elm,g.elm),w=n[--y],S=i[++v]):(r(a)&&(a=u(n,l,y)),c=a[S.key],r(c)?(e.insertBefore(t,p(S,s),g.elm),S=i[++v]):(f=n[c],m(f,S,s),n[c]=void 0,e.insertBefore(t,f.elm,g.elm),S=i[++v]));l>y?(h=r(i[b+1])?null:i[b+1].elm,d(t,h,i,v,b,s)):v>b&&_(t,n,l,y)}function m(t,n,u){var s,a;if(i(s=n.data)&&i(a=s.hook)&&i(s=a.prepatch)&&s(t,n),i(s=t.data)&&i(s=s.vnode)&&(t=s),i(s=n.data)&&i(s=s.vnode))return m(t,s,u),void(n.elm=s.elm);var c=n.elm=t.elm,f=t.children,h=n.children;if(t!==n){if(!o(t,n)){var l=e.parentNode(t.elm);return c=p(n,u),e.insertBefore(l,c,t.elm),void _(l,[t],0,0)}if(i(n.data)){for(s=0;s<b.update.length;++s)b.update[s](t,n);s=n.data.hook,i(s)&&i(s=s.update)&&s(t,n)}r(n.text)?i(f)&&i(h)?f!==h&&y(c,f,h,u):i(h)?(i(t.text)&&e.setTextContent(c,""),d(c,null,h,0,h.length-1,u)):i(f)?_(c,f,0,f.length-1):i(t.text)&&e.setTextContent(c,""):t.text!==n.text&&e.setTextContent(c,n.text),i(a)&&i(s=a.postpatch)&&s(t,n)}}var g,w,b={};for(r(e)&&(e=f),g=0;g<l.length;++g)for(b[l[g]]=[],w=0;w<t.length;++w)void 0!==t[w][l[g]]&&b[l[g]].push(t[w][l[g]]);return function(t,i){var u,s,a,c=[];for(u=0;u<b.pre.length;++u)b.pre[u]();for(r(t.sel)&&(t=n(t)),o(t,i)?m(t,i,c):(s=t.elm,a=e.parentNode(s),p(i,c),null!==a&&(e.insertBefore(a,i.elm,e.nextSibling(s)),_(a,[t],0,0))),u=0;u<c.length;++u)c[u].data.hook.insert(c[u]);for(u=0;u<b.post.length;++u)b.post[u]();return i}}var a=n(13),c=n(14),f=n(17),h=a("",{},[],void 0,void 0),l=["create","update","remove","destroy","pre","post"];t.exports={init:s}},function(t,e){function n(t){return document.createElement(t)}function r(t,e){return document.createElementNS(t,e)}function i(t){return document.createTextNode(t)}function o(t,e,n){t.insertBefore(e,n)}function u(t,e){t.removeChild(e)}function s(t,e){t.appendChild(e)}function a(t){return t.parentElement}function c(t){return t.nextSibling}function f(t){return t.tagName}function h(t,e){t.textContent=e}t.exports={createElement:n,createElementNS:r,createTextNode:i,appendChild:s,removeChild:u,insertBefore:o,parentNode:a,nextSibling:c,tagName:f,setTextContent:h}},function(t,e,n){"use strict";function r(t,e){var n=!1;return"boolean"==typeof e.useCapture&&(n=e.useCapture),p.indexOf(t)!==-1&&(n=!0),n}var i,o=n(19),u=n(5),s=n(20),a=n(24),c=n(25),f=n(26),h=n(22);try{i=n(23)}catch(l){i=Function.prototype}var p=["blur","canplay","canplaythrough","change","durationchange","emptied","ended","focus","load","loadeddata","loadedmetadata","mouseenter","mouseleave","pause","play","playing","ratechange","reset","scroll","seeked","seeking","stalled","submit","suspend","timeupdate","unload","volumechange","waiting"],d=function(){function t(t,e,n,r,i){void 0===n&&(n=[]),this._rootElement$=t,this._runStreamAdapter=e,this._namespace=n,this._isolateModule=r,this._delegators=i,this.isolateSource=c.isolateSource,this.isolateSink=c.isolateSink}return t.prototype.elements=function(){var t;if(0===this._namespace.length)t=this._rootElement$;else{var e=new s.ElementFinder(this._namespace,this._isolateModule);t=this._rootElement$.map(function(t){return e.call(t)})}var n=this._runStreamAdapter;return n.remember(n.adapt(t,o["default"].streamSubscribe))},Object.defineProperty(t.prototype,"namespace",{get:function(){return this._namespace},enumerable:!0,configurable:!0}),t.prototype.select=function(e){if("string"!=typeof e)throw new Error("DOM driver's select() expects the argument to be a string as a CSS selector");var n=e.trim(),r=":root"===n?this._namespace:this._namespace.concat(n);return new t(this._rootElement$,this._runStreamAdapter,r,this._isolateModule,this._delegators)},t.prototype.events=function(t,e){if(void 0===e&&(e={}),"string"!=typeof t)throw new Error("DOM driver's events() expects argument to be a string representing the event type to listen for.");var n=r(t,e),i=this._namespace,s=h.getScope(i),c=[t,n];s&&c.push(s);var l,p=c.join("~"),d=this;if(s){var v=!1;l=this._rootElement$.filter(function(t){var e=!!d._isolateModule.getIsolatedElement(s),n=e&&!v;return v=e,n})}else l=this._rootElement$.take(2);var _=l.map(function(e){if(!i||0===i.length)return a.fromEvent(e,t,n);var r,o=d._delegators,c=s?d._isolateModule.getIsolatedElement(s):e;o.has(p)?(r=o.get(p),r.updateTopElement(c)):(r=new f.EventDelegator(c,t,n,d._isolateModule),o.set(p,r));var h=u["default"].create();return s&&d._isolateModule.addEventDelegator(s,r),r.addDestination(h,i),h}).flatten();return this._runStreamAdapter.adapt(_,o["default"].streamSubscribe)},t.prototype.dispose=function(){this._isolateModule.reset()},t}();e.MainDOMSource=d},function(t,e,n){"use strict";var r=n(5),i={adapt:function(t,e){if(i.isValidStream(t))return t;var n=null;return r["default"].create({start:function(r){var i=r;n=e(t,i)},stop:function(){"function"==typeof n&&n()}})},makeSubject:function(){var t=r["default"].create(),e={next:function(e){t.shamefullySendNext(e)},error:function(e){t.shamefullySendError(e)},complete:function(){t.shamefullySendComplete()}};return{observer:e,stream:t}},remember:function(t){return t.remember()},isValidStream:function(t){return"function"==typeof t.addListener&&"function"==typeof t.shamefullySendNext},streamSubscribe:function(t,e){return t.addListener(e),function(){return t.removeListener(e)}}};Object.defineProperty(e,"__esModule",{value:!0}),e["default"]=i},function(t,e,n){"use strict";function r(t){return Array.prototype.slice.call(t)}var i,o=n(21),u=n(22);try{i=n(23)}catch(s){i=Function.prototype}var a=function(){function t(t,e){this.namespace=t,this.isolateModule=e}return t.prototype.call=function(t){var e=this.namespace;if(""===e.join(""))return t;var n=u.getScope(e),s=new o.ScopeChecker(n,this.isolateModule),a=u.getSelectors(e),c=t,f=[];return n.length>0&&(c=this.isolateModule.getIsolatedElement(n)||t,a&&i(c,a)&&f.push(c)),r(c.querySelectorAll(a)).filter(s.isStrictlyInRootScope,s).concat(f)},t}();e.ElementFinder=a},function(t,e){"use strict";var n=function(){function t(t,e){this.scope=t,this.isolateModule=e}return t.prototype.isStrictlyInRootScope=function(t){for(var e=t;e;e=e.parentElement){var n=this.isolateModule.isIsolatedElement(e);if(n&&n!==this.scope)return!1;if(n)return!0}return!0},t}();e.ScopeChecker=n},function(t,e){"use strict";function n(t){return"object"==typeof HTMLElement?t instanceof HTMLElement||t instanceof DocumentFragment:t&&"object"==typeof t&&null!==t&&(1===t.nodeType||11===t.nodeType)&&"string"==typeof t.nodeName}function r(t){var e="string"==typeof t?document.querySelector(t):t;if("string"==typeof t&&null===e)throw new Error("Cannot render into unknown element `"+t+"`");if(!n(e))throw new Error("Given container is not a DOM element neither a selector string.");return e}function i(t){return t.filter(function(t){return t.indexOf(e.SCOPE_PREFIX)>-1}).slice(-1).join("")}function o(t){return t.filter(function(t){return t.indexOf(e.SCOPE_PREFIX)===-1}).join(" ")}e.SCOPE_PREFIX="$$CYCLEDOM$$-",e.getElement=r,e.getScope=i,e.getSelectors=o},function(t,e){"use strict";function n(t,e){if(i)return i.call(t,e);for(var n=t.parentNode.querySelectorAll(e),r=0;r<n.length;r++)if(n[r]==t)return!0;return!1}var r=Element.prototype,i=r.matches||r.matchesSelector||r.webkitMatchesSelector||r.mozMatchesSelector||r.msMatchesSelector||r.oMatchesSelector;t.exports=n},function(t,e,n){"use strict";function r(t,e,n){return void 0===n&&(n=!1),i.Stream.create({element:t,next:null,start:function(t){this.next=function(e){t.next(e)},this.element.addEventListener(e,this.next,n)},stop:function(){this.element.removeEventListener(e,this.next,n)}})}var i=n(5);e.fromEvent=r},function(t,e,n){"use strict";function r(t,e){return t.select(o.SCOPE_PREFIX+e)}function i(t,e){return t.map(function(t){if(t.data.isolate){var n=parseInt(t.data.isolate.split(o.SCOPE_PREFIX+"cycle")[1]),r=parseInt(e.split("cycle")[1]);if(Number.isNaN(n)||Number.isNaN(r)||n>r)return t}return t.data.isolate=o.SCOPE_PREFIX+e,t})}var o=n(22);e.isolateSource=r,e.isolateSink=i},function(t,e,n){"use strict";var r,i=n(21),o=n(22);try{r=n(23)}catch(u){r=Function.prototype}var s=function(){function t(t,e,n,r){var i=this;this.topElement=t,this.eventType=e,this.useCapture=n,this.isolateModule=r,this.destinations=[],this.roof=t.parentElement,n?this.domListener=function(t){return i.capture(t)}:this.domListener=function(t){return i.bubble(t)},t.addEventListener(e,this.domListener,n)}return t.prototype.bubble=function(t){if(document.body.contains(t.currentTarget))for(var e=this.patchEvent(t),n=e.target;n&&n!==this.roof;n=n.parentElement){if(e.propagationHasBeenStopped)return;this.matchEventAgainstDestinations(n,e)}},t.prototype.matchEventAgainstDestinations=function(t,e){for(var n=0,i=this.destinations.length;n<i;n++){var o=this.destinations[n];o.scopeChecker.isStrictlyInRootScope(t)&&r(t,o.selector)&&(this.mutateEventCurrentTarget(e,t),o.subject._n(e))}},t.prototype.capture=function(t){for(var e=0,n=this.destinations.length;e<n;e++){var i=this.destinations[e];r(t.target,i.selector)&&i.subject._n(t)}},t.prototype.addDestination=function(t,e){var n=o.getScope(e),r=o.getSelectors(e),u=new i.ScopeChecker(n,this.isolateModule);this.destinations.push({subject:t,scopeChecker:u,selector:r})},t.prototype.patchEvent=function(t){var e=t;e.propagationHasBeenStopped=!1;var n=e.stopPropagation;return e.stopPropagation=function(){n.call(this),this.propagationHasBeenStopped=!0},e},t.prototype.mutateEventCurrentTarget=function(t,e){try{Object.defineProperty(t,"currentTarget",{value:e,configurable:!0})}catch(n){console.log("please use event.ownerTarget")}t.ownerTarget=e},t.prototype.updateTopElement=function(t){this.topElement.removeEventListener(this.eventType,this.domListener,this.useCapture),t.addEventListener(this.eventType,this.domListener,this.useCapture),this.topElement=t},t}();e.EventDelegator=s},function(t,e,n){"use strict";var r=n(28),i=n(29),o=n(30),u=function(){function t(t){this.rootElement=t}return t.prototype.call=function(t){var e=o["default"](t.sel),n=e.tagName,u=e.id,s=i["default"](t),a=t.data||{},c=a.props||{},f=c.id,h=void 0===f?u:f,l=h.toUpperCase()===this.rootElement.id.toUpperCase()&&n.toUpperCase()===this.rootElement.tagName.toUpperCase()&&s.toUpperCase()===this.rootElement.className.toUpperCase();if(l)return t;var p=this.rootElement,d=p.tagName,v=p.id,_=p.className,y=v?"#"+v:"",m=_?"."+_.split(" ").join("."):"";return r.h(""+d+y+m,{},[t])},t}();e.VNodeWrapper=u},function(t,e,n){"use strict";function r(t){return!Array.isArray(t)&&"function"==typeof t.map}function i(t){return o(t.data,t.children,t.sel),t}function o(t,e,n){if(t.ns="http://www.w3.org/2000/svg","foreignObject"!==n&&"undefined"!=typeof e&&s.array(e))for(var u=0;u<e.length;++u)r(e[u])?e[u]=e[u].map(i):o(e[u].data,e[u].children,e[u].sel)}function u(t,e,n){var r,i,u,c={};if(3===arguments.length?(c=e,s.array(n)?r=n:s.primitive(n)&&(i=n)):2===arguments.length&&(s.array(e)?r=e:s.primitive(e)?i=e:c=e),s.array(r))for(r=r.filter(function(t){return t}),u=0;u<r.length;++u)s.primitive(r[u])&&(r[u]=a(void 0,void 0,void 0,r[u]));return"s"===t[0]&&"v"===t[1]&&"g"===t[2]&&o(c,r,t),a(t,c,r,i,void 0)}var s=n(14),a=n(13);e.h=u},function(t,e,n){"use strict";function r(t){return t&&t.__esModule?t:{"default":t}}function i(t){var e=(0,u["default"])(t.sel),n=e.className;if(!t.data)return n;var r=t.data,i=r["class"],o=r.props;if(i){var s=Object.keys(t.data["class"]).filter(function(e){return t.data["class"][e];
-});n+=" "+s.join(" ")}return o&&o.className&&(n+=" "+o.className),n.trim()}Object.defineProperty(e,"__esModule",{value:!0}),e["default"]=i;var o=n(30),u=r(o)},function(t,e,n){"use strict";function r(t){return t&&t.__esModule?t:{"default":t}}function i(){var t=arguments.length<=0||void 0===arguments[0]?"":arguments[0],e=void 0,n="",r=[],i=(0,u["default"])(t,s);(a.test(i[1])||""===t)&&(e="div");var o=void 0,c=void 0,f=void 0;for(f=0;f<i.length;f++)o=i[f],o&&(c=o.charAt(0),e?"."===c?r.push(o.substring(1,o.length)):"#"===c&&(n=o.substring(1,o.length)):e=o);return{tagName:e,id:n,className:r.join(" ")}}Object.defineProperty(e,"__esModule",{value:!0}),e["default"]=i;var o=n(31),u=r(o),s=/([\.#]?[a-zA-Z0-9\u007F-\uFFFF_:-]+)/,a=/^\.|#/},function(t,e){/*!
+/******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+/******/
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId])
+/******/ 			return installedModules[moduleId].exports;
+/******/
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			exports: {},
+/******/ 			id: moduleId,
+/******/ 			loaded: false
+/******/ 		};
+/******/
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/
+/******/ 		// Flag the module as loaded
+/******/ 		module.loaded = true;
+/******/
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/
+/******/
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+/******/
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+/******/
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "";
+/******/
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(0);
+/******/ })
+/************************************************************************/
+/******/ ([
+/* 0 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var main_1 = __webpack_require__(1);
+	var xstream_run_1 = __webpack_require__(77);
+	var dom_1 = __webpack_require__(9);
+	xstream_run_1.run(main_1.default, {
+	    dom: dom_1.makeDOMDriver('#app')
+	});
+
+
+/***/ },
+/* 1 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var intent_1 = __webpack_require__(2);
+	var model_1 = __webpack_require__(3);
+	var view_1 = __webpack_require__(8);
+	function main(sources) {
+	    var vdom$ = view_1.default(model_1.default(intent_1.default(sources)));
+	    return {
+	        dom: vdom$
+	    };
+	}
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = main;
+
+
+/***/ },
+/* 2 */
+/***/ function(module, exports) {
+
+	"use strict";
+	function disabled(event) {
+	    return event.target.className.indexOf('disabled') !== -1;
+	}
+	function intent(sources) {
+	    var dom = sources.dom;
+	    var newGame$ = dom
+	        .select('.new')
+	        .events('click')
+	        .filter(function (ev) { return !disabled(ev); })
+	        .map(function (ev) {
+	        ev.preventDefault();
+	        return true;
+	    }).startWith(true);
+	    var reset$ = dom
+	        .select('.reset')
+	        .events('click')
+	        .filter(function (ev) { return !disabled(ev); })
+	        .map(function (ev) {
+	        ev.preventDefault();
+	        return true;
+	    });
+	    var selectCell$ = dom
+	        .select('.cell span')
+	        .events('click')
+	        .filter(function (ev) { return !disabled(ev); })
+	        .map(function (ev) {
+	        ev.preventDefault();
+	        return parseInt(ev.target
+	            .parentElement
+	            .attributes['data-index']
+	            .value);
+	    });
+	    return {
+	        newGame$: newGame$,
+	        reset$: reset$,
+	        selectCell$: selectCell$
+	    };
+	}
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = intent;
+
+
+/***/ },
+/* 3 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var reducers_1 = __webpack_require__(4);
+	function model(actions) {
+	    var state = reducers_1.default(actions);
+	    return state;
+	}
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = model;
+
+
+/***/ },
+/* 4 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var xstream_1 = __webpack_require__(5);
+	var delay_1 = __webpack_require__(7);
+	var dropRepeats_1 = __webpack_require__(81);
+	function reduce(reducer$, initial) {
+	    var value$ = reducer$.fold(function (current, reducer) { return reducer(current); }, initial);
+	    return value$;
+	}
+	function reducers(actions) {
+	    // alias
+	    var xs = xstream_1.default;
+	    var puzzle$ = actions.newGame$
+	        .map(function () {
+	        var puzzle = [];
+	        var maxSize = 9;
+	        for (var i = 0; i < maxSize; i++) {
+	            var nextNumber = Math.floor(Math.random() * 25);
+	            while (puzzle.indexOf(nextNumber) !== -1)
+	                nextNumber = Math.floor(Math.random() * 25);
+	            puzzle.push(nextNumber);
+	        }
+	        return puzzle;
+	    }).remember();
+	    var selectedCellsReducer$ = xs.merge(actions.newGame$
+	        .mapTo(function () { return new Array(); }), actions.reset$
+	        .mapTo(function () { return new Array(); }), actions.selectCell$
+	        .map(function (clicked) {
+	        return function (selectedCells) {
+	            var selected = selectedCells.indexOf(clicked) !== -1;
+	            return selected
+	                ? selectedCells.filter(function (x) { return x != clicked; })
+	                : selectedCells.concat(clicked);
+	        };
+	    }));
+	    var selectedCells$ = reduce(selectedCellsReducer$, new Array())
+	        .remember();
+	    var allowed$ = xs.merge(actions.newGame$
+	        .mapTo(false), actions.newGame$
+	        .compose(delay_1.default(4000))
+	        .mapTo(true)).remember();
+	    var over$ = selectedCells$
+	        .map(function (selected) { return selected.length === 9; })
+	        .compose(dropRepeats_1.default(function (prev, next) { return prev === next; }));
+	    var result$ = xs.merge(actions.newGame$
+	        .mapTo(null), over$
+	        .filter(Boolean)
+	        .map(function () {
+	        return puzzle$.map(function (puzzle) {
+	            return selectedCells$.map(function (selected) {
+	                var result = {
+	                    correct: selected.filter(function (s) { return puzzle.indexOf(s) !== -1; }),
+	                    wrong: selected.filter(function (s) { return puzzle.indexOf(s) === -1; }),
+	                    missed: puzzle.filter(function (p) { return selected.indexOf(p) === -1; })
+	                };
+	                return result;
+	            });
+	        }).flatten();
+	    }).flatten()).startWith(null);
+	    var scoreReducer$ = result$
+	        .filter(Boolean)
+	        .map(function (result) {
+	        return function (score) {
+	            var won = result.correct.length === 9;
+	            score = score || 0;
+	            return won ? score + 1 : score;
+	        };
+	    });
+	    var score$ = reduce(scoreReducer$, 0)
+	        .remember();
+	    return {
+	        puzzle$: puzzle$,
+	        allowed$: allowed$,
+	        selectedCells$: selectedCells$,
+	        over$: over$,
+	        score$: score$,
+	        result$: result$
+	    };
+	}
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = reducers;
+
+
+/***/ },
+/* 5 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var core_1 = __webpack_require__(6);
+	exports.Stream = core_1.Stream;
+	exports.MemoryStream = core_1.MemoryStream;
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = core_1.Stream;
+	//# sourceMappingURL=index.js.map
+
+/***/ },
+/* 6 */
+/***/ function(module, exports) {
+
+	"use strict";
+	var __extends = (this && this.__extends) || function (d, b) {
+	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+	    function __() { this.constructor = d; }
+	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	};
+	var empty = {};
+	function noop() { }
+	function copy(a) {
+	    var l = a.length;
+	    var b = Array(l);
+	    for (var i = 0; i < l; ++i) {
+	        b[i] = a[i];
+	    }
+	    return b;
+	}
+	exports.emptyIL = {
+	    _n: noop,
+	    _e: noop,
+	    _c: noop,
+	};
+	// mutates the input
+	function internalizeProducer(producer) {
+	    producer._start =
+	        function _start(il) {
+	            il.next = il._n;
+	            il.error = il._e;
+	            il.complete = il._c;
+	            this.start(il);
+	        };
+	    producer._stop = producer.stop;
+	}
+	function compose2(f1, f2) {
+	    return function composedFn(arg) {
+	        return f1(f2(arg));
+	    };
+	}
+	function and(f1, f2) {
+	    return function andFn(t) {
+	        return f1(t) && f2(t);
+	    };
+	}
+	var MergeProducer = (function () {
+	    function MergeProducer(insArr) {
+	        this.insArr = insArr;
+	        this.type = 'merge';
+	        this.out = null;
+	        this.ac = insArr.length;
+	    }
+	    MergeProducer.prototype._start = function (out) {
+	        this.out = out;
+	        var s = this.insArr;
+	        var L = s.length;
+	        for (var i = 0; i < L; i++) {
+	            s[i]._add(this);
+	        }
+	    };
+	    MergeProducer.prototype._stop = function () {
+	        var s = this.insArr;
+	        var L = s.length;
+	        for (var i = 0; i < L; i++) {
+	            s[i]._remove(this);
+	        }
+	        this.out = null;
+	        this.ac = L;
+	    };
+	    MergeProducer.prototype._n = function (t) {
+	        var u = this.out;
+	        if (!u)
+	            return;
+	        u._n(t);
+	    };
+	    MergeProducer.prototype._e = function (err) {
+	        var u = this.out;
+	        if (!u)
+	            return;
+	        u._e(err);
+	    };
+	    MergeProducer.prototype._c = function () {
+	        if (--this.ac === 0) {
+	            var u = this.out;
+	            if (!u)
+	                return;
+	            u._c();
+	        }
+	    };
+	    return MergeProducer;
+	}());
+	exports.MergeProducer = MergeProducer;
+	var CombineListener = (function () {
+	    function CombineListener(i, out, p) {
+	        this.i = i;
+	        this.out = out;
+	        this.p = p;
+	        p.ils.push(this);
+	    }
+	    CombineListener.prototype._n = function (t) {
+	        var p = this.p, out = this.out;
+	        if (!out)
+	            return;
+	        if (p.up(t, this.i)) {
+	            out._n(p.vals);
+	        }
+	    };
+	    CombineListener.prototype._e = function (err) {
+	        var out = this.out;
+	        if (!out)
+	            return;
+	        out._e(err);
+	    };
+	    CombineListener.prototype._c = function () {
+	        var p = this.p;
+	        if (!p.out)
+	            return;
+	        if (--p.Nc === 0) {
+	            p.out._c();
+	        }
+	    };
+	    return CombineListener;
+	}());
+	exports.CombineListener = CombineListener;
+	var CombineProducer = (function () {
+	    function CombineProducer(insArr) {
+	        this.insArr = insArr;
+	        this.type = 'combine';
+	        this.out = null;
+	        this.ils = [];
+	        var n = this.Nc = this.Nn = insArr.length;
+	        var vals = this.vals = new Array(n);
+	        for (var i = 0; i < n; i++) {
+	            vals[i] = empty;
+	        }
+	    }
+	    CombineProducer.prototype.up = function (t, i) {
+	        var v = this.vals[i];
+	        var Nn = !this.Nn ? 0 : v === empty ? --this.Nn : this.Nn;
+	        this.vals[i] = t;
+	        return Nn === 0;
+	    };
+	    CombineProducer.prototype._start = function (out) {
+	        this.out = out;
+	        var s = this.insArr;
+	        var n = s.length;
+	        if (n === 0) {
+	            out._n([]);
+	            out._c();
+	        }
+	        else {
+	            for (var i = 0; i < n; i++) {
+	                s[i]._add(new CombineListener(i, out, this));
+	            }
+	        }
+	    };
+	    CombineProducer.prototype._stop = function () {
+	        var s = this.insArr;
+	        var n = this.Nc = this.Nn = s.length;
+	        var vals = this.vals = new Array(n);
+	        for (var i = 0; i < n; i++) {
+	            s[i]._remove(this.ils[i]);
+	            vals[i] = empty;
+	        }
+	        this.out = null;
+	        this.ils = [];
+	    };
+	    return CombineProducer;
+	}());
+	exports.CombineProducer = CombineProducer;
+	var FromArrayProducer = (function () {
+	    function FromArrayProducer(a) {
+	        this.a = a;
+	        this.type = 'fromArray';
+	    }
+	    FromArrayProducer.prototype._start = function (out) {
+	        var a = this.a;
+	        for (var i = 0, l = a.length; i < l; i++) {
+	            out._n(a[i]);
+	        }
+	        out._c();
+	    };
+	    FromArrayProducer.prototype._stop = function () {
+	    };
+	    return FromArrayProducer;
+	}());
+	exports.FromArrayProducer = FromArrayProducer;
+	var FromPromiseProducer = (function () {
+	    function FromPromiseProducer(p) {
+	        this.p = p;
+	        this.type = 'fromPromise';
+	        this.on = false;
+	    }
+	    FromPromiseProducer.prototype._start = function (out) {
+	        var prod = this;
+	        this.on = true;
+	        this.p.then(function (v) {
+	            if (prod.on) {
+	                out._n(v);
+	                out._c();
+	            }
+	        }, function (e) {
+	            out._e(e);
+	        }).then(null, function (err) {
+	            setTimeout(function () { throw err; });
+	        });
+	    };
+	    FromPromiseProducer.prototype._stop = function () {
+	        this.on = false;
+	    };
+	    return FromPromiseProducer;
+	}());
+	exports.FromPromiseProducer = FromPromiseProducer;
+	var PeriodicProducer = (function () {
+	    function PeriodicProducer(period) {
+	        this.period = period;
+	        this.type = 'periodic';
+	        this.intervalID = -1;
+	        this.i = 0;
+	    }
+	    PeriodicProducer.prototype._start = function (stream) {
+	        var self = this;
+	        function intervalHandler() { stream._n(self.i++); }
+	        this.intervalID = setInterval(intervalHandler, this.period);
+	    };
+	    PeriodicProducer.prototype._stop = function () {
+	        if (this.intervalID !== -1)
+	            clearInterval(this.intervalID);
+	        this.intervalID = -1;
+	        this.i = 0;
+	    };
+	    return PeriodicProducer;
+	}());
+	exports.PeriodicProducer = PeriodicProducer;
+	var DebugOperator = (function () {
+	    function DebugOperator(arg, ins) {
+	        this.ins = ins;
+	        this.type = 'debug';
+	        this.out = null;
+	        this.s = null; // spy
+	        this.l = null; // label
+	        if (typeof arg === 'string') {
+	            this.l = arg;
+	        }
+	        else {
+	            this.s = arg;
+	        }
+	    }
+	    DebugOperator.prototype._start = function (out) {
+	        this.out = out;
+	        this.ins._add(this);
+	    };
+	    DebugOperator.prototype._stop = function () {
+	        this.ins._remove(this);
+	        this.out = null;
+	    };
+	    DebugOperator.prototype._n = function (t) {
+	        var u = this.out;
+	        if (!u)
+	            return;
+	        var s = this.s, l = this.l;
+	        if (s) {
+	            try {
+	                s(t);
+	            }
+	            catch (e) {
+	                u._e(e);
+	            }
+	        }
+	        else if (l) {
+	            console.log(l + ':', t);
+	        }
+	        else {
+	            console.log(t);
+	        }
+	        u._n(t);
+	    };
+	    DebugOperator.prototype._e = function (err) {
+	        var u = this.out;
+	        if (!u)
+	            return;
+	        u._e(err);
+	    };
+	    DebugOperator.prototype._c = function () {
+	        var u = this.out;
+	        if (!u)
+	            return;
+	        u._c();
+	    };
+	    return DebugOperator;
+	}());
+	exports.DebugOperator = DebugOperator;
+	var DropOperator = (function () {
+	    function DropOperator(max, ins) {
+	        this.max = max;
+	        this.ins = ins;
+	        this.type = 'drop';
+	        this.out = null;
+	        this.dropped = 0;
+	    }
+	    DropOperator.prototype._start = function (out) {
+	        this.out = out;
+	        this.ins._add(this);
+	    };
+	    DropOperator.prototype._stop = function () {
+	        this.ins._remove(this);
+	        this.out = null;
+	        this.dropped = 0;
+	    };
+	    DropOperator.prototype._n = function (t) {
+	        var u = this.out;
+	        if (!u)
+	            return;
+	        if (this.dropped++ >= this.max)
+	            u._n(t);
+	    };
+	    DropOperator.prototype._e = function (err) {
+	        var u = this.out;
+	        if (!u)
+	            return;
+	        u._e(err);
+	    };
+	    DropOperator.prototype._c = function () {
+	        var u = this.out;
+	        if (!u)
+	            return;
+	        u._c();
+	    };
+	    return DropOperator;
+	}());
+	exports.DropOperator = DropOperator;
+	var OtherIL = (function () {
+	    function OtherIL(out, op) {
+	        this.out = out;
+	        this.op = op;
+	    }
+	    OtherIL.prototype._n = function (t) {
+	        this.op.end();
+	    };
+	    OtherIL.prototype._e = function (err) {
+	        this.out._e(err);
+	    };
+	    OtherIL.prototype._c = function () {
+	        this.op.end();
+	    };
+	    return OtherIL;
+	}());
+	var EndWhenOperator = (function () {
+	    function EndWhenOperator(o, // o = other
+	        ins) {
+	        this.o = o;
+	        this.ins = ins;
+	        this.type = 'endWhen';
+	        this.out = null;
+	        this.oil = exports.emptyIL; // oil = other InternalListener
+	    }
+	    EndWhenOperator.prototype._start = function (out) {
+	        this.out = out;
+	        this.o._add(this.oil = new OtherIL(out, this));
+	        this.ins._add(this);
+	    };
+	    EndWhenOperator.prototype._stop = function () {
+	        this.ins._remove(this);
+	        this.o._remove(this.oil);
+	        this.out = null;
+	        this.oil = null;
+	    };
+	    EndWhenOperator.prototype.end = function () {
+	        var u = this.out;
+	        if (!u)
+	            return;
+	        u._c();
+	    };
+	    EndWhenOperator.prototype._n = function (t) {
+	        var u = this.out;
+	        if (!u)
+	            return;
+	        u._n(t);
+	    };
+	    EndWhenOperator.prototype._e = function (err) {
+	        var u = this.out;
+	        if (!u)
+	            return;
+	        u._e(err);
+	    };
+	    EndWhenOperator.prototype._c = function () {
+	        this.end();
+	    };
+	    return EndWhenOperator;
+	}());
+	exports.EndWhenOperator = EndWhenOperator;
+	var FilterOperator = (function () {
+	    function FilterOperator(passes, ins) {
+	        this.passes = passes;
+	        this.ins = ins;
+	        this.type = 'filter';
+	        this.out = null;
+	    }
+	    FilterOperator.prototype._start = function (out) {
+	        this.out = out;
+	        this.ins._add(this);
+	    };
+	    FilterOperator.prototype._stop = function () {
+	        this.ins._remove(this);
+	        this.out = null;
+	    };
+	    FilterOperator.prototype._n = function (t) {
+	        var u = this.out;
+	        if (!u)
+	            return;
+	        try {
+	            if (this.passes(t))
+	                u._n(t);
+	        }
+	        catch (e) {
+	            u._e(e);
+	        }
+	    };
+	    FilterOperator.prototype._e = function (err) {
+	        var u = this.out;
+	        if (!u)
+	            return;
+	        u._e(err);
+	    };
+	    FilterOperator.prototype._c = function () {
+	        var u = this.out;
+	        if (!u)
+	            return;
+	        u._c();
+	    };
+	    return FilterOperator;
+	}());
+	exports.FilterOperator = FilterOperator;
+	var FlattenListener = (function () {
+	    function FlattenListener(out, op) {
+	        this.out = out;
+	        this.op = op;
+	    }
+	    FlattenListener.prototype._n = function (t) {
+	        this.out._n(t);
+	    };
+	    FlattenListener.prototype._e = function (err) {
+	        this.out._e(err);
+	    };
+	    FlattenListener.prototype._c = function () {
+	        this.op.inner = null;
+	        this.op.less();
+	    };
+	    return FlattenListener;
+	}());
+	var FlattenOperator = (function () {
+	    function FlattenOperator(ins) {
+	        this.ins = ins;
+	        this.type = 'flatten';
+	        this.inner = null; // Current inner Stream
+	        this.il = null; // Current inner InternalListener
+	        this.open = true;
+	        this.out = null;
+	    }
+	    FlattenOperator.prototype._start = function (out) {
+	        this.out = out;
+	        this.ins._add(this);
+	    };
+	    FlattenOperator.prototype._stop = function () {
+	        this.ins._remove(this);
+	        if (this.inner)
+	            this.inner._remove(this.il);
+	        this.inner = null;
+	        this.il = null;
+	        this.open = true;
+	        this.out = null;
+	    };
+	    FlattenOperator.prototype.less = function () {
+	        var u = this.out;
+	        if (!u)
+	            return;
+	        if (!this.open && !this.inner)
+	            u._c();
+	    };
+	    FlattenOperator.prototype._n = function (s) {
+	        var u = this.out;
+	        if (!u)
+	            return;
+	        var _a = this, inner = _a.inner, il = _a.il;
+	        if (inner && il)
+	            inner._remove(il);
+	        (this.inner = s)._add(this.il = new FlattenListener(u, this));
+	    };
+	    FlattenOperator.prototype._e = function (err) {
+	        var u = this.out;
+	        if (!u)
+	            return;
+	        u._e(err);
+	    };
+	    FlattenOperator.prototype._c = function () {
+	        this.open = false;
+	        this.less();
+	    };
+	    return FlattenOperator;
+	}());
+	exports.FlattenOperator = FlattenOperator;
+	var FoldOperator = (function () {
+	    function FoldOperator(f, seed, ins) {
+	        this.f = f;
+	        this.seed = seed;
+	        this.ins = ins;
+	        this.type = 'fold';
+	        this.out = null;
+	        this.acc = seed;
+	    }
+	    FoldOperator.prototype._start = function (out) {
+	        this.out = out;
+	        out._n(this.acc);
+	        this.ins._add(this);
+	    };
+	    FoldOperator.prototype._stop = function () {
+	        this.ins._remove(this);
+	        this.out = null;
+	        this.acc = this.seed;
+	    };
+	    FoldOperator.prototype._n = function (t) {
+	        var u = this.out;
+	        if (!u)
+	            return;
+	        try {
+	            u._n(this.acc = this.f(this.acc, t));
+	        }
+	        catch (e) {
+	            u._e(e);
+	        }
+	    };
+	    FoldOperator.prototype._e = function (err) {
+	        var u = this.out;
+	        if (!u)
+	            return;
+	        u._e(err);
+	    };
+	    FoldOperator.prototype._c = function () {
+	        var u = this.out;
+	        if (!u)
+	            return;
+	        u._c();
+	    };
+	    return FoldOperator;
+	}());
+	exports.FoldOperator = FoldOperator;
+	var LastOperator = (function () {
+	    function LastOperator(ins) {
+	        this.ins = ins;
+	        this.type = 'last';
+	        this.out = null;
+	        this.has = false;
+	        this.val = empty;
+	    }
+	    LastOperator.prototype._start = function (out) {
+	        this.out = out;
+	        this.ins._add(this);
+	    };
+	    LastOperator.prototype._stop = function () {
+	        this.ins._remove(this);
+	        this.out = null;
+	        this.has = false;
+	        this.val = empty;
+	    };
+	    LastOperator.prototype._n = function (t) {
+	        this.has = true;
+	        this.val = t;
+	    };
+	    LastOperator.prototype._e = function (err) {
+	        var u = this.out;
+	        if (!u)
+	            return;
+	        u._e(err);
+	    };
+	    LastOperator.prototype._c = function () {
+	        var u = this.out;
+	        if (!u)
+	            return;
+	        if (this.has) {
+	            u._n(this.val);
+	            u._c();
+	        }
+	        else {
+	            u._e('TODO show proper error');
+	        }
+	    };
+	    return LastOperator;
+	}());
+	exports.LastOperator = LastOperator;
+	var MapFlattenInner = (function () {
+	    function MapFlattenInner(out, op) {
+	        this.out = out;
+	        this.op = op;
+	    }
+	    MapFlattenInner.prototype._n = function (r) {
+	        this.out._n(r);
+	    };
+	    MapFlattenInner.prototype._e = function (err) {
+	        this.out._e(err);
+	    };
+	    MapFlattenInner.prototype._c = function () {
+	        this.op.inner = null;
+	        this.op.less();
+	    };
+	    return MapFlattenInner;
+	}());
+	var MapFlattenOperator = (function () {
+	    function MapFlattenOperator(mapOp) {
+	        this.mapOp = mapOp;
+	        this.inner = null; // Current inner Stream
+	        this.il = null; // Current inner InternalListener
+	        this.open = true;
+	        this.out = null;
+	        this.type = mapOp.type + "+flatten";
+	        this.ins = mapOp.ins;
+	    }
+	    MapFlattenOperator.prototype._start = function (out) {
+	        this.out = out;
+	        this.mapOp.ins._add(this);
+	    };
+	    MapFlattenOperator.prototype._stop = function () {
+	        this.mapOp.ins._remove(this);
+	        if (this.inner)
+	            this.inner._remove(this.il);
+	        this.inner = null;
+	        this.il = null;
+	        this.open = true;
+	        this.out = null;
+	    };
+	    MapFlattenOperator.prototype.less = function () {
+	        if (!this.open && !this.inner) {
+	            var u = this.out;
+	            if (!u)
+	                return;
+	            u._c();
+	        }
+	    };
+	    MapFlattenOperator.prototype._n = function (v) {
+	        var u = this.out;
+	        if (!u)
+	            return;
+	        var _a = this, inner = _a.inner, il = _a.il;
+	        if (inner && il)
+	            inner._remove(il);
+	        try {
+	            (this.inner = this.mapOp.project(v))._add(this.il = new MapFlattenInner(u, this));
+	        }
+	        catch (e) {
+	            u._e(e);
+	        }
+	    };
+	    MapFlattenOperator.prototype._e = function (err) {
+	        var u = this.out;
+	        if (!u)
+	            return;
+	        u._e(err);
+	    };
+	    MapFlattenOperator.prototype._c = function () {
+	        this.open = false;
+	        this.less();
+	    };
+	    return MapFlattenOperator;
+	}());
+	exports.MapFlattenOperator = MapFlattenOperator;
+	var MapOperator = (function () {
+	    function MapOperator(project, ins) {
+	        this.project = project;
+	        this.ins = ins;
+	        this.type = 'map';
+	        this.out = null;
+	    }
+	    MapOperator.prototype._start = function (out) {
+	        this.out = out;
+	        this.ins._add(this);
+	    };
+	    MapOperator.prototype._stop = function () {
+	        this.ins._remove(this);
+	        this.out = null;
+	    };
+	    MapOperator.prototype._n = function (t) {
+	        var u = this.out;
+	        if (!u)
+	            return;
+	        try {
+	            u._n(this.project(t));
+	        }
+	        catch (e) {
+	            u._e(e);
+	        }
+	    };
+	    MapOperator.prototype._e = function (err) {
+	        var u = this.out;
+	        if (!u)
+	            return;
+	        u._e(err);
+	    };
+	    MapOperator.prototype._c = function () {
+	        var u = this.out;
+	        if (!u)
+	            return;
+	        u._c();
+	    };
+	    return MapOperator;
+	}());
+	exports.MapOperator = MapOperator;
+	var FilterMapOperator = (function (_super) {
+	    __extends(FilterMapOperator, _super);
+	    function FilterMapOperator(passes, project, ins) {
+	        _super.call(this, project, ins);
+	        this.passes = passes;
+	        this.type = 'filter+map';
+	    }
+	    FilterMapOperator.prototype._n = function (v) {
+	        if (this.passes(v)) {
+	            _super.prototype._n.call(this, v);
+	        }
+	        ;
+	    };
+	    return FilterMapOperator;
+	}(MapOperator));
+	exports.FilterMapOperator = FilterMapOperator;
+	var RememberOperator = (function () {
+	    function RememberOperator(ins) {
+	        this.ins = ins;
+	        this.type = 'remember';
+	        this.out = exports.emptyIL;
+	    }
+	    RememberOperator.prototype._start = function (out) {
+	        this.out = out;
+	        this.ins._add(out);
+	    };
+	    RememberOperator.prototype._stop = function () {
+	        this.ins._remove(this.out);
+	        this.out = null;
+	    };
+	    return RememberOperator;
+	}());
+	exports.RememberOperator = RememberOperator;
+	var ReplaceErrorOperator = (function () {
+	    function ReplaceErrorOperator(fn, ins) {
+	        this.fn = fn;
+	        this.ins = ins;
+	        this.type = 'replaceError';
+	        this.out = empty;
+	    }
+	    ReplaceErrorOperator.prototype._start = function (out) {
+	        this.out = out;
+	        this.ins._add(this);
+	    };
+	    ReplaceErrorOperator.prototype._stop = function () {
+	        this.ins._remove(this);
+	        this.out = null;
+	    };
+	    ReplaceErrorOperator.prototype._n = function (t) {
+	        var u = this.out;
+	        if (!u)
+	            return;
+	        u._n(t);
+	    };
+	    ReplaceErrorOperator.prototype._e = function (err) {
+	        var u = this.out;
+	        if (!u)
+	            return;
+	        try {
+	            this.ins._remove(this);
+	            (this.ins = this.fn(err))._add(this);
+	        }
+	        catch (e) {
+	            u._e(e);
+	        }
+	    };
+	    ReplaceErrorOperator.prototype._c = function () {
+	        var u = this.out;
+	        if (!u)
+	            return;
+	        u._c();
+	    };
+	    return ReplaceErrorOperator;
+	}());
+	exports.ReplaceErrorOperator = ReplaceErrorOperator;
+	var StartWithOperator = (function () {
+	    function StartWithOperator(ins, value) {
+	        this.ins = ins;
+	        this.value = value;
+	        this.type = 'startWith';
+	        this.out = exports.emptyIL;
+	    }
+	    StartWithOperator.prototype._start = function (out) {
+	        this.out = out;
+	        this.out._n(this.value);
+	        this.ins._add(out);
+	    };
+	    StartWithOperator.prototype._stop = function () {
+	        this.ins._remove(this.out);
+	        this.out = null;
+	    };
+	    return StartWithOperator;
+	}());
+	exports.StartWithOperator = StartWithOperator;
+	var TakeOperator = (function () {
+	    function TakeOperator(max, ins) {
+	        this.max = max;
+	        this.ins = ins;
+	        this.type = 'take';
+	        this.out = null;
+	        this.taken = 0;
+	    }
+	    TakeOperator.prototype._start = function (out) {
+	        this.out = out;
+	        this.ins._add(this);
+	    };
+	    TakeOperator.prototype._stop = function () {
+	        this.ins._remove(this);
+	        this.out = null;
+	        this.taken = 0;
+	    };
+	    TakeOperator.prototype._n = function (t) {
+	        var u = this.out;
+	        if (!u)
+	            return;
+	        if (this.taken++ < this.max - 1) {
+	            u._n(t);
+	        }
+	        else {
+	            u._n(t);
+	            u._c();
+	        }
+	    };
+	    TakeOperator.prototype._e = function (err) {
+	        var u = this.out;
+	        if (!u)
+	            return;
+	        u._e(err);
+	    };
+	    TakeOperator.prototype._c = function () {
+	        var u = this.out;
+	        if (!u)
+	            return;
+	        u._c();
+	    };
+	    return TakeOperator;
+	}());
+	exports.TakeOperator = TakeOperator;
+	var Stream = (function () {
+	    function Stream(producer) {
+	        this._stopID = empty;
+	        this._prod = producer;
+	        this._ils = [];
+	        this._target = null;
+	        this._err = null;
+	    }
+	    Stream.prototype._n = function (t) {
+	        var a = this._ils;
+	        var L = a.length;
+	        if (L == 1)
+	            a[0]._n(t);
+	        else {
+	            var b = copy(a);
+	            for (var i = 0; i < L; i++)
+	                b[i]._n(t);
+	        }
+	    };
+	    Stream.prototype._e = function (err) {
+	        if (this._err)
+	            return;
+	        this._err = err;
+	        var a = this._ils;
+	        var L = a.length;
+	        if (L == 1)
+	            a[0]._e(err);
+	        else {
+	            var b = copy(a);
+	            for (var i = 0; i < L; i++)
+	                b[i]._e(err);
+	        }
+	        this._x();
+	    };
+	    Stream.prototype._c = function () {
+	        var a = this._ils;
+	        var L = a.length;
+	        if (L == 1)
+	            a[0]._c();
+	        else {
+	            var b = copy(a);
+	            for (var i = 0; i < L; i++)
+	                b[i]._c();
+	        }
+	        this._x();
+	    };
+	    Stream.prototype._x = function () {
+	        if (this._ils.length === 0)
+	            return;
+	        if (this._prod)
+	            this._prod._stop();
+	        this._err = null;
+	        this._ils = [];
+	    };
+	    Stream.prototype._lateStop = function () {
+	        // this._prod is not null, because this _lateStop is called from _remove
+	        // where we already checked that this._prod is truthy
+	        this._prod._stop();
+	        this._err = null;
+	    };
+	    Stream.prototype._add = function (il) {
+	        var ta = this._target;
+	        if (ta)
+	            return ta._add(il);
+	        var a = this._ils;
+	        a.push(il);
+	        if (a.length === 1) {
+	            if (this._stopID !== empty) {
+	                clearTimeout(this._stopID);
+	                this._stopID = empty;
+	            }
+	            var p = this._prod;
+	            if (p)
+	                p._start(this);
+	        }
+	    };
+	    Stream.prototype._remove = function (il) {
+	        var _this = this;
+	        var ta = this._target;
+	        if (ta)
+	            return ta._remove(il);
+	        var a = this._ils;
+	        var i = a.indexOf(il);
+	        if (i > -1) {
+	            a.splice(i, 1);
+	            if (this._prod && a.length <= 0) {
+	                this._err = null;
+	                this._stopID = setTimeout(function () { return _this._lateStop(); });
+	            }
+	            else if (a.length === 1) {
+	                this._pruneCycles();
+	            }
+	        }
+	    };
+	    // If all paths stemming from `this` stream eventually end at `this`
+	    // stream, then we remove the single listener of `this` stream, to
+	    // force it to end its execution and dispose resources. This method
+	    // assumes as a precondition that this._ils has just one listener.
+	    Stream.prototype._pruneCycles = function () {
+	        if (this._hasNoSinks(this, [])) {
+	            this._remove(this._ils[0]);
+	        }
+	    };
+	    // Checks whether *there is no* path starting from `x` that leads to an end
+	    // listener (sink) in the stream graph, following edges A->B where B is a
+	    // listener of A. This means these paths constitute a cycle somehow. Is given
+	    // a trace of all visited nodes so far.
+	    Stream.prototype._hasNoSinks = function (x, trace) {
+	        if (trace.indexOf(x) !== -1) {
+	            return true;
+	        }
+	        else if (x.out === this) {
+	            return true;
+	        }
+	        else if (x.out) {
+	            return this._hasNoSinks(x.out, trace.concat(x));
+	        }
+	        else if (x._ils) {
+	            for (var i = 0, N = x._ils.length; i < N; i++) {
+	                if (!this._hasNoSinks(x._ils[i], trace.concat(x))) {
+	                    return false;
+	                }
+	            }
+	            return true;
+	        }
+	        else {
+	            return false;
+	        }
+	    };
+	    Stream.prototype.ctor = function () {
+	        return this instanceof MemoryStream ? MemoryStream : Stream;
+	    };
+	    /**
+	     * Adds a Listener to the Stream.
+	     *
+	     * @param {Listener<T>} listener
+	     */
+	    Stream.prototype.addListener = function (listener) {
+	        if (typeof listener.next !== 'function'
+	            || typeof listener.error !== 'function'
+	            || typeof listener.complete !== 'function') {
+	            throw new Error('stream.addListener() requires all three next, error, ' +
+	                'and complete functions.');
+	        }
+	        listener._n = listener.next;
+	        listener._e = listener.error;
+	        listener._c = listener.complete;
+	        this._add(listener);
+	    };
+	    /**
+	     * Removes a Listener from the Stream, assuming the Listener was added to it.
+	     *
+	     * @param {Listener<T>} listener
+	     */
+	    Stream.prototype.removeListener = function (listener) {
+	        this._remove(listener);
+	    };
+	    /**
+	     * Creates a new Stream given a Producer.
+	     *
+	     * @factory true
+	     * @param {Producer} producer An optional Producer that dictates how to
+	     * start, generate events, and stop the Stream.
+	     * @return {Stream}
+	     */
+	    Stream.create = function (producer) {
+	        if (producer) {
+	            if (typeof producer.start !== 'function'
+	                || typeof producer.stop !== 'function') {
+	                throw new Error('producer requires both start and stop functions');
+	            }
+	            internalizeProducer(producer); // mutates the input
+	        }
+	        return new Stream(producer);
+	    };
+	    /**
+	     * Creates a new MemoryStream given a Producer.
+	     *
+	     * @factory true
+	     * @param {Producer} producer An optional Producer that dictates how to
+	     * start, generate events, and stop the Stream.
+	     * @return {MemoryStream}
+	     */
+	    Stream.createWithMemory = function (producer) {
+	        if (producer) {
+	            internalizeProducer(producer); // mutates the input
+	        }
+	        return new MemoryStream(producer);
+	    };
+	    /**
+	     * Creates a Stream that does nothing when started. It never emits any event.
+	     *
+	     * Marble diagram:
+	     *
+	     * ```text
+	     *          never
+	     * -----------------------
+	     * ```
+	     *
+	     * @factory true
+	     * @return {Stream}
+	     */
+	    Stream.never = function () {
+	        return new Stream({ _start: noop, _stop: noop });
+	    };
+	    /**
+	     * Creates a Stream that immediately emits the "complete" notification when
+	     * started, and that's it.
+	     *
+	     * Marble diagram:
+	     *
+	     * ```text
+	     * empty
+	     * -|
+	     * ```
+	     *
+	     * @factory true
+	     * @return {Stream}
+	     */
+	    Stream.empty = function () {
+	        return new Stream({
+	            _start: function (il) { il._c(); },
+	            _stop: noop,
+	        });
+	    };
+	    /**
+	     * Creates a Stream that immediately emits an "error" notification with the
+	     * value you passed as the `error` argument when the stream starts, and that's
+	     * it.
+	     *
+	     * Marble diagram:
+	     *
+	     * ```text
+	     * throw(X)
+	     * -X
+	     * ```
+	     *
+	     * @factory true
+	     * @param error The error event to emit on the created stream.
+	     * @return {Stream}
+	     */
+	    Stream.throw = function (error) {
+	        return new Stream({
+	            _start: function (il) { il._e(error); },
+	            _stop: noop,
+	        });
+	    };
+	    /**
+	     * Creates a Stream that immediately emits the arguments that you give to
+	     * *of*, then completes.
+	     *
+	     * Marble diagram:
+	     *
+	     * ```text
+	     * of(1,2,3)
+	     * 123|
+	     * ```
+	     *
+	     * @factory true
+	     * @param a The first value you want to emit as an event on the stream.
+	     * @param b The second value you want to emit as an event on the stream. One
+	     * or more of these values may be given as arguments.
+	     * @return {Stream}
+	     */
+	    Stream.of = function () {
+	        var items = [];
+	        for (var _i = 0; _i < arguments.length; _i++) {
+	            items[_i - 0] = arguments[_i];
+	        }
+	        return Stream.fromArray(items);
+	    };
+	    /**
+	     * Converts an array to a stream. The returned stream will emit synchronously
+	     * all the items in the array, and then complete.
+	     *
+	     * Marble diagram:
+	     *
+	     * ```text
+	     * fromArray([1,2,3])
+	     * 123|
+	     * ```
+	     *
+	     * @factory true
+	     * @param {Array} array The array to be converted as a stream.
+	     * @return {Stream}
+	     */
+	    Stream.fromArray = function (array) {
+	        return new Stream(new FromArrayProducer(array));
+	    };
+	    /**
+	     * Converts a promise to a stream. The returned stream will emit the resolved
+	     * value of the promise, and then complete. However, if the promise is
+	     * rejected, the stream will emit the corresponding error.
+	     *
+	     * Marble diagram:
+	     *
+	     * ```text
+	     * fromPromise( ----42 )
+	     * -----------------42|
+	     * ```
+	     *
+	     * @factory true
+	     * @param {Promise} promise The promise to be converted as a stream.
+	     * @return {Stream}
+	     */
+	    Stream.fromPromise = function (promise) {
+	        return new Stream(new FromPromiseProducer(promise));
+	    };
+	    /**
+	     * Creates a stream that periodically emits incremental numbers, every
+	     * `period` milliseconds.
+	     *
+	     * Marble diagram:
+	     *
+	     * ```text
+	     *     periodic(1000)
+	     * ---0---1---2---3---4---...
+	     * ```
+	     *
+	     * @factory true
+	     * @param {number} period The interval in milliseconds to use as a rate of
+	     * emission.
+	     * @return {Stream}
+	     */
+	    Stream.periodic = function (period) {
+	        return new Stream(new PeriodicProducer(period));
+	    };
+	    /**
+	     * Blends multiple streams together, emitting events from all of them
+	     * concurrently.
+	     *
+	     * *merge* takes multiple streams as arguments, and creates a stream that
+	     * behaves like each of the argument streams, in parallel.
+	     *
+	     * Marble diagram:
+	     *
+	     * ```text
+	     * --1----2-----3--------4---
+	     * ----a-----b----c---d------
+	     *            merge
+	     * --1-a--2--b--3-c---d--4---
+	     * ```
+	     *
+	     * @factory true
+	     * @param {Stream} stream1 A stream to merge together with other streams.
+	     * @param {Stream} stream2 A stream to merge together with other streams. Two
+	     * or more streams may be given as arguments.
+	     * @return {Stream}
+	     */
+	    Stream.merge = function () {
+	        var streams = [];
+	        for (var _i = 0; _i < arguments.length; _i++) {
+	            streams[_i - 0] = arguments[_i];
+	        }
+	        return new Stream(new MergeProducer(streams));
+	    };
+	    Stream.prototype._map = function (project) {
+	        var p = this._prod;
+	        var ctor = this.ctor();
+	        if (p instanceof FilterOperator) {
+	            return new ctor(new FilterMapOperator(p.passes, project, p.ins));
+	        }
+	        if (p instanceof FilterMapOperator) {
+	            return new ctor(new FilterMapOperator(p.passes, compose2(project, p.project), p.ins));
+	        }
+	        if (p instanceof MapOperator) {
+	            return new ctor(new MapOperator(compose2(project, p.project), p.ins));
+	        }
+	        return new ctor(new MapOperator(project, this));
+	    };
+	    /**
+	     * Transforms each event from the input Stream through a `project` function,
+	     * to get a Stream that emits those transformed events.
+	     *
+	     * Marble diagram:
+	     *
+	     * ```text
+	     * --1---3--5-----7------
+	     *    map(i => i * 10)
+	     * --10--30-50----70-----
+	     * ```
+	     *
+	     * @param {Function} project A function of type `(t: T) => U` that takes event
+	     * `t` of type `T` from the input Stream and produces an event of type `U`, to
+	     * be emitted on the output Stream.
+	     * @return {Stream}
+	     */
+	    Stream.prototype.map = function (project) {
+	        return this._map(project);
+	    };
+	    /**
+	     * It's like `map`, but transforms each input event to always the same
+	     * constant value on the output Stream.
+	     *
+	     * Marble diagram:
+	     *
+	     * ```text
+	     * --1---3--5-----7-----
+	     *       mapTo(10)
+	     * --10--10-10----10----
+	     * ```
+	     *
+	     * @param projectedValue A value to emit on the output Stream whenever the
+	     * input Stream emits any value.
+	     * @return {Stream}
+	     */
+	    Stream.prototype.mapTo = function (projectedValue) {
+	        var s = this.map(function () { return projectedValue; });
+	        var op = s._prod;
+	        op.type = op.type.replace('map', 'mapTo');
+	        return s;
+	    };
+	    /**
+	     * Only allows events that pass the test given by the `passes` argument.
+	     *
+	     * Each event from the input stream is given to the `passes` function. If the
+	     * function returns `true`, the event is forwarded to the output stream,
+	     * otherwise it is ignored and not forwarded.
+	     *
+	     * Marble diagram:
+	     *
+	     * ```text
+	     * --1---2--3-----4-----5---6--7-8--
+	     *     filter(i => i % 2 === 0)
+	     * ------2--------4---------6----8--
+	     * ```
+	     *
+	     * @param {Function} passes A function of type `(t: T) +> boolean` that takes
+	     * an event from the input stream and checks if it passes, by returning a
+	     * boolean.
+	     * @return {Stream}
+	     */
+	    Stream.prototype.filter = function (passes) {
+	        var p = this._prod;
+	        if (p instanceof FilterOperator) {
+	            return new Stream(new FilterOperator(and(passes, p.passes), p.ins));
+	        }
+	        return new Stream(new FilterOperator(passes, this));
+	    };
+	    /**
+	     * Lets the first `amount` many events from the input stream pass to the
+	     * output stream, then makes the output stream complete.
+	     *
+	     * Marble diagram:
+	     *
+	     * ```text
+	     * --a---b--c----d---e--
+	     *    take(3)
+	     * --a---b--c|
+	     * ```
+	     *
+	     * @param {number} amount How many events to allow from the input stream
+	     * before completing the output stream.
+	     * @return {Stream}
+	     */
+	    Stream.prototype.take = function (amount) {
+	        return new (this.ctor())(new TakeOperator(amount, this));
+	    };
+	    /**
+	     * Ignores the first `amount` many events from the input stream, and then
+	     * after that starts forwarding events from the input stream to the output
+	     * stream.
+	     *
+	     * Marble diagram:
+	     *
+	     * ```text
+	     * --a---b--c----d---e--
+	     *       drop(3)
+	     * --------------d---e--
+	     * ```
+	     *
+	     * @param {number} amount How many events to ignore from the input stream
+	     * before forwarding all events from the input stream to the output stream.
+	     * @return {Stream}
+	     */
+	    Stream.prototype.drop = function (amount) {
+	        return new Stream(new DropOperator(amount, this));
+	    };
+	    /**
+	     * When the input stream completes, the output stream will emit the last event
+	     * emitted by the input stream, and then will also complete.
+	     *
+	     * Marble diagram:
+	     *
+	     * ```text
+	     * --a---b--c--d----|
+	     *       last()
+	     * -----------------d|
+	     * ```
+	     *
+	     * @return {Stream}
+	     */
+	    Stream.prototype.last = function () {
+	        return new Stream(new LastOperator(this));
+	    };
+	    /**
+	     * Prepends the given `initial` value to the sequence of events emitted by the
+	     * input stream. The returned stream is a MemoryStream, which means it is
+	     * already `remember()`'d.
+	     *
+	     * Marble diagram:
+	     *
+	     * ```text
+	     * ---1---2-----3---
+	     *   startWith(0)
+	     * 0--1---2-----3---
+	     * ```
+	     *
+	     * @param initial The value or event to prepend.
+	     * @return {MemoryStream}
+	     */
+	    Stream.prototype.startWith = function (initial) {
+	        return new MemoryStream(new StartWithOperator(this, initial));
+	    };
+	    /**
+	     * Uses another stream to determine when to complete the current stream.
+	     *
+	     * When the given `other` stream emits an event or completes, the output
+	     * stream will complete. Before that happens, the output stream will behaves
+	     * like the input stream.
+	     *
+	     * Marble diagram:
+	     *
+	     * ```text
+	     * ---1---2-----3--4----5----6---
+	     *   endWhen( --------a--b--| )
+	     * ---1---2-----3--4--|
+	     * ```
+	     *
+	     * @param other Some other stream that is used to know when should the output
+	     * stream of this operator complete.
+	     * @return {Stream}
+	     */
+	    Stream.prototype.endWhen = function (other) {
+	        return new (this.ctor())(new EndWhenOperator(other, this));
+	    };
+	    /**
+	     * "Folds" the stream onto itself.
+	     *
+	     * Combines events from the past throughout
+	     * the entire execution of the input stream, allowing you to accumulate them
+	     * together. It's essentially like `Array.prototype.reduce`. The returned
+	     * stream is a MemoryStream, which means it is already `remember()`'d.
+	     *
+	     * The output stream starts by emitting the `seed` which you give as argument.
+	     * Then, when an event happens on the input stream, it is combined with that
+	     * seed value through the `accumulate` function, and the output value is
+	     * emitted on the output stream. `fold` remembers that output value as `acc`
+	     * ("accumulator"), and then when a new input event `t` happens, `acc` will be
+	     * combined with that to produce the new `acc` and so forth.
+	     *
+	     * Marble diagram:
+	     *
+	     * ```text
+	     * ------1-----1--2----1----1------
+	     *   fold((acc, x) => acc + x, 3)
+	     * 3-----4-----5--7----8----9------
+	     * ```
+	     *
+	     * @param {Function} accumulate A function of type `(acc: R, t: T) => R` that
+	     * takes the previous accumulated value `acc` and the incoming event from the
+	     * input stream and produces the new accumulated value.
+	     * @param seed The initial accumulated value, of type `R`.
+	     * @return {MemoryStream}
+	     */
+	    Stream.prototype.fold = function (accumulate, seed) {
+	        return new MemoryStream(new FoldOperator(accumulate, seed, this));
+	    };
+	    /**
+	     * Replaces an error with another stream.
+	     *
+	     * When (and if) an error happens on the input stream, instead of forwarding
+	     * that error to the output stream, *replaceError* will call the `replace`
+	     * function which returns the stream that the output stream will replicate.
+	     * And, in case that new stream also emits an error, `replace` will be called
+	     * again to get another stream to start replicating.
+	     *
+	     * Marble diagram:
+	     *
+	     * ```text
+	     * --1---2-----3--4-----X
+	     *   replaceError( () => --10--| )
+	     * --1---2-----3--4--------10--|
+	     * ```
+	     *
+	     * @param {Function} replace A function of type `(err) => Stream` that takes
+	     * the error that occurred on the input stream or on the previous replacement
+	     * stream and returns a new stream. The output stream will behave like the
+	     * stream that this function returns.
+	     * @return {Stream}
+	     */
+	    Stream.prototype.replaceError = function (replace) {
+	        return new (this.ctor())(new ReplaceErrorOperator(replace, this));
+	    };
+	    /**
+	     * Flattens a "stream of streams", handling only one nested stream at a time
+	     * (no concurrency).
+	     *
+	     * If the input stream is a stream that emits streams, then this operator will
+	     * return an output stream which is a flat stream: emits regular events. The
+	     * flattening happens without concurrency. It works like this: when the input
+	     * stream emits a nested stream, *flatten* will start imitating that nested
+	     * one. However, as soon as the next nested stream is emitted on the input
+	     * stream, *flatten* will forget the previous nested one it was imitating, and
+	     * will start imitating the new nested one.
+	     *
+	     * Marble diagram:
+	     *
+	     * ```text
+	     * --+--------+---------------
+	     *   \        \
+	     *    \       ----1----2---3--
+	     *    --a--b----c----d--------
+	     *           flatten
+	     * -----a--b------1----2---3--
+	     * ```
+	     *
+	     * @return {Stream}
+	     */
+	    Stream.prototype.flatten = function () {
+	        var p = this._prod;
+	        return new Stream(p instanceof MapOperator && !(p instanceof FilterMapOperator) ?
+	            new MapFlattenOperator(p) :
+	            new FlattenOperator(this));
+	    };
+	    /**
+	     * Passes the input stream to a custom operator, to produce an output stream.
+	     *
+	     * *compose* is a handy way of using an existing function in a chained style.
+	     * Instead of writing `outStream = f(inStream)` you can write
+	     * `outStream = inStream.compose(f)`.
+	     *
+	     * @param {function} operator A function that takes a stream as input and
+	     * returns a stream as well.
+	     * @return {Stream}
+	     */
+	    Stream.prototype.compose = function (operator) {
+	        return operator(this);
+	    };
+	    /**
+	     * Returns an output stream that behaves like the input stream, but also
+	     * remembers the most recent event that happens on the input stream, so that a
+	     * newly added listener will immediately receive that memorised event.
+	     *
+	     * @return {MemoryStream}
+	     */
+	    Stream.prototype.remember = function () {
+	        return new MemoryStream(new RememberOperator(this));
+	    };
+	    /**
+	     * Returns an output stream that identically behaves like the input stream,
+	     * but also runs a `spy` function fo each event, to help you debug your app.
+	     *
+	     * *debug* takes a `spy` function as argument, and runs that for each event
+	     * happening on the input stream. If you don't provide the `spy` argument,
+	     * then *debug* will just `console.log` each event. This helps you to
+	     * understand the flow of events through some operator chain.
+	     *
+	     * Please note that if the output stream has no listeners, then it will not
+	     * start, which means `spy` will never run because no actual event happens in
+	     * that case.
+	     *
+	     * Marble diagram:
+	     *
+	     * ```text
+	     * --1----2-----3-----4--
+	     *         debug
+	     * --1----2-----3-----4--
+	     * ```
+	     *
+	     * @param {function} labelOrSpy A string to use as the label when printing
+	     * debug information on the console, or a 'spy' function that takes an event
+	     * as argument, and does not need to return anything.
+	     * @return {Stream}
+	     */
+	    Stream.prototype.debug = function (labelOrSpy) {
+	        return new (this.ctor())(new DebugOperator(labelOrSpy, this));
+	    };
+	    /**
+	     * *imitate* changes this current Stream to emit the same events that the
+	     * `other` given Stream does. This method returns nothing.
+	     *
+	     * This method exists to allow one thing: **circular dependency of streams**.
+	     * For instance, let's imagine that for some reason you need to create a
+	     * circular dependency where stream `first$` depends on stream `second$`
+	     * which in turn depends on `first$`:
+	     *
+	     * <!-- skip-example -->
+	     * ```js
+	     * import delay from 'xstream/extra/delay'
+	     *
+	     * var first$ = second$.map(x => x * 10).take(3);
+	     * var second$ = first$.map(x => x + 1).startWith(1).compose(delay(100));
+	     * ```
+	     *
+	     * However, that is invalid JavaScript, because `second$` is undefined
+	     * on the first line. This is how *imitate* can help solve it:
+	     *
+	     * ```js
+	     * import delay from 'xstream/extra/delay'
+	     *
+	     * var secondProxy$ = xs.create();
+	     * var first$ = secondProxy$.map(x => x * 10).take(3);
+	     * var second$ = first$.map(x => x + 1).startWith(1).compose(delay(100));
+	     * secondProxy$.imitate(second$);
+	     * ```
+	     *
+	     * We create `secondProxy$` before the others, so it can be used in the
+	     * declaration of `first$`. Then, after both `first$` and `second$` are
+	     * defined, we hook `secondProxy$` with `second$` with `imitate()` to tell
+	     * that they are "the same". `imitate` will not trigger the start of any
+	     * stream, it just binds `secondProxy$` and `second$` together.
+	     *
+	     * The following is an example where `imitate()` is important in Cycle.js
+	     * applications. A parent component contains some child components. A child
+	     * has an action stream which is given to the parent to define its state:
+	     *
+	     * <!-- skip-example -->
+	     * ```js
+	     * const childActionProxy$ = xs.create();
+	     * const parent = Parent({...sources, childAction$: childActionProxy$});
+	     * const childAction$ = parent.state$.map(s => s.child.action$).flatten();
+	     * childActionProxy$.imitate(childAction$);
+	     * ```
+	     *
+	     * Note, though, that **`imitate()` does not support MemoryStreams**. If we
+	     * would attempt to imitate a MemoryStream in a circular dependency, we would
+	     * either get a race condition (where the symptom would be "nothing happens")
+	     * or an infinite cyclic emission of values. It's useful to think about
+	     * MemoryStreams as cells in a spreadsheet. It doesn't make any sense to
+	     * define a spreadsheet cell `A1` with a formula that depends on `B1` and
+	     * cell `B1` defined with a formula that depends on `A1`.
+	     *
+	     * If you find yourself wanting to use `imitate()` with a
+	     * MemoryStream, you should rework your code around `imitate()` to use a
+	     * Stream instead. Look for the stream in the circular dependency that
+	     * represents an event stream, and that would be a candidate for creating a
+	     * proxy Stream which then imitates the target Stream.
+	     *
+	     * @param {Stream} target The other stream to imitate on the current one. Must
+	     * not be a MemoryStream.
+	     */
+	    Stream.prototype.imitate = function (target) {
+	        if (target instanceof MemoryStream) {
+	            throw new Error('A MemoryStream was given to imitate(), but it only ' +
+	                'supports a Stream. Read more about this restriction here: ' +
+	                'https://github.com/staltz/xstream#faq');
+	        }
+	        this._target = target;
+	        for (var ils = this._ils, N = ils.length, i = 0; i < N; i++) {
+	            target._add(ils[i]);
+	        }
+	        this._ils = [];
+	    };
+	    /**
+	     * Forces the Stream to emit the given value to its listeners.
+	     *
+	     * As the name indicates, if you use this, you are most likely doing something
+	     * The Wrong Way. Please try to understand the reactive way before using this
+	     * method. Use it only when you know what you are doing.
+	     *
+	     * @param value The "next" value you want to broadcast to all listeners of
+	     * this Stream.
+	     */
+	    Stream.prototype.shamefullySendNext = function (value) {
+	        this._n(value);
+	    };
+	    /**
+	     * Forces the Stream to emit the given error to its listeners.
+	     *
+	     * As the name indicates, if you use this, you are most likely doing something
+	     * The Wrong Way. Please try to understand the reactive way before using this
+	     * method. Use it only when you know what you are doing.
+	     *
+	     * @param {any} error The error you want to broadcast to all the listeners of
+	     * this Stream.
+	     */
+	    Stream.prototype.shamefullySendError = function (error) {
+	        this._e(error);
+	    };
+	    /**
+	     * Forces the Stream to emit the "completed" event to its listeners.
+	     *
+	     * As the name indicates, if you use this, you are most likely doing something
+	     * The Wrong Way. Please try to understand the reactive way before using this
+	     * method. Use it only when you know what you are doing.
+	     */
+	    Stream.prototype.shamefullySendComplete = function () {
+	        this._c();
+	    };
+	    /**
+	     * Combines multiple input streams together to return a stream whose events
+	     * are arrays that collect the latest events from each input stream.
+	     *
+	     * *combine* internally remembers the most recent event from each of the input
+	     * streams. When any of the input streams emits an event, that event together
+	     * with all the other saved events are combined into an array. That array will
+	     * be emitted on the output stream. It's essentially a way of joining together
+	     * the events from multiple streams.
+	     *
+	     * Marble diagram:
+	     *
+	     * ```text
+	     * --1----2-----3--------4---
+	     * ----a-----b-----c--d------
+	     *          combine
+	     * ----1a-2a-2b-3b-3c-3d-4d--
+	     * ```
+	     *
+	     * @factory true
+	     * @param {Stream} stream1 A stream to combine together with other streams.
+	     * @param {Stream} stream2 A stream to combine together with other streams.
+	     * Multiple streams, not just two, may be given as arguments.
+	     * @return {Stream}
+	     */
+	    Stream.combine = function combine() {
+	        var streams = [];
+	        for (var _i = 0; _i < arguments.length; _i++) {
+	            streams[_i - 0] = arguments[_i];
+	        }
+	        return new Stream(new CombineProducer(streams));
+	    };
+	    return Stream;
+	}());
+	exports.Stream = Stream;
+	var MemoryStream = (function (_super) {
+	    __extends(MemoryStream, _super);
+	    function MemoryStream(producer) {
+	        _super.call(this, producer);
+	        this._has = false;
+	    }
+	    MemoryStream.prototype._n = function (x) {
+	        this._v = x;
+	        this._has = true;
+	        _super.prototype._n.call(this, x);
+	    };
+	    MemoryStream.prototype._add = function (il) {
+	        if (this._has) {
+	            il._n(this._v);
+	        }
+	        _super.prototype._add.call(this, il);
+	    };
+	    MemoryStream.prototype._lateStop = function () {
+	        this._has = false;
+	        _super.prototype._lateStop.call(this);
+	    };
+	    MemoryStream.prototype._x = function () {
+	        this._has = false;
+	        _super.prototype._x.call(this);
+	    };
+	    MemoryStream.prototype.map = function (project) {
+	        return this._map(project);
+	    };
+	    MemoryStream.prototype.mapTo = function (projectedValue) {
+	        return _super.prototype.mapTo.call(this, projectedValue);
+	    };
+	    MemoryStream.prototype.take = function (amount) {
+	        return _super.prototype.take.call(this, amount);
+	    };
+	    MemoryStream.prototype.endWhen = function (other) {
+	        return _super.prototype.endWhen.call(this, other);
+	    };
+	    MemoryStream.prototype.replaceError = function (replace) {
+	        return _super.prototype.replaceError.call(this, replace);
+	    };
+	    MemoryStream.prototype.debug = function (labelOrSpy) {
+	        return _super.prototype.debug.call(this, labelOrSpy);
+	    };
+	    return MemoryStream;
+	}(Stream));
+	exports.MemoryStream = MemoryStream;
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = Stream;
+	//# sourceMappingURL=core.js.map
+
+/***/ },
+/* 7 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var core_1 = __webpack_require__(6);
+	var DelayOperator = (function () {
+	    function DelayOperator(dt, ins) {
+	        this.dt = dt;
+	        this.ins = ins;
+	        this.type = 'delay';
+	        this.out = null;
+	    }
+	    DelayOperator.prototype._start = function (out) {
+	        this.out = out;
+	        this.ins._add(this);
+	    };
+	    DelayOperator.prototype._stop = function () {
+	        this.ins._remove(this);
+	        this.out = null;
+	    };
+	    DelayOperator.prototype._n = function (t) {
+	        var u = this.out;
+	        if (!u)
+	            return;
+	        var id = setInterval(function () {
+	            u._n(t);
+	            clearInterval(id);
+	        }, this.dt);
+	    };
+	    DelayOperator.prototype._e = function (err) {
+	        var u = this.out;
+	        if (!u)
+	            return;
+	        var id = setInterval(function () {
+	            u._e(err);
+	            clearInterval(id);
+	        }, this.dt);
+	    };
+	    DelayOperator.prototype._c = function () {
+	        var u = this.out;
+	        if (!u)
+	            return;
+	        var id = setInterval(function () {
+	            u._c();
+	            clearInterval(id);
+	        }, this.dt);
+	    };
+	    return DelayOperator;
+	}());
+	/**
+	 * Delays periodic events by a given time period.
+	 *
+	 * Marble diagram:
+	 *
+	 * ```text
+	 * 1----2--3--4----5|
+	 *     delay(60)
+	 * ---1----2--3--4----5|
+	 * ```
+	 *
+	 * Example:
+	 *
+	 * ```js
+	 * import fromDiagram from 'xstream/extra/fromDiagram'
+	 * import delay from 'xstream/extra/delay'
+	 *
+	 * const stream = fromDiagram('1----2--3--4----5|')
+	 *  .compose(delay(60))
+	 *
+	 * stream.addListener({
+	 *   next: i => console.log(i),
+	 *   error: err => console.error(err),
+	 *   complete: () => console.log('completed')
+	 * })
+	 * ```
+	 *
+	 * ```text
+	 * > 1  (after 60 ms)
+	 * > 2  (after 160 ms)
+	 * > 3  (after 220 ms)
+	 * > 4  (after 280 ms)
+	 * > 5  (after 380 ms)
+	 * > completed
+	 * ```
+	 *
+	 * @param {number} period The amount of silence required in milliseconds.
+	 * @return {Stream}
+	 */
+	function delay(period) {
+	    return function delayOperator(ins) {
+	        return new core_1.Stream(new DelayOperator(period, ins));
+	    };
+	}
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = delay;
+	//# sourceMappingURL=delay.js.map
+
+/***/ },
+/* 8 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var xstream_1 = __webpack_require__(5);
+	var dom_1 = __webpack_require__(9);
+	function renderCell(index, state) {
+	    var disabled = (!state.allowed || state.over) ? '.disabled' : '';
+	    var classes = disabled;
+	    if (state.over && state.result) {
+	        if (state.result.correct.indexOf(index) > -1)
+	            classes += '.correct';
+	        else if (state.result.wrong.indexOf(index) > -1)
+	            classes += '.wrong';
+	        else if (state.result.missed.indexOf(index) > -1)
+	            classes += '.missed';
+	    }
+	    else {
+	        if (!state.allowed && state.puzzle.indexOf(index) > -1)
+	            classes += '.highlighted';
+	        else if (state.allowed && state.selected.indexOf(index) > -1)
+	            classes += '.selected';
+	    }
+	    return dom_1.div(classes + '.cell', { attrs: { 'data-index': index } }, [dom_1.span(disabled)]);
+	}
+	var grid = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24];
+	function states(state) {
+	    var xs = xstream_1.Stream;
+	    var state$ = xs.combine(state.puzzle$, state.allowed$, state.selectedCells$, state.over$, state.score$, state.result$).map(function (_a) {
+	        var puzzle = _a[0], allowed = _a[1], selected = _a[2], over = _a[3], score = _a[4], result = _a[5];
+	        var viewState = {
+	            puzzle: puzzle,
+	            allowed: allowed,
+	            selected: selected,
+	            over: over,
+	            score: score,
+	            result: result
+	        };
+	        return viewState;
+	    });
+	    return state$;
+	}
+	function view(state) {
+	    var state$ = states(state);
+	    var vdom$ = state$.map(function (state) {
+	        var score = state.score.toString();
+	        return dom_1.div('#root', [
+	            dom_1.div('.container', [
+	                dom_1.header([
+	                    dom_1.div('.title.bar', [
+	                        dom_1.h1(['Recall']),
+	                        dom_1.div('.scores', [
+	                            dom_1.div('.current.score', [dom_1.span([score])]),
+	                            dom_1.div('.best.score', [dom_1.span([score])])
+	                        ])
+	                    ]),
+	                    dom_1.div('.info', [
+	                        dom_1.p([
+	                            'Click on the ',
+	                            dom_1.strong(['nine tiles you see']),
+	                            ' to win!']),
+	                        dom_1.a('.new', 'New Game')
+	                    ])
+	                ]),
+	                dom_1.main([
+	                    dom_1.div('.panel', [
+	                        dom_1.div('.grid', grid.map(function (x) { return renderCell(x, state); }))
+	                    ])
+	                ]),
+	                dom_1.footer([
+	                    'Made with ',
+	                    dom_1.span('.heart', '❤'),
+	                    ' using ',
+	                    dom_1.span('.cycle', 'Cycle.js'),
+	                    ' by ',
+	                    dom_1.a('.author', { props: { href: 'https://github.com/artfuldev' } }, '@artfuldev'),
+	                    dom_1.div([
+	                        dom_1.a('.source', { props: { href: 'https://github.com/artfuldev/recall-cycle/tree/gh-pages/' } }, 'View Source')
+	                    ])
+	                ])
+	            ])
+	        ]);
+	    });
+	    return vdom$;
+	}
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = view;
+
+
+/***/ },
+/* 9 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var thunk = __webpack_require__(10);
+	exports.thunk = thunk;
+	/**
+	 * A factory for the DOM driver function.
+	 *
+	 * Takes a `container` to define the target on the existing DOM which this
+	 * driver will operate on, and an `options` object as the second argument. The
+	 * input to this driver is a stream of virtual DOM objects, or in other words,
+	 * Snabbdom "VNode" objects. The output of this driver is a "DOMSource": a
+	 * collection of Observables queried with the methods `select()` and `events()`.
+	 *
+	 * `DOMSource.select(selector)` returns a new DOMSource with scope restricted to
+	 * the element(s) that matches the CSS `selector` given.
+	 *
+	 * `DOMSource.events(eventType, options)` returns a stream of events of
+	 * `eventType` happening on the elements that match the current DOMSource. The
+	 * returned stream is an *xstream* Stream if you use `@cycle/xstream-run` to run
+	 * your app with this driver, or it is an RxJS Observable if you use
+	 * `@cycle/rxjs-run`, and so forth. The `options` parameter can have the field
+	 * `useCapture`, which is by default `false`, except it is `true` for event
+	 * types that do not bubble. Read more here
+	 * https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener
+	 * about the `useCapture` and its purpose.
+	 *
+	 * `DOMSource.elements()` returns a stream of the DOM element(s) matched by the
+	 * selectors in the DOMSource. Also, `DOMSource.select(':root').elements()`
+	 * returns a stream of DOM element corresponding to the root (or container) of
+	 * the app on the DOM.
+	 *
+	 * @param {(String|HTMLElement)} container the DOM selector for the element
+	 * (or the element itself) to contain the rendering of the VTrees.
+	 * @param {DOMDriverOptions} options an object with two optional fields:
+	 * `transposition: boolean` enables/disables transposition of inner streams in
+	 * the virtual DOM tree, `modules: array` contains additional Snabbdom modules.
+	 * @return {Function} the DOM driver function. The function expects a stream of
+	 * of VNode as input, and outputs the DOMSource object.
+	 * @function makeDOMDriver
+	 */
+	var makeDOMDriver_1 = __webpack_require__(14);
+	exports.makeDOMDriver = makeDOMDriver_1.makeDOMDriver;
+	/**
+	 * A factory for the HTML driver function.
+	 *
+	 * Takes an `effect` callback function and an `options` object as arguments. The
+	 * input to this driver is a stream of virtual DOM objects, or in other words,
+	 * Snabbdom "VNode" objects. The output of this driver is a "DOMSource": a
+	 * collection of Observables queried with the methods `select()` and `events()`.
+	 *
+	 * The HTML Driver is supplementary to the DOM Driver. Instead of producing
+	 * elements on the DOM, it generates HTML as strings and does a side effect on
+	 * those HTML strings. That side effect is described by the `effect` callback
+	 * function. So, if you want to use the HTML Driver on the server-side to render
+	 * your application as HTML and send as a response (which is the typical use
+	 * case for the HTML Driver), you need to pass something like the
+	 * `html => response.send(html)` function as the `effect` argument. This way,
+	 * the driver knows what side effect to cause based on the HTML string it just
+	 * rendered.
+	 *
+	 * The HTML driver is useful only for that side effect in the `effect` callback.
+	 * It can be considered a sink-only driver. However, in order to serve as a
+	 * transparent replacement to the DOM Driver when rendering from the server, the
+	 * HTML driver returns a source object that behaves just like the DOMSource.
+	 * This helps reuse the same application that is written for the DOM Driver.
+	 * This fake DOMSource returns empty streams when you query it, because there
+	 * are no user events on the server.
+	 *
+	 * `DOMSource.select(selector)` returns a new DOMSource with scope restricted to
+	 * the element(s) that matches the CSS `selector` given.
+	 *
+	 * `DOMSource.events(eventType, options)` returns an empty stream. The returned
+	 * stream is an *xstream* Stream if you use `@cycle/xstream-run` to run your app
+	 * with this driver, or it is an RxJS Observable if you use `@cycle/rxjs-run`,
+	 * and so forth.
+	 *
+	 * `DOMSource.elements()` returns the stream of HTML string rendered from your
+	 * sink virtual DOM stream.
+	 *
+	 * @param {Function} effect a callback function that takes a string of rendered
+	 * HTML as input and should run a side effect, returning nothing.
+	 * @param {HTMLDriverOptions} options an object with one optional field:
+	 * `transposition: boolean` enables/disables transposition of inner streams in
+	 * the virtual DOM tree.
+	 * @return {Function} the HTML driver function. The function expects a stream of
+	 * of VNode as input, and outputs the DOMSource object.
+	 * @function makeHTMLDriver
+	 */
+	var makeHTMLDriver_1 = __webpack_require__(40);
+	exports.makeHTMLDriver = makeHTMLDriver_1.makeHTMLDriver;
+	/**
+	 * A factory function to create mocked DOMSource objects, for testing purposes.
+	 *
+	 * Takes a `streamAdapter` and a `mockConfig` object as arguments, and returns
+	 * a DOMSource that can be given to any Cycle.js app that expects a DOMSource in
+	 * the sources, for testing.
+	 *
+	 * The `streamAdapter` parameter is a package such as `@cycle/xstream-adapter`,
+	 * `@cycle/rxjs-adapter`, etc. Import it as `import a from '@cycle/rx-adapter`,
+	 * then provide it to `mockDOMSource. This is important so the DOMSource created
+	 * knows which stream library should it use to export its streams when you call
+	 * `DOMSource.events()` for instance.
+	 *
+	 * The `mockConfig` parameter is an object specifying selectors, eventTypes and
+	 * their streams. Example:
+	 *
+	 * ```js
+	 * const domSource = mockDOMSource(RxAdapter, {
+	 *   '.foo': {
+	 *     'click': Rx.Observable.of({target: {}}),
+	 *     'mouseover': Rx.Observable.of({target: {}}),
+	 *   },
+	 *   '.bar': {
+	 *     'scroll': Rx.Observable.of({target: {}}),
+	 *     elements: Rx.Observable.of({tagName: 'div'}),
+	 *   }
+	 * });
+	 *
+	 * // Usage
+	 * const click$ = domSource.select('.foo').events('click');
+	 * const element$ = domSource.select('.bar').elements();
+	 * ```
+	 *
+	 * @param {Object} mockConfig an object where keys are selector strings
+	 * and values are objects. Those nested objects have `eventType` strings as keys
+	 * and values are streams you created.
+	 * @return {Object} fake DOM source object, with an API containing `select()`
+	 * and `events()` and `elements()` which can be used just like the DOM Driver's
+	 * DOMSource.
+	 *
+	 * @function mockDOMSource
+	 */
+	var mockDOMSource_1 = __webpack_require__(75);
+	exports.mockDOMSource = mockDOMSource_1.mockDOMSource;
+	/**
+	 * The hyperscript function `h()` is a function to create virtual DOM objects,
+	 * also known as VNodes. Call
+	 *
+	 * ```js
+	 * h('div.myClass', {style: {color: 'red'}}, [])
+	 * ```
+	 *
+	 * to create a VNode that represents a `DIV` element with className `myClass`,
+	 * styled with red color, and no children because the `[]` array was passed. The
+	 * API is `h(tagOrSelector, optionalData, optionalChildrenOrText)`.
+	 *
+	 * However, usually you should use "hyperscript helpers", which are shortcut
+	 * functions based on hyperscript. There is one hyperscript helper function for
+	 * each DOM tagName, such as `h1()`, `h2()`, `div()`, `span()`, `label()`,
+	 * `input()`. For instance, the previous example could have been written
+	 * as:
+	 *
+	 * ```js
+	 * div('.myClass', {style: {color: 'red'}}, [])
+	 * ```
+	 *
+	 * There are also SVG helper functions, which apply the appropriate SVG
+	 * namespace to the resulting elements. `svg()` function creates the top-most
+	 * SVG element, and `svg.g`, `svg.polygon`, `svg.circle`, `svg.path` are for
+	 * SVG-specific child elements. Example:
+	 *
+	 * ```js
+	 * svg({width: 150, height: 150}, [
+	 *   svg.polygon({
+	 *     attrs: {
+	 *       class: 'triangle',
+	 *       points: '20 0 20 150 150 20'
+	 *     }
+	 *   })
+	 * ])
+	 * ```
+	 *
+	 * @function h
+	 */
+	var hyperscript_1 = __webpack_require__(27);
+	exports.h = hyperscript_1.h;
+	var hyperscript_helpers_1 = __webpack_require__(76);
+	exports.svg = hyperscript_helpers_1.default.svg;
+	exports.a = hyperscript_helpers_1.default.a;
+	exports.abbr = hyperscript_helpers_1.default.abbr;
+	exports.address = hyperscript_helpers_1.default.address;
+	exports.area = hyperscript_helpers_1.default.area;
+	exports.article = hyperscript_helpers_1.default.article;
+	exports.aside = hyperscript_helpers_1.default.aside;
+	exports.audio = hyperscript_helpers_1.default.audio;
+	exports.b = hyperscript_helpers_1.default.b;
+	exports.base = hyperscript_helpers_1.default.base;
+	exports.bdi = hyperscript_helpers_1.default.bdi;
+	exports.bdo = hyperscript_helpers_1.default.bdo;
+	exports.blockquote = hyperscript_helpers_1.default.blockquote;
+	exports.body = hyperscript_helpers_1.default.body;
+	exports.br = hyperscript_helpers_1.default.br;
+	exports.button = hyperscript_helpers_1.default.button;
+	exports.canvas = hyperscript_helpers_1.default.canvas;
+	exports.caption = hyperscript_helpers_1.default.caption;
+	exports.cite = hyperscript_helpers_1.default.cite;
+	exports.code = hyperscript_helpers_1.default.code;
+	exports.col = hyperscript_helpers_1.default.col;
+	exports.colgroup = hyperscript_helpers_1.default.colgroup;
+	exports.dd = hyperscript_helpers_1.default.dd;
+	exports.del = hyperscript_helpers_1.default.del;
+	exports.dfn = hyperscript_helpers_1.default.dfn;
+	exports.dir = hyperscript_helpers_1.default.dir;
+	exports.div = hyperscript_helpers_1.default.div;
+	exports.dl = hyperscript_helpers_1.default.dl;
+	exports.dt = hyperscript_helpers_1.default.dt;
+	exports.em = hyperscript_helpers_1.default.em;
+	exports.embed = hyperscript_helpers_1.default.embed;
+	exports.fieldset = hyperscript_helpers_1.default.fieldset;
+	exports.figcaption = hyperscript_helpers_1.default.figcaption;
+	exports.figure = hyperscript_helpers_1.default.figure;
+	exports.footer = hyperscript_helpers_1.default.footer;
+	exports.form = hyperscript_helpers_1.default.form;
+	exports.h1 = hyperscript_helpers_1.default.h1;
+	exports.h2 = hyperscript_helpers_1.default.h2;
+	exports.h3 = hyperscript_helpers_1.default.h3;
+	exports.h4 = hyperscript_helpers_1.default.h4;
+	exports.h5 = hyperscript_helpers_1.default.h5;
+	exports.h6 = hyperscript_helpers_1.default.h6;
+	exports.head = hyperscript_helpers_1.default.head;
+	exports.header = hyperscript_helpers_1.default.header;
+	exports.hgroup = hyperscript_helpers_1.default.hgroup;
+	exports.hr = hyperscript_helpers_1.default.hr;
+	exports.html = hyperscript_helpers_1.default.html;
+	exports.i = hyperscript_helpers_1.default.i;
+	exports.iframe = hyperscript_helpers_1.default.iframe;
+	exports.img = hyperscript_helpers_1.default.img;
+	exports.input = hyperscript_helpers_1.default.input;
+	exports.ins = hyperscript_helpers_1.default.ins;
+	exports.kbd = hyperscript_helpers_1.default.kbd;
+	exports.keygen = hyperscript_helpers_1.default.keygen;
+	exports.label = hyperscript_helpers_1.default.label;
+	exports.legend = hyperscript_helpers_1.default.legend;
+	exports.li = hyperscript_helpers_1.default.li;
+	exports.link = hyperscript_helpers_1.default.link;
+	exports.main = hyperscript_helpers_1.default.main;
+	exports.map = hyperscript_helpers_1.default.map;
+	exports.mark = hyperscript_helpers_1.default.mark;
+	exports.menu = hyperscript_helpers_1.default.menu;
+	exports.meta = hyperscript_helpers_1.default.meta;
+	exports.nav = hyperscript_helpers_1.default.nav;
+	exports.noscript = hyperscript_helpers_1.default.noscript;
+	exports.object = hyperscript_helpers_1.default.object;
+	exports.ol = hyperscript_helpers_1.default.ol;
+	exports.optgroup = hyperscript_helpers_1.default.optgroup;
+	exports.option = hyperscript_helpers_1.default.option;
+	exports.p = hyperscript_helpers_1.default.p;
+	exports.param = hyperscript_helpers_1.default.param;
+	exports.pre = hyperscript_helpers_1.default.pre;
+	exports.progress = hyperscript_helpers_1.default.progress;
+	exports.q = hyperscript_helpers_1.default.q;
+	exports.rp = hyperscript_helpers_1.default.rp;
+	exports.rt = hyperscript_helpers_1.default.rt;
+	exports.ruby = hyperscript_helpers_1.default.ruby;
+	exports.s = hyperscript_helpers_1.default.s;
+	exports.samp = hyperscript_helpers_1.default.samp;
+	exports.script = hyperscript_helpers_1.default.script;
+	exports.section = hyperscript_helpers_1.default.section;
+	exports.select = hyperscript_helpers_1.default.select;
+	exports.small = hyperscript_helpers_1.default.small;
+	exports.source = hyperscript_helpers_1.default.source;
+	exports.span = hyperscript_helpers_1.default.span;
+	exports.strong = hyperscript_helpers_1.default.strong;
+	exports.style = hyperscript_helpers_1.default.style;
+	exports.sub = hyperscript_helpers_1.default.sub;
+	exports.sup = hyperscript_helpers_1.default.sup;
+	exports.table = hyperscript_helpers_1.default.table;
+	exports.tbody = hyperscript_helpers_1.default.tbody;
+	exports.td = hyperscript_helpers_1.default.td;
+	exports.textarea = hyperscript_helpers_1.default.textarea;
+	exports.tfoot = hyperscript_helpers_1.default.tfoot;
+	exports.th = hyperscript_helpers_1.default.th;
+	exports.thead = hyperscript_helpers_1.default.thead;
+	exports.title = hyperscript_helpers_1.default.title;
+	exports.tr = hyperscript_helpers_1.default.tr;
+	exports.u = hyperscript_helpers_1.default.u;
+	exports.ul = hyperscript_helpers_1.default.ul;
+	exports.video = hyperscript_helpers_1.default.video;
+	//# sourceMappingURL=index.js.map
+
+/***/ },
+/* 10 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var h = __webpack_require__(11);
+	
+	function init(thunk) {
+	  var i, cur = thunk.data;
+	  cur.vnode = cur.fn.apply(undefined, cur.args);
+	}
+	
+	function prepatch(oldThunk, thunk) {
+	  var i, old = oldThunk.data, cur = thunk.data;
+	  var oldArgs = old.args, args = cur.args;
+	  cur.vnode = old.vnode;
+	  if (old.fn !== cur.fn || oldArgs.length !== args.length) {
+	    cur.vnode = cur.fn.apply(undefined, args);
+	    return;
+	  }
+	  for (i = 0; i < args.length; ++i) {
+	    if (oldArgs[i] !== args[i]) {
+	      cur.vnode = cur.fn.apply(undefined, args);
+	      return;
+	    }
+	  }
+	}
+	
+	module.exports = function(name, fn /* args */) {
+	  var i, args = [];
+	  for (i = 2; i < arguments.length; ++i) {
+	    args[i - 2] = arguments[i];
+	  }
+	  return h('thunk' + name, {
+	    hook: {init: init, prepatch: prepatch},
+	    fn: fn, args: args,
+	  });
+	};
+
+
+/***/ },
+/* 11 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var VNode = __webpack_require__(12);
+	var is = __webpack_require__(13);
+	
+	function addNS(data, children) {
+	  data.ns = 'http://www.w3.org/2000/svg';
+	  if (children !== undefined) {
+	    for (var i = 0; i < children.length; ++i) {
+	      addNS(children[i].data, children[i].children);
+	    }
+	  }
+	}
+	
+	module.exports = function h(sel, b, c) {
+	  var data = {}, children, text, i;
+	  if (arguments.length === 3) {
+	    data = b;
+	    if (is.array(c)) { children = c; }
+	    else if (is.primitive(c)) { text = c; }
+	  } else if (arguments.length === 2) {
+	    if (is.array(b)) { children = b; }
+	    else if (is.primitive(b)) { text = b; }
+	    else { data = b; }
+	  }
+	  if (is.array(children)) {
+	    for (i = 0; i < children.length; ++i) {
+	      if (is.primitive(children[i])) children[i] = VNode(undefined, undefined, undefined, children[i]);
+	    }
+	  }
+	  if (sel[0] === 's' && sel[1] === 'v' && sel[2] === 'g') {
+	    addNS(data, children);
+	  }
+	  return VNode(sel, data, children, text, undefined);
+	};
+
+
+/***/ },
+/* 12 */
+/***/ function(module, exports) {
+
+	module.exports = function(sel, data, children, text, elm) {
+	  var key = data === undefined ? undefined : data.key;
+	  return {sel: sel, data: data, children: children,
+	          text: text, elm: elm, key: key};
+	};
+
+
+/***/ },
+/* 13 */
+/***/ function(module, exports) {
+
+	module.exports = {
+	  array: Array.isArray,
+	  primitive: function(s) { return typeof s === 'string' || typeof s === 'number'; },
+	};
+
+
+/***/ },
+/* 14 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var snabbdom_1 = __webpack_require__(15);
+	var xstream_1 = __webpack_require__(5);
+	var MainDOMSource_1 = __webpack_require__(17);
+	var VNodeWrapper_1 = __webpack_require__(26);
+	var utils_1 = __webpack_require__(21);
+	var modules_1 = __webpack_require__(31);
+	var isolateModule_1 = __webpack_require__(38);
+	var transposition_1 = __webpack_require__(39);
+	var xstream_adapter_1 = __webpack_require__(18);
+	function makeDOMDriverInputGuard(modules) {
+	    if (!Array.isArray(modules)) {
+	        throw new Error("Optional modules option must be " +
+	            "an array for snabbdom modules");
+	    }
+	}
+	function domDriverInputGuard(view$) {
+	    if (!view$
+	        || typeof view$.addListener !== "function"
+	        || typeof view$.fold !== "function") {
+	        throw new Error("The DOM driver function expects as input a Stream of " +
+	            "virtual DOM elements");
+	    }
+	}
+	function makeDOMDriver(container, options) {
+	    if (!options) {
+	        options = {};
+	    }
+	    var transposition = options.transposition || false;
+	    var modules = options.modules || modules_1.default;
+	    var isolateModule = new isolateModule_1.IsolateModule((new Map()));
+	    var patch = snabbdom_1.init([isolateModule.createModule()].concat(modules));
+	    var rootElement = utils_1.getElement(container);
+	    var vnodeWrapper = new VNodeWrapper_1.VNodeWrapper(rootElement);
+	    var delegators = new Map();
+	    makeDOMDriverInputGuard(modules);
+	    function DOMDriver(vnode$, runStreamAdapter) {
+	        domDriverInputGuard(vnode$);
+	        var transposeVNode = transposition_1.makeTransposeVNode(runStreamAdapter);
+	        var preprocessedVNode$ = (transposition ? vnode$.map(transposeVNode).flatten() : vnode$);
+	        var rootElement$ = preprocessedVNode$
+	            .map(function (vnode) { return vnodeWrapper.call(vnode); })
+	            .fold(patch, rootElement)
+	            .drop(1)
+	            .map(function unwrapElementFromVNode(vnode) { return vnode.elm; })
+	            .compose(function (stream) { return xstream_1.default.merge(stream, xstream_1.default.never()); }) // don't complete this stream
+	            .startWith(rootElement);
+	        /* tslint:disable:no-empty */
+	        rootElement$.addListener({ next: function () { }, error: function () { }, complete: function () { } });
+	        /* tslint:enable:no-empty */
+	        return new MainDOMSource_1.MainDOMSource(rootElement$, runStreamAdapter, [], isolateModule, delegators);
+	    }
+	    ;
+	    DOMDriver.streamAdapter = xstream_adapter_1.default;
+	    return DOMDriver;
+	}
+	exports.makeDOMDriver = makeDOMDriver;
+	//# sourceMappingURL=makeDOMDriver.js.map
+
+/***/ },
+/* 15 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// jshint newcap: false
+	/* global require, module, document, Node */
+	'use strict';
+	
+	var VNode = __webpack_require__(12);
+	var is = __webpack_require__(13);
+	var domApi = __webpack_require__(16);
+	
+	function isUndef(s) { return s === undefined; }
+	function isDef(s) { return s !== undefined; }
+	
+	var emptyNode = VNode('', {}, [], undefined, undefined);
+	
+	function sameVnode(vnode1, vnode2) {
+	  return vnode1.key === vnode2.key && vnode1.sel === vnode2.sel;
+	}
+	
+	function createKeyToOldIdx(children, beginIdx, endIdx) {
+	  var i, map = {}, key;
+	  for (i = beginIdx; i <= endIdx; ++i) {
+	    key = children[i].key;
+	    if (isDef(key)) map[key] = i;
+	  }
+	  return map;
+	}
+	
+	var hooks = ['create', 'update', 'remove', 'destroy', 'pre', 'post'];
+	
+	function init(modules, api) {
+	  var i, j, cbs = {};
+	
+	  if (isUndef(api)) api = domApi;
+	
+	  for (i = 0; i < hooks.length; ++i) {
+	    cbs[hooks[i]] = [];
+	    for (j = 0; j < modules.length; ++j) {
+	      if (modules[j][hooks[i]] !== undefined) cbs[hooks[i]].push(modules[j][hooks[i]]);
+	    }
+	  }
+	
+	  function emptyNodeAt(elm) {
+	    return VNode(api.tagName(elm).toLowerCase(), {}, [], undefined, elm);
+	  }
+	
+	  function createRmCb(childElm, listeners) {
+	    return function() {
+	      if (--listeners === 0) {
+	        var parent = api.parentNode(childElm);
+	        api.removeChild(parent, childElm);
+	      }
+	    };
+	  }
+	
+	  function createElm(vnode, insertedVnodeQueue) {
+	    var i, thunk, data = vnode.data;
+	    if (isDef(data)) {
+	      if (isDef(i = data.hook) && isDef(i = i.init)) i(vnode);
+	      if (isDef(i = data.vnode)) {
+	          thunk = vnode;
+	          vnode = i;
+	      }
+	    }
+	    var elm, children = vnode.children, sel = vnode.sel;
+	    if (isDef(sel)) {
+	      // Parse selector
+	      var hashIdx = sel.indexOf('#');
+	      var dotIdx = sel.indexOf('.', hashIdx);
+	      var hash = hashIdx > 0 ? hashIdx : sel.length;
+	      var dot = dotIdx > 0 ? dotIdx : sel.length;
+	      var tag = hashIdx !== -1 || dotIdx !== -1 ? sel.slice(0, Math.min(hash, dot)) : sel;
+	      elm = vnode.elm = isDef(data) && isDef(i = data.ns) ? api.createElementNS(i, tag)
+	                                                          : api.createElement(tag);
+	      if (hash < dot) elm.id = sel.slice(hash + 1, dot);
+	      if (dotIdx > 0) elm.className = sel.slice(dot+1).replace(/\./g, ' ');
+	      if (is.array(children)) {
+	        for (i = 0; i < children.length; ++i) {
+	          api.appendChild(elm, createElm(children[i], insertedVnodeQueue));
+	        }
+	      } else if (is.primitive(vnode.text)) {
+	        api.appendChild(elm, api.createTextNode(vnode.text));
+	      }
+	      for (i = 0; i < cbs.create.length; ++i) cbs.create[i](emptyNode, vnode);
+	      i = vnode.data.hook; // Reuse variable
+	      if (isDef(i)) {
+	        if (i.create) i.create(emptyNode, vnode);
+	        if (i.insert) insertedVnodeQueue.push(vnode);
+	      }
+	    } else {
+	      elm = vnode.elm = api.createTextNode(vnode.text);
+	    }
+	    if (isDef(thunk)) thunk.elm = vnode.elm;
+	    return vnode.elm;
+	  }
+	
+	  function addVnodes(parentElm, before, vnodes, startIdx, endIdx, insertedVnodeQueue) {
+	    for (; startIdx <= endIdx; ++startIdx) {
+	      api.insertBefore(parentElm, createElm(vnodes[startIdx], insertedVnodeQueue), before);
+	    }
+	  }
+	
+	  function invokeDestroyHook(vnode) {
+	    var i, j, data = vnode.data;
+	    if (isDef(data)) {
+	      if (isDef(i = data.hook) && isDef(i = i.destroy)) i(vnode);
+	      for (i = 0; i < cbs.destroy.length; ++i) cbs.destroy[i](vnode);
+	      if (isDef(i = vnode.children)) {
+	        for (j = 0; j < vnode.children.length; ++j) {
+	          invokeDestroyHook(vnode.children[j]);
+	        }
+	      }
+	      if (isDef(i = data.vnode)) invokeDestroyHook(i);
+	    }
+	  }
+	
+	  function removeVnodes(parentElm, vnodes, startIdx, endIdx) {
+	    for (; startIdx <= endIdx; ++startIdx) {
+	      var i, listeners, rm, ch = vnodes[startIdx];
+	      if (isDef(ch)) {
+	        if (isDef(ch.sel)) {
+	          invokeDestroyHook(ch);
+	          listeners = cbs.remove.length + 1;
+	          rm = createRmCb(ch.elm, listeners);
+	          for (i = 0; i < cbs.remove.length; ++i) cbs.remove[i](ch, rm);
+	          if (isDef(i = ch.data) && isDef(i = i.hook) && isDef(i = i.remove)) {
+	            i(ch, rm);
+	          } else {
+	            rm();
+	          }
+	        } else { // Text node
+	          api.removeChild(parentElm, ch.elm);
+	        }
+	      }
+	    }
+	  }
+	
+	  function updateChildren(parentElm, oldCh, newCh, insertedVnodeQueue) {
+	    var oldStartIdx = 0, newStartIdx = 0;
+	    var oldEndIdx = oldCh.length - 1;
+	    var oldStartVnode = oldCh[0];
+	    var oldEndVnode = oldCh[oldEndIdx];
+	    var newEndIdx = newCh.length - 1;
+	    var newStartVnode = newCh[0];
+	    var newEndVnode = newCh[newEndIdx];
+	    var oldKeyToIdx, idxInOld, elmToMove, before;
+	
+	    while (oldStartIdx <= oldEndIdx && newStartIdx <= newEndIdx) {
+	      if (isUndef(oldStartVnode)) {
+	        oldStartVnode = oldCh[++oldStartIdx]; // Vnode has been moved left
+	      } else if (isUndef(oldEndVnode)) {
+	        oldEndVnode = oldCh[--oldEndIdx];
+	      } else if (sameVnode(oldStartVnode, newStartVnode)) {
+	        patchVnode(oldStartVnode, newStartVnode, insertedVnodeQueue);
+	        oldStartVnode = oldCh[++oldStartIdx];
+	        newStartVnode = newCh[++newStartIdx];
+	      } else if (sameVnode(oldEndVnode, newEndVnode)) {
+	        patchVnode(oldEndVnode, newEndVnode, insertedVnodeQueue);
+	        oldEndVnode = oldCh[--oldEndIdx];
+	        newEndVnode = newCh[--newEndIdx];
+	      } else if (sameVnode(oldStartVnode, newEndVnode)) { // Vnode moved right
+	        patchVnode(oldStartVnode, newEndVnode, insertedVnodeQueue);
+	        api.insertBefore(parentElm, oldStartVnode.elm, api.nextSibling(oldEndVnode.elm));
+	        oldStartVnode = oldCh[++oldStartIdx];
+	        newEndVnode = newCh[--newEndIdx];
+	      } else if (sameVnode(oldEndVnode, newStartVnode)) { // Vnode moved left
+	        patchVnode(oldEndVnode, newStartVnode, insertedVnodeQueue);
+	        api.insertBefore(parentElm, oldEndVnode.elm, oldStartVnode.elm);
+	        oldEndVnode = oldCh[--oldEndIdx];
+	        newStartVnode = newCh[++newStartIdx];
+	      } else {
+	        if (isUndef(oldKeyToIdx)) oldKeyToIdx = createKeyToOldIdx(oldCh, oldStartIdx, oldEndIdx);
+	        idxInOld = oldKeyToIdx[newStartVnode.key];
+	        if (isUndef(idxInOld)) { // New element
+	          api.insertBefore(parentElm, createElm(newStartVnode, insertedVnodeQueue), oldStartVnode.elm);
+	          newStartVnode = newCh[++newStartIdx];
+	        } else {
+	          elmToMove = oldCh[idxInOld];
+	          patchVnode(elmToMove, newStartVnode, insertedVnodeQueue);
+	          oldCh[idxInOld] = undefined;
+	          api.insertBefore(parentElm, elmToMove.elm, oldStartVnode.elm);
+	          newStartVnode = newCh[++newStartIdx];
+	        }
+	      }
+	    }
+	    if (oldStartIdx > oldEndIdx) {
+	      before = isUndef(newCh[newEndIdx+1]) ? null : newCh[newEndIdx+1].elm;
+	      addVnodes(parentElm, before, newCh, newStartIdx, newEndIdx, insertedVnodeQueue);
+	    } else if (newStartIdx > newEndIdx) {
+	      removeVnodes(parentElm, oldCh, oldStartIdx, oldEndIdx);
+	    }
+	  }
+	
+	  function patchVnode(oldVnode, vnode, insertedVnodeQueue) {
+	    var i, hook;
+	    if (isDef(i = vnode.data) && isDef(hook = i.hook) && isDef(i = hook.prepatch)) {
+	      i(oldVnode, vnode);
+	    }
+	    if (isDef(i = oldVnode.data) && isDef(i = i.vnode)) oldVnode = i;
+	    if (isDef(i = vnode.data) && isDef(i = i.vnode)) {
+	      patchVnode(oldVnode, i, insertedVnodeQueue);
+	      vnode.elm = i.elm;
+	      return;
+	    }
+	    var elm = vnode.elm = oldVnode.elm, oldCh = oldVnode.children, ch = vnode.children;
+	    if (oldVnode === vnode) return;
+	    if (!sameVnode(oldVnode, vnode)) {
+	      var parentElm = api.parentNode(oldVnode.elm);
+	      elm = createElm(vnode, insertedVnodeQueue);
+	      api.insertBefore(parentElm, elm, oldVnode.elm);
+	      removeVnodes(parentElm, [oldVnode], 0, 0);
+	      return;
+	    }
+	    if (isDef(vnode.data)) {
+	      for (i = 0; i < cbs.update.length; ++i) cbs.update[i](oldVnode, vnode);
+	      i = vnode.data.hook;
+	      if (isDef(i) && isDef(i = i.update)) i(oldVnode, vnode);
+	    }
+	    if (isUndef(vnode.text)) {
+	      if (isDef(oldCh) && isDef(ch)) {
+	        if (oldCh !== ch) updateChildren(elm, oldCh, ch, insertedVnodeQueue);
+	      } else if (isDef(ch)) {
+	        if (isDef(oldVnode.text)) api.setTextContent(elm, '');
+	        addVnodes(elm, null, ch, 0, ch.length - 1, insertedVnodeQueue);
+	      } else if (isDef(oldCh)) {
+	        removeVnodes(elm, oldCh, 0, oldCh.length - 1);
+	      } else if (isDef(oldVnode.text)) {
+	        api.setTextContent(elm, '');
+	      }
+	    } else if (oldVnode.text !== vnode.text) {
+	      api.setTextContent(elm, vnode.text);
+	    }
+	    if (isDef(hook) && isDef(i = hook.postpatch)) {
+	      i(oldVnode, vnode);
+	    }
+	  }
+	
+	  return function(oldVnode, vnode) {
+	    var i, elm, parent;
+	    var insertedVnodeQueue = [];
+	    for (i = 0; i < cbs.pre.length; ++i) cbs.pre[i]();
+	
+	    if (isUndef(oldVnode.sel)) {
+	      oldVnode = emptyNodeAt(oldVnode);
+	    }
+	
+	    if (sameVnode(oldVnode, vnode)) {
+	      patchVnode(oldVnode, vnode, insertedVnodeQueue);
+	    } else {
+	      elm = oldVnode.elm;
+	      parent = api.parentNode(elm);
+	
+	      createElm(vnode, insertedVnodeQueue);
+	
+	      if (parent !== null) {
+	        api.insertBefore(parent, vnode.elm, api.nextSibling(elm));
+	        removeVnodes(parent, [oldVnode], 0, 0);
+	      }
+	    }
+	
+	    for (i = 0; i < insertedVnodeQueue.length; ++i) {
+	      insertedVnodeQueue[i].data.hook.insert(insertedVnodeQueue[i]);
+	    }
+	    for (i = 0; i < cbs.post.length; ++i) cbs.post[i]();
+	    return vnode;
+	  };
+	}
+	
+	module.exports = {init: init};
+
+
+/***/ },
+/* 16 */
+/***/ function(module, exports) {
+
+	function createElement(tagName){
+	  return document.createElement(tagName);
+	}
+	
+	function createElementNS(namespaceURI, qualifiedName){
+	  return document.createElementNS(namespaceURI, qualifiedName);
+	}
+	
+	function createTextNode(text){
+	  return document.createTextNode(text);
+	}
+	
+	
+	function insertBefore(parentNode, newNode, referenceNode){
+	  parentNode.insertBefore(newNode, referenceNode);
+	}
+	
+	
+	function removeChild(node, child){
+	  node.removeChild(child);
+	}
+	
+	function appendChild(node, child){
+	  node.appendChild(child);
+	}
+	
+	function parentNode(node){
+	  return node.parentElement;
+	}
+	
+	function nextSibling(node){
+	  return node.nextSibling;
+	}
+	
+	function tagName(node){
+	  return node.tagName;
+	}
+	
+	function setTextContent(node, text){
+	  node.textContent = text;
+	}
+	
+	module.exports = {
+	  createElement: createElement,
+	  createElementNS: createElementNS,
+	  createTextNode: createTextNode,
+	  appendChild: appendChild,
+	  removeChild: removeChild,
+	  insertBefore: insertBefore,
+	  parentNode: parentNode,
+	  nextSibling: nextSibling,
+	  tagName: tagName,
+	  setTextContent: setTextContent
+	};
+
+
+/***/ },
+/* 17 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var xstream_adapter_1 = __webpack_require__(18);
+	var xstream_1 = __webpack_require__(5);
+	var ElementFinder_1 = __webpack_require__(19);
+	var fromEvent_1 = __webpack_require__(23);
+	var isolate_1 = __webpack_require__(24);
+	var EventDelegator_1 = __webpack_require__(25);
+	var utils_1 = __webpack_require__(21);
+	var matchesSelector;
+	try {
+	    matchesSelector = __webpack_require__(22);
+	}
+	catch (e) {
+	    matchesSelector = Function.prototype;
+	}
+	var eventTypesThatDontBubble = [
+	    "blur",
+	    "canplay",
+	    "canplaythrough",
+	    "change",
+	    "durationchange",
+	    "emptied",
+	    "ended",
+	    "focus",
+	    "load",
+	    "loadeddata",
+	    "loadedmetadata",
+	    "mouseenter",
+	    "mouseleave",
+	    "pause",
+	    "play",
+	    "playing",
+	    "ratechange",
+	    "reset",
+	    "scroll",
+	    "seeked",
+	    "seeking",
+	    "stalled",
+	    "submit",
+	    "suspend",
+	    "timeupdate",
+	    "unload",
+	    "volumechange",
+	    "waiting",
+	];
+	function determineUseCapture(eventType, options) {
+	    var result = false;
+	    if (typeof options.useCapture === "boolean") {
+	        result = options.useCapture;
+	    }
+	    if (eventTypesThatDontBubble.indexOf(eventType) !== -1) {
+	        result = true;
+	    }
+	    return result;
+	}
+	var MainDOMSource = (function () {
+	    function MainDOMSource(_rootElement$, _runStreamAdapter, _namespace, _isolateModule, _delegators) {
+	        if (_namespace === void 0) { _namespace = []; }
+	        this._rootElement$ = _rootElement$;
+	        this._runStreamAdapter = _runStreamAdapter;
+	        this._namespace = _namespace;
+	        this._isolateModule = _isolateModule;
+	        this._delegators = _delegators;
+	        this.isolateSource = isolate_1.isolateSource;
+	        this.isolateSink = isolate_1.isolateSink;
+	    }
+	    MainDOMSource.prototype.elements = function () {
+	        var output$;
+	        if (this._namespace.length === 0) {
+	            output$ = this._rootElement$;
+	        }
+	        else {
+	            var elementFinder_1 = new ElementFinder_1.ElementFinder(this._namespace, this._isolateModule);
+	            output$ = this._rootElement$.map(function (el) { return elementFinder_1.call(el); });
+	        }
+	        var runSA = this._runStreamAdapter;
+	        return runSA.remember(runSA.adapt(output$, xstream_adapter_1.default.streamSubscribe));
+	    };
+	    Object.defineProperty(MainDOMSource.prototype, "namespace", {
+	        get: function () {
+	            return this._namespace;
+	        },
+	        enumerable: true,
+	        configurable: true
+	    });
+	    MainDOMSource.prototype.select = function (selector) {
+	        if (typeof selector !== 'string') {
+	            throw new Error("DOM driver's select() expects the argument to be a " +
+	                "string as a CSS selector");
+	        }
+	        var trimmedSelector = selector.trim();
+	        var childNamespace = trimmedSelector === ":root" ?
+	            this._namespace :
+	            this._namespace.concat(trimmedSelector);
+	        return new MainDOMSource(this._rootElement$, this._runStreamAdapter, childNamespace, this._isolateModule, this._delegators);
+	    };
+	    MainDOMSource.prototype.events = function (eventType, options) {
+	        if (options === void 0) { options = {}; }
+	        if (typeof eventType !== "string") {
+	            throw new Error("DOM driver's events() expects argument to be a " +
+	                "string representing the event type to listen for.");
+	        }
+	        var useCapture = determineUseCapture(eventType, options);
+	        var namespace = this._namespace;
+	        var scope = utils_1.getScope(namespace);
+	        var keyParts = [eventType, useCapture];
+	        if (scope) {
+	            keyParts.push(scope);
+	        }
+	        var key = keyParts.join('~');
+	        var domSource = this;
+	        var rootElement$;
+	        if (scope) {
+	            var hadIsolated_mutable_1 = false;
+	            rootElement$ = this._rootElement$
+	                .filter(function (rootElement) {
+	                var hasIsolated = !!domSource._isolateModule.getIsolatedElement(scope);
+	                var shouldPass = hasIsolated && !hadIsolated_mutable_1;
+	                hadIsolated_mutable_1 = hasIsolated;
+	                return shouldPass;
+	            });
+	        }
+	        else {
+	            rootElement$ = this._rootElement$.take(2);
+	        }
+	        var event$ = rootElement$
+	            .map(function setupEventDelegatorOnTopElement(rootElement) {
+	            // Event listener just for the root element
+	            if (!namespace || namespace.length === 0) {
+	                return fromEvent_1.fromEvent(rootElement, eventType, useCapture);
+	            }
+	            // Event listener on the top element as an EventDelegator
+	            var delegators = domSource._delegators;
+	            var top = scope
+	                ? domSource._isolateModule.getIsolatedElement(scope)
+	                : rootElement;
+	            var delegator;
+	            if (delegators.has(key)) {
+	                delegator = delegators.get(key);
+	                delegator.updateTopElement(top);
+	            }
+	            else {
+	                delegator = new EventDelegator_1.EventDelegator(top, eventType, useCapture, domSource._isolateModule);
+	                delegators.set(key, delegator);
+	            }
+	            var subject = xstream_1.default.create();
+	            if (scope) {
+	                domSource._isolateModule.addEventDelegator(scope, delegator);
+	            }
+	            delegator.addDestination(subject, namespace);
+	            return subject;
+	        })
+	            .flatten();
+	        return this._runStreamAdapter.adapt(event$, xstream_adapter_1.default.streamSubscribe);
+	    };
+	    MainDOMSource.prototype.dispose = function () {
+	        this._isolateModule.reset();
+	    };
+	    return MainDOMSource;
+	}());
+	exports.MainDOMSource = MainDOMSource;
+	//# sourceMappingURL=MainDOMSource.js.map
+
+/***/ },
+/* 18 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var xstream_1 = __webpack_require__(5);
+	var XStreamAdapter = {
+	    adapt: function (originStream, originStreamSubscribe) {
+	        if (XStreamAdapter.isValidStream(originStream)) {
+	            return originStream;
+	        }
+	        ;
+	        var dispose = null;
+	        return xstream_1.default.create({
+	            start: function (out) {
+	                var observer = out;
+	                dispose = originStreamSubscribe(originStream, observer);
+	            },
+	            stop: function () {
+	                if (typeof dispose === 'function') {
+	                    dispose();
+	                }
+	            }
+	        });
+	    },
+	    makeSubject: function () {
+	        var stream = xstream_1.default.create();
+	        var observer = {
+	            next: function (x) { stream.shamefullySendNext(x); },
+	            error: function (err) { stream.shamefullySendError(err); },
+	            complete: function () { stream.shamefullySendComplete(); }
+	        };
+	        return { observer: observer, stream: stream };
+	    },
+	    remember: function (stream) {
+	        return stream.remember();
+	    },
+	    isValidStream: function (stream) {
+	        return (typeof stream.addListener === 'function' &&
+	            typeof stream.shamefullySendNext === 'function');
+	    },
+	    streamSubscribe: function (stream, observer) {
+	        stream.addListener(observer);
+	        return function () { return stream.removeListener(observer); };
+	    }
+	};
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = XStreamAdapter;
+	//# sourceMappingURL=index.js.map
+
+/***/ },
+/* 19 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var ScopeChecker_1 = __webpack_require__(20);
+	var utils_1 = __webpack_require__(21);
+	var matchesSelector;
+	try {
+	    matchesSelector = __webpack_require__(22);
+	}
+	catch (e) {
+	    matchesSelector = Function.prototype;
+	}
+	function toElArray(input) {
+	    return Array.prototype.slice.call(input);
+	}
+	var ElementFinder = (function () {
+	    function ElementFinder(namespace, isolateModule) {
+	        this.namespace = namespace;
+	        this.isolateModule = isolateModule;
+	    }
+	    ElementFinder.prototype.call = function (rootElement) {
+	        var namespace = this.namespace;
+	        if (namespace.join("") === "") {
+	            return rootElement;
+	        }
+	        var scope = utils_1.getScope(namespace);
+	        var scopeChecker = new ScopeChecker_1.ScopeChecker(scope, this.isolateModule);
+	        var selector = utils_1.getSelectors(namespace);
+	        var topNode = rootElement;
+	        var topNodeMatches = [];
+	        if (scope.length > 0) {
+	            topNode = this.isolateModule.getIsolatedElement(scope) || rootElement;
+	            if (selector && matchesSelector(topNode, selector)) {
+	                topNodeMatches.push(topNode);
+	            }
+	        }
+	        return toElArray(topNode.querySelectorAll(selector))
+	            .filter(scopeChecker.isStrictlyInRootScope, scopeChecker)
+	            .concat(topNodeMatches);
+	    };
+	    return ElementFinder;
+	}());
+	exports.ElementFinder = ElementFinder;
+	//# sourceMappingURL=ElementFinder.js.map
+
+/***/ },
+/* 20 */
+/***/ function(module, exports) {
+
+	"use strict";
+	var ScopeChecker = (function () {
+	    function ScopeChecker(scope, isolateModule) {
+	        this.scope = scope;
+	        this.isolateModule = isolateModule;
+	    }
+	    ScopeChecker.prototype.isStrictlyInRootScope = function (leaf) {
+	        for (var el = leaf; el; el = el.parentElement) {
+	            var scope = this.isolateModule.isIsolatedElement(el);
+	            if (scope && scope !== this.scope) {
+	                return false;
+	            }
+	            if (scope) {
+	                return true;
+	            }
+	        }
+	        return true;
+	    };
+	    return ScopeChecker;
+	}());
+	exports.ScopeChecker = ScopeChecker;
+	//# sourceMappingURL=ScopeChecker.js.map
+
+/***/ },
+/* 21 */
+/***/ function(module, exports) {
+
+	"use strict";
+	function isElement(obj) {
+	    return typeof HTMLElement === "object" ?
+	        obj instanceof HTMLElement || obj instanceof DocumentFragment :
+	        obj && typeof obj === "object" && obj !== null &&
+	            (obj.nodeType === 1 || obj.nodeType === 11) &&
+	            typeof obj.nodeName === "string";
+	}
+	exports.SCOPE_PREFIX = "$$CYCLEDOM$$-";
+	function getElement(selectors) {
+	    var domElement = (typeof selectors === "string" ?
+	        document.querySelector(selectors) :
+	        selectors);
+	    if (typeof selectors === "string" && domElement === null) {
+	        throw new Error("Cannot render into unknown element `" + selectors + "`");
+	    }
+	    else if (!isElement(domElement)) {
+	        throw new Error("Given container is not a DOM element neither a " +
+	            "selector string.");
+	    }
+	    return domElement;
+	}
+	exports.getElement = getElement;
+	function getScope(namespace) {
+	    return namespace
+	        .filter(function (c) { return c.indexOf(exports.SCOPE_PREFIX) > -1; })
+	        .slice(-1) // only need the latest, most specific, isolated boundary
+	        .join("");
+	}
+	exports.getScope = getScope;
+	function getSelectors(namespace) {
+	    return namespace.filter(function (c) { return c.indexOf(exports.SCOPE_PREFIX) === -1; }).join(" ");
+	}
+	exports.getSelectors = getSelectors;
+	//# sourceMappingURL=utils.js.map
+
+/***/ },
+/* 22 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	var proto = Element.prototype;
+	var vendor = proto.matches
+	  || proto.matchesSelector
+	  || proto.webkitMatchesSelector
+	  || proto.mozMatchesSelector
+	  || proto.msMatchesSelector
+	  || proto.oMatchesSelector;
+	
+	module.exports = match;
+	
+	/**
+	 * Match `el` to `selector`.
+	 *
+	 * @param {Element} el
+	 * @param {String} selector
+	 * @return {Boolean}
+	 * @api public
+	 */
+	
+	function match(el, selector) {
+	  if (vendor) return vendor.call(el, selector);
+	  var nodes = el.parentNode.querySelectorAll(selector);
+	  for (var i = 0; i < nodes.length; i++) {
+	    if (nodes[i] == el) return true;
+	  }
+	  return false;
+	}
+
+/***/ },
+/* 23 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var xstream_1 = __webpack_require__(5);
+	function fromEvent(element, eventName, useCapture) {
+	    if (useCapture === void 0) { useCapture = false; }
+	    return xstream_1.Stream.create({
+	        element: element,
+	        next: null,
+	        start: function start(listener) {
+	            this.next = function next(event) { listener.next(event); };
+	            this.element.addEventListener(eventName, this.next, useCapture);
+	        },
+	        stop: function stop() {
+	            this.element.removeEventListener(eventName, this.next, useCapture);
+	        }
+	    });
+	}
+	exports.fromEvent = fromEvent;
+	//# sourceMappingURL=fromEvent.js.map
+
+/***/ },
+/* 24 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var utils_1 = __webpack_require__(21);
+	function isolateSource(source, scope) {
+	    return source.select(utils_1.SCOPE_PREFIX + scope);
+	}
+	exports.isolateSource = isolateSource;
+	function isolateSink(sink, scope) {
+	    return sink.map(function (vTree) {
+	        if (vTree.data.isolate) {
+	            var existingScope = parseInt(vTree.data.isolate.split(utils_1.SCOPE_PREFIX + 'cycle')[1]);
+	            var _scope = parseInt(scope.split('cycle')[1]);
+	            if (Number.isNaN(existingScope) ||
+	                Number.isNaN(_scope) ||
+	                existingScope > _scope) {
+	                return vTree;
+	            }
+	        }
+	        vTree.data.isolate = utils_1.SCOPE_PREFIX + scope;
+	        return vTree;
+	    });
+	}
+	exports.isolateSink = isolateSink;
+	//# sourceMappingURL=isolate.js.map
+
+/***/ },
+/* 25 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var ScopeChecker_1 = __webpack_require__(20);
+	var utils_1 = __webpack_require__(21);
+	var matchesSelector;
+	try {
+	    matchesSelector = __webpack_require__(22);
+	}
+	catch (e) {
+	    matchesSelector = Function.prototype;
+	}
+	/**
+	 * Attaches an actual event listener to the DOM root element,
+	 * handles "destinations" (interested DOMSource output subjects), and bubbling.
+	 */
+	var EventDelegator = (function () {
+	    function EventDelegator(topElement, eventType, useCapture, isolateModule) {
+	        var _this = this;
+	        this.topElement = topElement;
+	        this.eventType = eventType;
+	        this.useCapture = useCapture;
+	        this.isolateModule = isolateModule;
+	        this.destinations = [];
+	        this.roof = topElement.parentElement;
+	        if (useCapture) {
+	            this.domListener = function (ev) { return _this.capture(ev); };
+	        }
+	        else {
+	            this.domListener = function (ev) { return _this.bubble(ev); };
+	        }
+	        topElement.addEventListener(eventType, this.domListener, useCapture);
+	    }
+	    EventDelegator.prototype.bubble = function (rawEvent) {
+	        if (!document.body.contains(rawEvent.currentTarget)) {
+	            return;
+	        }
+	        var ev = this.patchEvent(rawEvent);
+	        for (var el = ev.target; el && el !== this.roof; el = el.parentElement) {
+	            if (ev.propagationHasBeenStopped) {
+	                return;
+	            }
+	            this.matchEventAgainstDestinations(el, ev);
+	        }
+	    };
+	    EventDelegator.prototype.matchEventAgainstDestinations = function (el, ev) {
+	        for (var i = 0, n = this.destinations.length; i < n; i++) {
+	            var dest = this.destinations[i];
+	            if (!dest.scopeChecker.isStrictlyInRootScope(el)) {
+	                continue;
+	            }
+	            if (matchesSelector(el, dest.selector)) {
+	                this.mutateEventCurrentTarget(ev, el);
+	                dest.subject._n(ev);
+	            }
+	        }
+	    };
+	    EventDelegator.prototype.capture = function (ev) {
+	        for (var i = 0, n = this.destinations.length; i < n; i++) {
+	            var dest = this.destinations[i];
+	            if (matchesSelector(ev.target, dest.selector)) {
+	                dest.subject._n(ev);
+	            }
+	        }
+	    };
+	    EventDelegator.prototype.addDestination = function (subject, namespace) {
+	        var scope = utils_1.getScope(namespace);
+	        var selector = utils_1.getSelectors(namespace);
+	        var scopeChecker = new ScopeChecker_1.ScopeChecker(scope, this.isolateModule);
+	        this.destinations.push({ subject: subject, scopeChecker: scopeChecker, selector: selector });
+	    };
+	    EventDelegator.prototype.patchEvent = function (event) {
+	        var pEvent = event;
+	        pEvent.propagationHasBeenStopped = false;
+	        var oldStopPropagation = pEvent.stopPropagation;
+	        pEvent.stopPropagation = function stopPropagation() {
+	            oldStopPropagation.call(this);
+	            this.propagationHasBeenStopped = true;
+	        };
+	        return pEvent;
+	    };
+	    EventDelegator.prototype.mutateEventCurrentTarget = function (event, currentTargetElement) {
+	        try {
+	            Object.defineProperty(event, "currentTarget", {
+	                value: currentTargetElement,
+	                configurable: true,
+	            });
+	        }
+	        catch (err) {
+	            console.log("please use event.ownerTarget");
+	        }
+	        event.ownerTarget = currentTargetElement;
+	    };
+	    EventDelegator.prototype.updateTopElement = function (newTopElement) {
+	        this.topElement.removeEventListener(this.eventType, this.domListener, this.useCapture);
+	        newTopElement.addEventListener(this.eventType, this.domListener, this.useCapture);
+	        this.topElement = newTopElement;
+	    };
+	    return EventDelegator;
+	}());
+	exports.EventDelegator = EventDelegator;
+	//# sourceMappingURL=EventDelegator.js.map
+
+/***/ },
+/* 26 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var hyperscript_1 = __webpack_require__(27);
+	var classNameFromVNode_1 = __webpack_require__(28);
+	var selectorParser_1 = __webpack_require__(29);
+	var VNodeWrapper = (function () {
+	    function VNodeWrapper(rootElement) {
+	        this.rootElement = rootElement;
+	    }
+	    VNodeWrapper.prototype.call = function (vnode) {
+	        var _a = selectorParser_1.default(vnode.sel), selectorTagName = _a.tagName, selectorId = _a.id;
+	        var vNodeClassName = classNameFromVNode_1.default(vnode);
+	        var vNodeData = vnode.data || {};
+	        var vNodeDataProps = vNodeData.props || {};
+	        var _b = vNodeDataProps.id, vNodeId = _b === void 0 ? selectorId : _b;
+	        var isVNodeAndRootElementIdentical = vNodeId.toUpperCase() === this.rootElement.id.toUpperCase() &&
+	            selectorTagName.toUpperCase() === this.rootElement.tagName.toUpperCase() &&
+	            vNodeClassName.toUpperCase() === this.rootElement.className.toUpperCase();
+	        if (isVNodeAndRootElementIdentical) {
+	            return vnode;
+	        }
+	        var _c = this.rootElement, tagName = _c.tagName, id = _c.id, className = _c.className;
+	        var elementId = id ? "#" + id : "";
+	        var elementClassName = className ?
+	            "." + className.split(" ").join(".") : "";
+	        return hyperscript_1.h("" + tagName + elementId + elementClassName, {}, [vnode]);
+	    };
+	    return VNodeWrapper;
+	}());
+	exports.VNodeWrapper = VNodeWrapper;
+	//# sourceMappingURL=VNodeWrapper.js.map
+
+/***/ },
+/* 27 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var is = __webpack_require__(13);
+	var vnode = __webpack_require__(12);
+	function isGenericStream(x) {
+	    return !Array.isArray(x) && typeof x.map === "function";
+	}
+	function mutateStreamWithNS(vNode) {
+	    addNS(vNode.data, vNode.children, vNode.sel);
+	    return vNode;
+	}
+	function addNS(data, children, selector) {
+	    data.ns = "http://www.w3.org/2000/svg";
+	    if (selector !== "foreignObject" && typeof children !== "undefined" && is.array(children)) {
+	        for (var i = 0; i < children.length; ++i) {
+	            if (isGenericStream(children[i])) {
+	                children[i] = children[i].map(mutateStreamWithNS);
+	            }
+	            else {
+	                addNS(children[i].data, children[i].children, children[i].sel);
+	            }
+	        }
+	    }
+	}
+	function h(sel, b, c) {
+	    var data = {};
+	    var children;
+	    var text;
+	    var i;
+	    if (arguments.length === 3) {
+	        data = b;
+	        if (is.array(c)) {
+	            children = c;
+	        }
+	        else if (is.primitive(c)) {
+	            text = c;
+	        }
+	    }
+	    else if (arguments.length === 2) {
+	        if (is.array(b)) {
+	            children = b;
+	        }
+	        else if (is.primitive(b)) {
+	            text = b;
+	        }
+	        else {
+	            data = b;
+	        }
+	    }
+	    if (is.array(children)) {
+	        children = children.filter(function (x) { return x; });
+	        for (i = 0; i < children.length; ++i) {
+	            if (is.primitive(children[i])) {
+	                children[i] = vnode(undefined, undefined, undefined, children[i]);
+	            }
+	        }
+	    }
+	    if (sel[0] === 's' && sel[1] === 'v' && sel[2] === 'g') {
+	        addNS(data, children, sel);
+	    }
+	    return vnode(sel, data, children, text, undefined);
+	}
+	exports.h = h;
+	;
+	//# sourceMappingURL=hyperscript.js.map
+
+/***/ },
+/* 28 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.default = classNameFromVNode;
+	
+	var _selectorParser2 = __webpack_require__(29);
+	
+	var _selectorParser3 = _interopRequireDefault(_selectorParser2);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function classNameFromVNode(vNode) {
+	  var _selectorParser = (0, _selectorParser3.default)(vNode.sel);
+	
+	  var cn = _selectorParser.className;
+	
+	  if (!vNode.data) {
+	    return cn;
+	  }
+	
+	  var _vNode$data = vNode.data;
+	  var dataClass = _vNode$data.class;
+	  var props = _vNode$data.props;
+	
+	  if (dataClass) {
+	    var c = Object.keys(vNode.data.class).filter(function (cl) {
+	      return vNode.data.class[cl];
+	    });
+	    cn += ' ' + c.join(' ');
+	  }
+	
+	  if (props && props.className) {
+	    cn += ' ' + props.className;
+	  }
+	
+	  return cn.trim();
+	}
+
+/***/ },
+/* 29 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.default = selectorParser;
+	
+	var _browserSplit = __webpack_require__(30);
+	
+	var _browserSplit2 = _interopRequireDefault(_browserSplit);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var classIdSplit = /([\.#]?[a-zA-Z0-9\u007F-\uFFFF_:-]+)/;
+	var notClassId = /^\.|#/;
+	
+	function selectorParser() {
+	  var selector = arguments.length <= 0 || arguments[0] === undefined ? '' : arguments[0];
+	
+	  var tagName = undefined;
+	  var id = '';
+	  var classes = [];
+	
+	  var tagParts = (0, _browserSplit2.default)(selector, classIdSplit);
+	
+	  if (notClassId.test(tagParts[1]) || selector === '') {
+	    tagName = 'div';
+	  }
+	
+	  var part = undefined;
+	  var type = undefined;
+	  var i = undefined;
+	
+	  for (i = 0; i < tagParts.length; i++) {
+	    part = tagParts[i];
+	
+	    if (!part) {
+	      continue;
+	    }
+	
+	    type = part.charAt(0);
+	
+	    if (!tagName) {
+	      tagName = part;
+	    } else if (type === '.') {
+	      classes.push(part.substring(1, part.length));
+	    } else if (type === '#') {
+	      id = part.substring(1, part.length);
+	    }
+	  }
+	
+	  return {
+	    tagName: tagName,
+	    id: id,
+	    className: classes.join(' ')
+	  };
+	}
+
+/***/ },
+/* 30 */
+/***/ function(module, exports) {
+
+	/*!
 	 * Cross-Browser Split 1.1.1
 	 * Copyright 2007-2012 Steven Levithan <stevenlevithan.com>
 	 * Available under the MIT License
 	 * ECMAScript compliant, uniform cross-browser split method
 	 */
-t.exports=function(t){var e,n=String.prototype.split,r=/()??/.exec("")[1]===t;return e=function(e,i,o){if("[object RegExp]"!==Object.prototype.toString.call(i))return n.call(e,i,o);var u,s,a,c,f=[],h=(i.ignoreCase?"i":"")+(i.multiline?"m":"")+(i.extended?"x":"")+(i.sticky?"y":""),l=0,i=new RegExp(i.source,h+"g");for(e+="",r||(u=new RegExp("^"+i.source+"$(?!\\s)",h)),o=o===t?-1>>>0:o>>>0;(s=i.exec(e))&&(a=s.index+s[0].length,!(a>l&&(f.push(e.slice(l,s.index)),!r&&s.length>1&&s[0].replace(u,function(){for(var e=1;e<arguments.length-2;e++)arguments[e]===t&&(s[e]=t)}),s.length>1&&s.index<e.length&&Array.prototype.push.apply(f,s.slice(1)),c=s[0].length,l=a,f.length>=o)));)i.lastIndex===s.index&&i.lastIndex++;return l===e.length?!c&&i.test("")||f.push(""):f.push(e.slice(l)),f.length>o?f.slice(0,o):f}}()},function(t,e,n){"use strict";var r=n(33);e.ClassModule=r;var i=n(34);e.PropsModule=i;var o=n(35);e.AttrsModule=o;var u=n(36);e.EventsModule=u;var s=n(37);e.StyleModule=s;var a=n(38);e.HeroModule=a,Object.defineProperty(e,"__esModule",{value:!0}),e["default"]=[s,r,i,o]},function(t,e){function n(t,e){var n,r,i=e.elm,o=t.data["class"]||{},u=e.data["class"]||{};for(r in o)u[r]||i.classList.remove(r);for(r in u)n=u[r],n!==o[r]&&i.classList[n?"add":"remove"](r)}t.exports={create:n,update:n}},function(t,e){function n(t,e){var n,r,i,o=e.elm,u=t.data.props||{},s=e.data.props||{};for(n in u)s[n]||delete o[n];for(n in s)r=s[n],i=u[n],i===r||"value"===n&&o[n]===r||(o[n]=r)}t.exports={create:n,update:n}},function(t,e){function n(t,e){var n,r,o,u=e.elm,s=t.data.attrs||{},a=e.data.attrs||{};for(n in a)r=a[n],o=s[n],o!==r&&(!r&&i[n]?u.removeAttribute(n):u.setAttribute(n,r));for(n in s)n in a||u.removeAttribute(n)}for(var r=["allowfullscreen","async","autofocus","autoplay","checked","compact","controls","declare","default","defaultchecked","defaultmuted","defaultselected","defer","disabled","draggable","enabled","formnovalidate","hidden","indeterminate","inert","ismap","itemscope","loop","multiple","muted","nohref","noresize","noshade","novalidate","nowrap","open","pauseonexit","readonly","required","reversed","scoped","seamless","selected","sortable","spellcheck","translate","truespeed","typemustmatch","visible"],i={},o=0,u=r.length;o<u;o++)i[r[o]]=!0;t.exports={create:n,update:n}},function(t,e,n){function r(t){return function(){2===t.length?t[0](t[1]):t[0].apply(void 0,t.slice(1))}}function i(t){return function(e){t.fn(e)}}function o(t,e){var n,o,s,a=e.elm,c=t.data.on||{},f=e.data.on;if(f)for(n in f)if(o=f[n],s=c[n],void 0===s)u.array(o)?a.addEventListener(n,r(o)):(o={fn:o},f[n]=o,a.addEventListener(n,i(o)));else if(u.array(s)){s.length=o.length;for(var h=0;h<s.length;++h)s[h]=o[h];f[n]=s}else s.fn=o,f[n]=s}var u=n(14);t.exports={create:o,update:o}},function(t,e){function n(t,e,n){s(function(){t[e]=n})}function r(t,e){var r,i,o=e.elm,u=t.data.style||{},s=e.data.style||{},a="delayed"in u;for(i in u)s[i]||(o.style[i]="");for(i in s)if(r=s[i],"delayed"===i)for(i in s.delayed)r=s.delayed[i],a&&r===u.delayed[i]||n(o.style,i,r);else"remove"!==i&&r!==u[i]&&(o.style[i]=r)}function i(t){var e,n,r=t.elm,i=t.data.style;if(i&&(e=i.destroy))for(n in e)r.style[n]=e[n]}function o(t,e){var n=t.data.style;if(!n||!n.remove)return void e();var r,i,o=t.elm,u=0,s=n.remove,a=0,c=[];for(r in s)c.push(r),o.style[r]=s[r];i=getComputedStyle(o);for(var f=i["transition-property"].split(", ");u<f.length;++u)c.indexOf(f[u])!==-1&&a++;o.addEventListener("transitionend",function(t){t.target===o&&--a,0===a&&e()})}var u="undefined"!=typeof window&&window.requestAnimationFrame||setTimeout,s=function(t){u(function(){u(t)})};t.exports={create:r,update:r,destroy:i,remove:o}},function(t,e){function n(t,e,n){v(function(){t[e]=n})}function r(t){var e;if(document.createRange){var n=document.createRange();n.selectNodeContents(t),n.getBoundingClientRect&&(e=n.getBoundingClientRect())}return e}function i(t,e,n){if(t&&e){var r=e.left+e.width/2-n.left,i=e.top+e.height/2-n.top;return r+"px "+i+"px"}return"0 0"}function o(t,e){return t&&e?t.left+t.width/2-(e.left+e.width/2):0}function u(t,e){return t&&e?t.top+t.height/2-(e.top+e.height/2):0}function s(t){return 1===t.childNodes.length&&3===t.childNodes[0].nodeType}function a(t,e){l={},p=[]}function c(t,e){var n=e.data.hero;n&&n.id&&(p.push(n.id),p.push(e))}function f(t){var e=t.data.hero;if(e&&e.id){var n=t.elm;t.isTextNode=s(n),t.boundingRect=n.getBoundingClientRect(),t.textRect=t.isTextNode?r(n.childNodes[0]):null;var i=window.getComputedStyle(n,null);t.savedStyle=JSON.parse(JSON.stringify(i)),l[e.id]=t}}function h(){var t,e,a,c,f,h,d,v,_,y,m,g,w,b,S,x,O,E,I;for(t=0;t<p.length;t+=2)if(e=p[t],a=p[t+1].elm,c=l[e]){O=c.isTextNode&&s(a),b=a.style,x=window.getComputedStyle(a,null),f=c.elm,S=f.style,_=a.getBoundingClientRect(),v=c.boundingRect,O?(E=r(a.childNodes[0]),I=c.textRect,y=o(I,E),m=u(I,E)):(y=v.left-_.left,m=v.top-_.top),h=_.height/Math.max(v.height,1),d=O?h:_.width/Math.max(v.width,1),g=b.transform,w=b.transition,"inline"===x.display&&(b.display="inline-block"),b.transition=w+"transform 0s",b.transformOrigin=i(O,E,_),b.opacity="0",b.transform=g+"translate("+y+"px, "+m+"px) scale("+1/d+", "+1/h+")",n(b,"transition",w),n(b,"transform",g),n(b,"opacity","1");for(var M in c.savedStyle)if(parseInt(M)!=M){var j="ms"===M.substring(0,2),z="moz"===M.substring(0,3),k="webkit"===M.substring(0,6);j||z||k||(S[M]=c.savedStyle[M])}S.position="absolute",S.top=v.top+"px",S.left=v.left+"px",S.width=v.width+"px",S.height=v.height+"px",S.margin=0,S.transformOrigin=i(O,I,v),S.transform="",S.opacity="1",document.body.appendChild(f),n(S,"transform","translate("+-y+"px, "+-m+"px) scale("+d+", "+h+")"),n(S,"opacity","0"),f.addEventListener("transitionend",function(t){"transform"===t.propertyName&&document.body.removeChild(t.target)})}l=p=void 0}var l,p,d="undefined"!=typeof window&&window.requestAnimationFrame||setTimeout,v=function(t){d(function(){d(t)})};t.exports={pre:a,create:c,destroy:f,post:h}},function(t,e){"use strict";var n=function(){function t(t){this.isolatedElements=t,this.eventDelegators=new Map}return t.prototype.setScope=function(t,e){this.isolatedElements.set(e,t)},t.prototype.removeScope=function(t){this.isolatedElements["delete"](t)},t.prototype.getIsolatedElement=function(t){return this.isolatedElements.get(t)},t.prototype.isIsolatedElement=function(t){for(var e=Array.from(this.isolatedElements.entries()),n=0;n<e.length;++n)if(t===e[n][1])return e[n][0];return!1},t.prototype.addEventDelegator=function(t,e){var n=this.eventDelegators.get(t);n||(n=[],this.eventDelegators.set(t,n)),n[n.length]=e},t.prototype.reset=function(){this.isolatedElements.clear()},t.prototype.createModule=function(){var t=this;return{create:function(e,n){var r=e.data,i=void 0===r?{}:r,o=n.elm,u=n.data,s=void 0===u?{}:u,a=i.isolate||"",c=s.isolate||"";if(c){a&&t.removeScope(a),t.setScope(o,c);var f=t.eventDelegators.get(c);if(f)for(var h=0,l=f.length;h<l;++h)f[h].updateTopElement(o);else void 0===f&&t.eventDelegators.set(c,[])}a&&!c&&t.removeScope(c)},update:function(e,n){var r=e.data,i=void 0===r?{}:r,o=n.elm,u=n.data,s=void 0===u?{}:u,a=i.isolate||"",c=s.isolate||"";c&&c!==a&&(a&&t.removeScope(a),t.setScope(o,c)),a&&!c&&t.removeScope(c)},remove:function(e,n){var r=e.data;r=r||{};var i=r.isolate;i&&(t.removeScope(i),t.eventDelegators.get(i)&&t.eventDelegators.set(i,[])),n()},destroy:function(e){var n=e.data;n=n||{};var r=n.isolate;r&&(t.removeScope(r),t.eventDelegators.get(r)&&t.eventDelegators.set(r,[]))}}},t}();e.IsolateModule=n},function(t,e,n){"use strict";function r(t,e){return{sel:t.sel,data:t.data,text:t.text,elm:t.elm,key:t.key,children:e}}function i(t){return function e(n){if(n){if(n&&"object"==typeof n.data&&n.data["static"])return u["default"].of(n);if(t.isValidStream(n)){var i=o["default"].adapt(n,t.streamSubscribe);return i.map(e).flatten()}if("object"==typeof n){if(!n.children||0===n.children.length)return u["default"].of(n);var s=n.children.map(e).filter(function(t){return null!==t});return 0===s.length?u["default"].of(r(n,[])):u["default"].combine.apply(u["default"],s).map(function(t){return r(n,t.slice())})}throw new Error("Unhandled vTree Value")}return null}}var o=n(19),u=n(5);e.makeTransposeVNode=i},function(t,e,n){"use strict";function r(t,e){function n(e,n){var i=o.makeTransposeVNode(n),c=r?e.map(i).flatten():e,f=c.last().map(s);return f.addListener({next:t||a,error:a,complete:a}),new u.HTMLSource(f,n)}e||(e={});var r=e.transposition||!1;return n.streamAdapter=i["default"],n}var i=n(19),o=n(40),u=n(42),s=n(43),a=function(){};e.makeHTMLDriver=r},function(t,e,n){"use strict";var r=n(5),i=n(19),o=function(){function t(t,e){this.runSA=e,this._html$=t,this._empty$=e.adapt(r["default"].empty(),i["default"].streamSubscribe)}return t.prototype.elements=function(){return this.runSA.adapt(this._html$,i["default"].streamSubscribe)},t.prototype.select=function(e){return new t(r["default"].empty(),this.runSA)},t.prototype.events=function(t,e){return this._empty$},t}();e.HTMLSource=o},function(t,e,n){var r=n(44);t.exports=r([n(49),n(70)])},function(t,e,n){var r=n(45),i=n(47),o=n(48);t.exports=function(t){function e(e){return t.reduce(function(t,n){return t.push(n(e)),t},[]).filter(function(t){return""!==t})}return function n(t){if(!t.sel&&t.text)return t.text;t.data=t.data||{},"string"==typeof t.sel&&"thunk"===t.sel.slice(0,5)&&(t=t.data.fn.apply(null,t.data.args));var u=r(t.sel).tagName,s=e(t),a="http://www.w3.org/2000/svg"===t.data.ns,c=[];return c.push("<"+u),s.length&&c.push(" "+s.join(" ")),a&&o[u]!==!0&&c.push(" /"),c.push(">"),(i[u]!==!0&&!a||a&&o[u]===!0)&&(t.data.props&&t.data.props.innerHTML?c.push(t.data.props.innerHTML):t.text?c.push(t.text):t.children&&t.children.forEach(function(t){c.push(n(t))}),c.push("</"+u+">")),c.join("")}}},function(t,e,n){var r=n(46),i=/([\.#]?[a-zA-Z0-9\u007F-\uFFFF_:-]+)/,o=/^\.|#/;t.exports=function(t,e){t=t||"";var n,u="",s=[],a=r(t,i);(o.test(a[1])||""===t)&&(n="div");var c,f,h;for(h=0;h<a.length;h++)c=a[h],c&&(f=c.charAt(0),n?"."===f?s.push(c.substring(1,c.length)):"#"===f&&(u=c.substring(1,c.length)):n=c);return{tagName:e===!0?n.toUpperCase():n,id:u,className:s.join(" ")}}},function(t,e){/*!
+	
+	/**
+	 * Splits a string into an array of strings using a regex or string separator. Matches of the
+	 * separator are not included in the result array. However, if `separator` is a regex that contains
+	 * capturing groups, backreferences are spliced into the result each time `separator` is matched.
+	 * Fixes browser bugs compared to the native `String.prototype.split` and can be used reliably
+	 * cross-browser.
+	 * @param {String} str String to split.
+	 * @param {RegExp|String} separator Regex or string to use for separating the string.
+	 * @param {Number} [limit] Maximum number of items to include in the result array.
+	 * @returns {Array} Array of substrings.
+	 * @example
+	 *
+	 * // Basic use
+	 * split('a b c d', ' ');
+	 * // -> ['a', 'b', 'c', 'd']
+	 *
+	 * // With limit
+	 * split('a b c d', ' ', 2);
+	 * // -> ['a', 'b']
+	 *
+	 * // Backreferences in result array
+	 * split('..word1 word2..', /([a-z]+)(\d+)/i);
+	 * // -> ['..', 'word', '1', ' ', 'word', '2', '..']
+	 */
+	module.exports = (function split(undef) {
+	
+	  var nativeSplit = String.prototype.split,
+	    compliantExecNpcg = /()??/.exec("")[1] === undef,
+	    // NPCG: nonparticipating capturing group
+	    self;
+	
+	  self = function(str, separator, limit) {
+	    // If `separator` is not a regex, use `nativeSplit`
+	    if (Object.prototype.toString.call(separator) !== "[object RegExp]") {
+	      return nativeSplit.call(str, separator, limit);
+	    }
+	    var output = [],
+	      flags = (separator.ignoreCase ? "i" : "") + (separator.multiline ? "m" : "") + (separator.extended ? "x" : "") + // Proposed for ES6
+	      (separator.sticky ? "y" : ""),
+	      // Firefox 3+
+	      lastLastIndex = 0,
+	      // Make `global` and avoid `lastIndex` issues by working with a copy
+	      separator = new RegExp(separator.source, flags + "g"),
+	      separator2, match, lastIndex, lastLength;
+	    str += ""; // Type-convert
+	    if (!compliantExecNpcg) {
+	      // Doesn't need flags gy, but they don't hurt
+	      separator2 = new RegExp("^" + separator.source + "$(?!\\s)", flags);
+	    }
+	    /* Values for `limit`, per the spec:
+	     * If undefined: 4294967295 // Math.pow(2, 32) - 1
+	     * If 0, Infinity, or NaN: 0
+	     * If positive number: limit = Math.floor(limit); if (limit > 4294967295) limit -= 4294967296;
+	     * If negative number: 4294967296 - Math.floor(Math.abs(limit))
+	     * If other: Type-convert, then use the above rules
+	     */
+	    limit = limit === undef ? -1 >>> 0 : // Math.pow(2, 32) - 1
+	    limit >>> 0; // ToUint32(limit)
+	    while (match = separator.exec(str)) {
+	      // `separator.lastIndex` is not reliable cross-browser
+	      lastIndex = match.index + match[0].length;
+	      if (lastIndex > lastLastIndex) {
+	        output.push(str.slice(lastLastIndex, match.index));
+	        // Fix browsers whose `exec` methods don't consistently return `undefined` for
+	        // nonparticipating capturing groups
+	        if (!compliantExecNpcg && match.length > 1) {
+	          match[0].replace(separator2, function() {
+	            for (var i = 1; i < arguments.length - 2; i++) {
+	              if (arguments[i] === undef) {
+	                match[i] = undef;
+	              }
+	            }
+	          });
+	        }
+	        if (match.length > 1 && match.index < str.length) {
+	          Array.prototype.push.apply(output, match.slice(1));
+	        }
+	        lastLength = match[0].length;
+	        lastLastIndex = lastIndex;
+	        if (output.length >= limit) {
+	          break;
+	        }
+	      }
+	      if (separator.lastIndex === match.index) {
+	        separator.lastIndex++; // Avoid an infinite loop
+	      }
+	    }
+	    if (lastLastIndex === str.length) {
+	      if (lastLength || !separator.test("")) {
+	        output.push("");
+	      }
+	    } else {
+	      output.push(str.slice(lastLastIndex));
+	    }
+	    return output.length > limit ? output.slice(0, limit) : output;
+	  };
+	
+	  return self;
+	})();
+
+
+/***/ },
+/* 31 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var ClassModule = __webpack_require__(32);
+	exports.ClassModule = ClassModule;
+	var PropsModule = __webpack_require__(33);
+	exports.PropsModule = PropsModule;
+	var AttrsModule = __webpack_require__(34);
+	exports.AttrsModule = AttrsModule;
+	var EventsModule = __webpack_require__(35);
+	exports.EventsModule = EventsModule;
+	var StyleModule = __webpack_require__(36);
+	exports.StyleModule = StyleModule;
+	var HeroModule = __webpack_require__(37);
+	exports.HeroModule = HeroModule;
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = [StyleModule, ClassModule, PropsModule, AttrsModule];
+	//# sourceMappingURL=modules.js.map
+
+/***/ },
+/* 32 */
+/***/ function(module, exports) {
+
+	function updateClass(oldVnode, vnode) {
+	  var cur, name, elm = vnode.elm,
+	      oldClass = oldVnode.data.class || {},
+	      klass = vnode.data.class || {};
+	  for (name in oldClass) {
+	    if (!klass[name]) {
+	      elm.classList.remove(name);
+	    }
+	  }
+	  for (name in klass) {
+	    cur = klass[name];
+	    if (cur !== oldClass[name]) {
+	      elm.classList[cur ? 'add' : 'remove'](name);
+	    }
+	  }
+	}
+	
+	module.exports = {create: updateClass, update: updateClass};
+
+
+/***/ },
+/* 33 */
+/***/ function(module, exports) {
+
+	function updateProps(oldVnode, vnode) {
+	  var key, cur, old, elm = vnode.elm,
+	      oldProps = oldVnode.data.props || {}, props = vnode.data.props || {};
+	  for (key in oldProps) {
+	    if (!props[key]) {
+	      delete elm[key];
+	    }
+	  }
+	  for (key in props) {
+	    cur = props[key];
+	    old = oldProps[key];
+	    if (old !== cur && (key !== 'value' || elm[key] !== cur)) {
+	      elm[key] = cur;
+	    }
+	  }
+	}
+	
+	module.exports = {create: updateProps, update: updateProps};
+
+
+/***/ },
+/* 34 */
+/***/ function(module, exports) {
+
+	var booleanAttrs = ["allowfullscreen", "async", "autofocus", "autoplay", "checked", "compact", "controls", "declare", 
+	                "default", "defaultchecked", "defaultmuted", "defaultselected", "defer", "disabled", "draggable", 
+	                "enabled", "formnovalidate", "hidden", "indeterminate", "inert", "ismap", "itemscope", "loop", "multiple", 
+	                "muted", "nohref", "noresize", "noshade", "novalidate", "nowrap", "open", "pauseonexit", "readonly", 
+	                "required", "reversed", "scoped", "seamless", "selected", "sortable", "spellcheck", "translate", 
+	                "truespeed", "typemustmatch", "visible"];
+	    
+	var booleanAttrsDict = {};
+	for(var i=0, len = booleanAttrs.length; i < len; i++) {
+	  booleanAttrsDict[booleanAttrs[i]] = true;
+	}
+	    
+	function updateAttrs(oldVnode, vnode) {
+	  var key, cur, old, elm = vnode.elm,
+	      oldAttrs = oldVnode.data.attrs || {}, attrs = vnode.data.attrs || {};
+	  
+	  // update modified attributes, add new attributes
+	  for (key in attrs) {
+	    cur = attrs[key];
+	    old = oldAttrs[key];
+	    if (old !== cur) {
+	      // TODO: add support to namespaced attributes (setAttributeNS)
+	      if(!cur && booleanAttrsDict[key])
+	        elm.removeAttribute(key);
+	      else
+	        elm.setAttribute(key, cur);
+	    }
+	  }
+	  //remove removed attributes
+	  // use `in` operator since the previous `for` iteration uses it (.i.e. add even attributes with undefined value)
+	  // the other option is to remove all attributes with value == undefined
+	  for (key in oldAttrs) {
+	    if (!(key in attrs)) {
+	      elm.removeAttribute(key);
+	    }
+	  }
+	}
+	
+	module.exports = {create: updateAttrs, update: updateAttrs};
+
+
+/***/ },
+/* 35 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var is = __webpack_require__(13);
+	
+	function arrInvoker(arr) {
+	  return function() {
+	    // Special case when length is two, for performance
+	    arr.length === 2 ? arr[0](arr[1]) : arr[0].apply(undefined, arr.slice(1));
+	  };
+	}
+	
+	function fnInvoker(o) {
+	  return function(ev) { o.fn(ev); };
+	}
+	
+	function updateEventListeners(oldVnode, vnode) {
+	  var name, cur, old, elm = vnode.elm,
+	      oldOn = oldVnode.data.on || {}, on = vnode.data.on;
+	  if (!on) return;
+	  for (name in on) {
+	    cur = on[name];
+	    old = oldOn[name];
+	    if (old === undefined) {
+	      if (is.array(cur)) {
+	        elm.addEventListener(name, arrInvoker(cur));
+	      } else {
+	        cur = {fn: cur};
+	        on[name] = cur;
+	        elm.addEventListener(name, fnInvoker(cur));
+	      }
+	    } else if (is.array(old)) {
+	      // Deliberately modify old array since it's captured in closure created with `arrInvoker`
+	      old.length = cur.length;
+	      for (var i = 0; i < old.length; ++i) old[i] = cur[i];
+	      on[name]  = old;
+	    } else {
+	      old.fn = cur;
+	      on[name] = old;
+	    }
+	  }
+	}
+	
+	module.exports = {create: updateEventListeners, update: updateEventListeners};
+
+
+/***/ },
+/* 36 */
+/***/ function(module, exports) {
+
+	var raf = (typeof window !== 'undefined' && window.requestAnimationFrame) || setTimeout;
+	var nextFrame = function(fn) { raf(function() { raf(fn); }); };
+	
+	function setNextFrame(obj, prop, val) {
+	  nextFrame(function() { obj[prop] = val; });
+	}
+	
+	function updateStyle(oldVnode, vnode) {
+	  var cur, name, elm = vnode.elm,
+	      oldStyle = oldVnode.data.style || {},
+	      style = vnode.data.style || {},
+	      oldHasDel = 'delayed' in oldStyle;
+	  for (name in oldStyle) {
+	    if (!style[name]) {
+	      elm.style[name] = '';
+	    }
+	  }
+	  for (name in style) {
+	    cur = style[name];
+	    if (name === 'delayed') {
+	      for (name in style.delayed) {
+	        cur = style.delayed[name];
+	        if (!oldHasDel || cur !== oldStyle.delayed[name]) {
+	          setNextFrame(elm.style, name, cur);
+	        }
+	      }
+	    } else if (name !== 'remove' && cur !== oldStyle[name]) {
+	      elm.style[name] = cur;
+	    }
+	  }
+	}
+	
+	function applyDestroyStyle(vnode) {
+	  var style, name, elm = vnode.elm, s = vnode.data.style;
+	  if (!s || !(style = s.destroy)) return;
+	  for (name in style) {
+	    elm.style[name] = style[name];
+	  }
+	}
+	
+	function applyRemoveStyle(vnode, rm) {
+	  var s = vnode.data.style;
+	  if (!s || !s.remove) {
+	    rm();
+	    return;
+	  }
+	  var name, elm = vnode.elm, idx, i = 0, maxDur = 0,
+	      compStyle, style = s.remove, amount = 0, applied = [];
+	  for (name in style) {
+	    applied.push(name);
+	    elm.style[name] = style[name];
+	  }
+	  compStyle = getComputedStyle(elm);
+	  var props = compStyle['transition-property'].split(', ');
+	  for (; i < props.length; ++i) {
+	    if(applied.indexOf(props[i]) !== -1) amount++;
+	  }
+	  elm.addEventListener('transitionend', function(ev) {
+	    if (ev.target === elm) --amount;
+	    if (amount === 0) rm();
+	  });
+	}
+	
+	module.exports = {create: updateStyle, update: updateStyle, destroy: applyDestroyStyle, remove: applyRemoveStyle};
+
+
+/***/ },
+/* 37 */
+/***/ function(module, exports) {
+
+	var raf = (typeof window !== 'undefined' && window.requestAnimationFrame) || setTimeout;
+	var nextFrame = function(fn) { raf(function() { raf(fn); }); };
+	
+	function setNextFrame(obj, prop, val) {
+	  nextFrame(function() { obj[prop] = val; });
+	}
+	
+	function getTextNodeRect(textNode) {
+	  var rect;
+	  if (document.createRange) {
+	    var range = document.createRange();
+	    range.selectNodeContents(textNode);
+	    if (range.getBoundingClientRect) {
+	        rect = range.getBoundingClientRect();
+	    }
+	  }
+	  return rect;
+	}
+	
+	function calcTransformOrigin(isTextNode, textRect, boundingRect) {
+	  if (isTextNode) {
+	    if (textRect) {
+	      //calculate pixels to center of text from left edge of bounding box
+	      var relativeCenterX = textRect.left + textRect.width/2 - boundingRect.left;
+	      var relativeCenterY = textRect.top + textRect.height/2 - boundingRect.top;
+	      return relativeCenterX + 'px ' + relativeCenterY + 'px';
+	    }
+	  }
+	  return '0 0'; //top left
+	}
+	
+	function getTextDx(oldTextRect, newTextRect) {
+	  if (oldTextRect && newTextRect) {
+	    return ((oldTextRect.left + oldTextRect.width/2) - (newTextRect.left + newTextRect.width/2));
+	  }
+	  return 0;
+	}
+	function getTextDy(oldTextRect, newTextRect) {
+	  if (oldTextRect && newTextRect) {
+	    return ((oldTextRect.top + oldTextRect.height/2) - (newTextRect.top + newTextRect.height/2));
+	  }
+	  return 0;
+	}
+	
+	function isTextElement(elm) {
+	  return elm.childNodes.length === 1 && elm.childNodes[0].nodeType === 3;
+	}
+	
+	var removed, created;
+	
+	function pre(oldVnode, vnode) {
+	  removed = {};
+	  created = [];
+	}
+	
+	function create(oldVnode, vnode) {
+	  var hero = vnode.data.hero;
+	  if (hero && hero.id) {
+	    created.push(hero.id);
+	    created.push(vnode);
+	  }
+	}
+	
+	function destroy(vnode) {
+	  var hero = vnode.data.hero;
+	  if (hero && hero.id) {
+	    var elm = vnode.elm;
+	    vnode.isTextNode = isTextElement(elm); //is this a text node?
+	    vnode.boundingRect = elm.getBoundingClientRect(); //save the bounding rectangle to a new property on the vnode
+	    vnode.textRect = vnode.isTextNode ? getTextNodeRect(elm.childNodes[0]) : null; //save bounding rect of inner text node
+	    var computedStyle = window.getComputedStyle(elm, null); //get current styles (includes inherited properties)
+	    vnode.savedStyle = JSON.parse(JSON.stringify(computedStyle)); //save a copy of computed style values
+	    removed[hero.id] = vnode;
+	  }
+	}
+	
+	function post() {
+	  var i, id, newElm, oldVnode, oldElm, hRatio, wRatio,
+	      oldRect, newRect, dx, dy, origTransform, origTransition,
+	      newStyle, oldStyle, newComputedStyle, isTextNode,
+	      newTextRect, oldTextRect;
+	  for (i = 0; i < created.length; i += 2) {
+	    id = created[i];
+	    newElm = created[i+1].elm;
+	    oldVnode = removed[id];
+	    if (oldVnode) {
+	      isTextNode = oldVnode.isTextNode && isTextElement(newElm); //Are old & new both text?
+	      newStyle = newElm.style;
+	      newComputedStyle = window.getComputedStyle(newElm, null); //get full computed style for new element
+	      oldElm = oldVnode.elm;
+	      oldStyle = oldElm.style;
+	      //Overall element bounding boxes
+	      newRect = newElm.getBoundingClientRect();
+	      oldRect = oldVnode.boundingRect; //previously saved bounding rect
+	      //Text node bounding boxes & distances
+	      if (isTextNode) {
+	        newTextRect = getTextNodeRect(newElm.childNodes[0]);
+	        oldTextRect = oldVnode.textRect;
+	        dx = getTextDx(oldTextRect, newTextRect);
+	        dy = getTextDy(oldTextRect, newTextRect);
+	      } else {
+	        //Calculate distances between old & new positions
+	        dx = oldRect.left - newRect.left;
+	        dy = oldRect.top - newRect.top;
+	      }
+	      hRatio = newRect.height / (Math.max(oldRect.height, 1));
+	      wRatio = isTextNode ? hRatio : newRect.width / (Math.max(oldRect.width, 1)); //text scales based on hRatio
+	      // Animate new element
+	      origTransform = newStyle.transform;
+	      origTransition = newStyle.transition;
+	      if (newComputedStyle.display === 'inline') //inline elements cannot be transformed
+	        newStyle.display = 'inline-block';        //this does not appear to have any negative side effects
+	      newStyle.transition = origTransition + 'transform 0s';
+	      newStyle.transformOrigin = calcTransformOrigin(isTextNode, newTextRect, newRect);
+	      newStyle.opacity = '0';
+	      newStyle.transform = origTransform + 'translate('+dx+'px, '+dy+'px) ' +
+	                               'scale('+1/wRatio+', '+1/hRatio+')';
+	      setNextFrame(newStyle, 'transition', origTransition);
+	      setNextFrame(newStyle, 'transform', origTransform);
+	      setNextFrame(newStyle, 'opacity', '1');
+	      // Animate old element
+	      for (var key in oldVnode.savedStyle) { //re-apply saved inherited properties
+	        if (parseInt(key) != key) {
+	          var ms = key.substring(0,2) === 'ms';
+	          var moz = key.substring(0,3) === 'moz';
+	          var webkit = key.substring(0,6) === 'webkit';
+	      	  if (!ms && !moz && !webkit) //ignore prefixed style properties
+	        	  oldStyle[key] = oldVnode.savedStyle[key];
+	        }
+	      }
+	      oldStyle.position = 'absolute';
+	      oldStyle.top = oldRect.top + 'px'; //start at existing position
+	      oldStyle.left = oldRect.left + 'px';
+	      oldStyle.width = oldRect.width + 'px'; //Needed for elements who were sized relative to their parents
+	      oldStyle.height = oldRect.height + 'px'; //Needed for elements who were sized relative to their parents
+	      oldStyle.margin = 0; //Margin on hero element leads to incorrect positioning
+	      oldStyle.transformOrigin = calcTransformOrigin(isTextNode, oldTextRect, oldRect);
+	      oldStyle.transform = '';
+	      oldStyle.opacity = '1';
+	      document.body.appendChild(oldElm);
+	      setNextFrame(oldStyle, 'transform', 'translate('+ -dx +'px, '+ -dy +'px) scale('+wRatio+', '+hRatio+')'); //scale must be on far right for translate to be correct
+	      setNextFrame(oldStyle, 'opacity', '0');
+	      oldElm.addEventListener('transitionend', function(ev) {
+	        if (ev.propertyName === 'transform')
+	          document.body.removeChild(ev.target);
+	      });
+	    }
+	  }
+	  removed = created = undefined;
+	}
+	
+	module.exports = {pre: pre, create: create, destroy: destroy, post: post};
+
+
+/***/ },
+/* 38 */
+/***/ function(module, exports) {
+
+	"use strict";
+	var IsolateModule = (function () {
+	    function IsolateModule(isolatedElements) {
+	        this.isolatedElements = isolatedElements;
+	        this.eventDelegators = new Map();
+	    }
+	    IsolateModule.prototype.setScope = function (elm, scope) {
+	        this.isolatedElements.set(scope, elm);
+	    };
+	    IsolateModule.prototype.removeScope = function (scope) {
+	        this.isolatedElements.delete(scope);
+	    };
+	    IsolateModule.prototype.getIsolatedElement = function (scope) {
+	        return this.isolatedElements.get(scope);
+	    };
+	    IsolateModule.prototype.isIsolatedElement = function (elm) {
+	        var elements = Array.from(this.isolatedElements.entries());
+	        for (var i = 0; i < elements.length; ++i) {
+	            if (elm === elements[i][1]) {
+	                return elements[i][0];
+	            }
+	        }
+	        return false;
+	    };
+	    IsolateModule.prototype.addEventDelegator = function (scope, eventDelegator) {
+	        var delegators = this.eventDelegators.get(scope);
+	        if (!delegators) {
+	            delegators = [];
+	            this.eventDelegators.set(scope, delegators);
+	        }
+	        delegators[delegators.length] = eventDelegator;
+	    };
+	    IsolateModule.prototype.reset = function () {
+	        this.isolatedElements.clear();
+	    };
+	    IsolateModule.prototype.createModule = function () {
+	        var self = this;
+	        return {
+	            create: function (oldVNode, vNode) {
+	                var _a = oldVNode.data, oldData = _a === void 0 ? {} : _a;
+	                var elm = vNode.elm, _b = vNode.data, data = _b === void 0 ? {} : _b;
+	                var oldScope = oldData.isolate || "";
+	                var scope = data.isolate || "";
+	                if (scope) {
+	                    if (oldScope) {
+	                        self.removeScope(oldScope);
+	                    }
+	                    self.setScope(elm, scope);
+	                    var delegators = self.eventDelegators.get(scope);
+	                    if (delegators) {
+	                        for (var i = 0, len = delegators.length; i < len; ++i) {
+	                            delegators[i].updateTopElement(elm);
+	                        }
+	                    }
+	                    else if (delegators === void 0) {
+	                        self.eventDelegators.set(scope, []);
+	                    }
+	                }
+	                if (oldScope && !scope) {
+	                    self.removeScope(scope);
+	                }
+	            },
+	            update: function (oldVNode, vNode) {
+	                var _a = oldVNode.data, oldData = _a === void 0 ? {} : _a;
+	                var elm = vNode.elm, _b = vNode.data, data = _b === void 0 ? {} : _b;
+	                var oldScope = oldData.isolate || "";
+	                var scope = data.isolate || "";
+	                if (scope && scope !== oldScope) {
+	                    if (oldScope) {
+	                        self.removeScope(oldScope);
+	                    }
+	                    self.setScope(elm, scope);
+	                }
+	                if (oldScope && !scope) {
+	                    self.removeScope(scope);
+	                }
+	            },
+	            remove: function (_a, cb) {
+	                var data = _a.data;
+	                data = data || {};
+	                var scope = data.isolate;
+	                if (scope) {
+	                    self.removeScope(scope);
+	                    if (self.eventDelegators.get(scope)) {
+	                        self.eventDelegators.set(scope, []);
+	                    }
+	                }
+	                cb();
+	            },
+	            destroy: function (_a) {
+	                var data = _a.data;
+	                data = data || {};
+	                var scope = data.isolate;
+	                if (scope) {
+	                    self.removeScope(scope);
+	                    if (self.eventDelegators.get(scope)) {
+	                        self.eventDelegators.set(scope, []);
+	                    }
+	                }
+	            }
+	        };
+	    };
+	    return IsolateModule;
+	}());
+	exports.IsolateModule = IsolateModule;
+	//# sourceMappingURL=isolateModule.js.map
+
+/***/ },
+/* 39 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var xstream_adapter_1 = __webpack_require__(18);
+	var xstream_1 = __webpack_require__(5);
+	function createVTree(vnode, children) {
+	    return {
+	        sel: vnode.sel,
+	        data: vnode.data,
+	        text: vnode.text,
+	        elm: vnode.elm,
+	        key: vnode.key,
+	        children: children,
+	    };
+	}
+	function makeTransposeVNode(runStreamAdapter) {
+	    return function transposeVNode(vnode) {
+	        if (!vnode) {
+	            return null;
+	        }
+	        else if (vnode && typeof vnode.data === "object" && vnode.data.static) {
+	            return xstream_1.default.of(vnode);
+	        }
+	        else if (runStreamAdapter.isValidStream(vnode)) {
+	            var xsStream = xstream_adapter_1.default.adapt(vnode, runStreamAdapter.streamSubscribe);
+	            return xsStream.map(transposeVNode).flatten();
+	        }
+	        else if (typeof vnode === "object") {
+	            if (!vnode.children || vnode.children.length === 0) {
+	                return xstream_1.default.of(vnode);
+	            }
+	            var vnodeChildren = vnode.children
+	                .map(transposeVNode)
+	                .filter(function (x) { return x !== null; });
+	            if (vnodeChildren.length === 0) {
+	                return xstream_1.default.of(createVTree(vnode, []));
+	            }
+	            else {
+	                return xstream_1.default.combine.apply(xstream_1.default, vnodeChildren)
+	                    .map(function (children) { return createVTree(vnode, children.slice()); });
+	            }
+	        }
+	        else {
+	            throw new Error("Unhandled vTree Value");
+	        }
+	    };
+	}
+	exports.makeTransposeVNode = makeTransposeVNode;
+	//# sourceMappingURL=transposition.js.map
+
+/***/ },
+/* 40 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var xstream_adapter_1 = __webpack_require__(18);
+	var transposition_1 = __webpack_require__(39);
+	var HTMLSource_1 = __webpack_require__(41);
+	var toHTML = __webpack_require__(42);
+	/* tslint:disable:no-empty */
+	var noop = function () { };
+	/* tslint:enable:no-empty */
+	function makeHTMLDriver(effect, options) {
+	    if (!options) {
+	        options = {};
+	    }
+	    var transposition = options.transposition || false;
+	    function htmlDriver(vnode$, runStreamAdapter) {
+	        var transposeVNode = transposition_1.makeTransposeVNode(runStreamAdapter);
+	        var preprocessedVNode$ = (transposition ? vnode$.map(transposeVNode).flatten() : vnode$);
+	        var html$ = preprocessedVNode$.last().map(toHTML);
+	        html$.addListener({
+	            next: effect || noop,
+	            error: noop,
+	            complete: noop,
+	        });
+	        return new HTMLSource_1.HTMLSource(html$, runStreamAdapter);
+	    }
+	    ;
+	    htmlDriver.streamAdapter = xstream_adapter_1.default;
+	    return htmlDriver;
+	}
+	exports.makeHTMLDriver = makeHTMLDriver;
+	//# sourceMappingURL=makeHTMLDriver.js.map
+
+/***/ },
+/* 41 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var xstream_1 = __webpack_require__(5);
+	var xstream_adapter_1 = __webpack_require__(18);
+	var HTMLSource = (function () {
+	    function HTMLSource(html$, runSA) {
+	        this.runSA = runSA;
+	        this._html$ = html$;
+	        this._empty$ = runSA.adapt(xstream_1.default.empty(), xstream_adapter_1.default.streamSubscribe);
+	    }
+	    HTMLSource.prototype.elements = function () {
+	        return this.runSA.adapt(this._html$, xstream_adapter_1.default.streamSubscribe);
+	    };
+	    HTMLSource.prototype.select = function (selector) {
+	        return new HTMLSource(xstream_1.default.empty(), this.runSA);
+	    };
+	    HTMLSource.prototype.events = function (eventType, options) {
+	        return this._empty$;
+	    };
+	    return HTMLSource;
+	}());
+	exports.HTMLSource = HTMLSource;
+	//# sourceMappingURL=HTMLSource.js.map
+
+/***/ },
+/* 42 */
+/***/ function(module, exports, __webpack_require__) {
+
+	
+	var init = __webpack_require__(43);
+	
+	module.exports = init([__webpack_require__(48), __webpack_require__(69)]);
+
+/***/ },
+/* 43 */
+/***/ function(module, exports, __webpack_require__) {
+
+	
+	var parseSelector = __webpack_require__(44);
+	var VOID_ELEMENTS = __webpack_require__(46);
+	var CONTAINER_ELEMENTS = __webpack_require__(47);
+	
+	module.exports = function init(modules) {
+	  function parse(data) {
+	    return modules.reduce(function (arr, fn) {
+	      arr.push(fn(data));
+	      return arr;
+	    }, []).filter(function (result) {
+	      return result !== '';
+	    });
+	  }
+	
+	  return function renderToString(vnode) {
+	    if (!vnode.sel && vnode.text) {
+	      return vnode.text;
+	    }
+	
+	    vnode.data = vnode.data || {};
+	
+	    // Support thunks
+	    if (typeof vnode.sel === 'string' && vnode.sel.slice(0, 5) === 'thunk') {
+	      vnode = vnode.data.fn.apply(null, vnode.data.args);
+	    }
+	
+	    var tagName = parseSelector(vnode.sel).tagName;
+	    var attributes = parse(vnode);
+	    var svg = vnode.data.ns === 'http://www.w3.org/2000/svg';
+	    var tag = [];
+	
+	    // Open tag
+	    tag.push('<' + tagName);
+	    if (attributes.length) {
+	      tag.push(' ' + attributes.join(' '));
+	    }
+	    if (svg && CONTAINER_ELEMENTS[tagName] !== true) {
+	      tag.push(' /');
+	    }
+	    tag.push('>');
+	
+	    // Close tag, if needed
+	    if (VOID_ELEMENTS[tagName] !== true && !svg || svg && CONTAINER_ELEMENTS[tagName] === true) {
+	      if (vnode.data.props && vnode.data.props.innerHTML) {
+	        tag.push(vnode.data.props.innerHTML);
+	      } else if (vnode.text) {
+	        tag.push(vnode.text);
+	      } else if (vnode.children) {
+	        vnode.children.forEach(function (child) {
+	          tag.push(renderToString(child));
+	        });
+	      }
+	      tag.push('</' + tagName + '>');
+	    }
+	
+	    return tag.join('');
+	  };
+	};
+
+/***/ },
+/* 44 */
+/***/ function(module, exports, __webpack_require__) {
+
+	
+	// https://github.com/Matt-Esch/virtual-dom/blob/master/virtual-hyperscript/parse-tag.js
+	
+	var split = __webpack_require__(45);
+	
+	var classIdSplit = /([\.#]?[a-zA-Z0-9\u007F-\uFFFF_:-]+)/;
+	var notClassId = /^\.|#/;
+	
+	module.exports = function parseSelector(selector, upper) {
+	  selector = selector || '';
+	  var tagName;
+	  var id = '';
+	  var classes = [];
+	
+	  var tagParts = split(selector, classIdSplit);
+	
+	  if (notClassId.test(tagParts[1]) || selector === '') {
+	    tagName = 'div';
+	  }
+	
+	  var part, type, i;
+	
+	  for (i = 0; i < tagParts.length; i++) {
+	    part = tagParts[i];
+	
+	    if (!part) {
+	      continue;
+	    }
+	
+	    type = part.charAt(0);
+	
+	    if (!tagName) {
+	      tagName = part;
+	    } else if (type === '.') {
+	      classes.push(part.substring(1, part.length));
+	    } else if (type === '#') {
+	      id = part.substring(1, part.length);
+	    }
+	  }
+	
+	  return {
+	    tagName: upper === true ? tagName.toUpperCase() : tagName,
+	    id: id,
+	    className: classes.join(' ')
+	  };
+	};
+
+/***/ },
+/* 45 */
+/***/ function(module, exports) {
+
+	/*!
 	 * Cross-Browser Split 1.1.1
 	 * Copyright 2007-2012 Steven Levithan <stevenlevithan.com>
 	 * Available under the MIT License
 	 * ECMAScript compliant, uniform cross-browser split method
 	 */
-t.exports=function(t){var e,n=String.prototype.split,r=/()??/.exec("")[1]===t;return e=function(e,i,o){if("[object RegExp]"!==Object.prototype.toString.call(i))return n.call(e,i,o);var u,s,a,c,f=[],h=(i.ignoreCase?"i":"")+(i.multiline?"m":"")+(i.extended?"x":"")+(i.sticky?"y":""),l=0,i=new RegExp(i.source,h+"g");for(e+="",r||(u=new RegExp("^"+i.source+"$(?!\\s)",h)),o=o===t?-1>>>0:o>>>0;(s=i.exec(e))&&(a=s.index+s[0].length,!(a>l&&(f.push(e.slice(l,s.index)),!r&&s.length>1&&s[0].replace(u,function(){for(var e=1;e<arguments.length-2;e++)arguments[e]===t&&(s[e]=t)}),s.length>1&&s.index<e.length&&Array.prototype.push.apply(f,s.slice(1)),c=s[0].length,l=a,f.length>=o)));)i.lastIndex===s.index&&i.lastIndex++;return l===e.length?!c&&i.test("")||f.push(""):f.push(e.slice(l)),f.length>o?f.slice(0,o):f}}()},function(t,e){t.exports={area:!0,base:!0,br:!0,col:!0,embed:!0,hr:!0,img:!0,input:!0,keygen:!0,link:!0,meta:!0,param:!0,source:!0,track:!0,wbr:!0}},function(t,e){t.exports={a:!0,defs:!0,glyph:!0,g:!0,marker:!0,mask:!0,"missing-glyph":!0,pattern:!0,svg:!0,"switch":!0,symbol:!0,desc:!0,metadata:!0,title:!0}},function(t,e,n){function r(t,e){i(t,function(t,n){return"htmlFor"===n?void(e["for"]=t):"className"===n?void(e["class"]=t.split(" ")):void("innerHTML"!==n&&(e[n]=t))})}var i=n(50),o=n(57),u=n(60),s=n(45);t.exports=function a(t){var e=s(t.sel),n=e.className.split(" "),a=[],c=[],f={};return e.id&&(f.id=e.id),r(t.data.props,f),r(t.data.attrs,f),t.data["class"]&&(f["class"]=void 0),i(t.data["class"],function(t,e){t===!0&&c.push(e)}),c=u(c,f["class"],n).filter(function(t){return""!==t}),c.length&&(f["class"]=c.join(" ")),i(f,function(t,e){a.push(t===!0?e:e+'="'+o(t)+'"')}),a.length?a.join(" "):""}},function(t,e,n){function r(t,e){return o(t,e,s)}function i(t){return function(e,n,r){return"function"==typeof n&&void 0===r||(n=u(n,r,3)),t(e,n)}}var o=n(51),u=n(52),s=n(53),a=i(r);t.exports=a},function(t,e){function n(t){return function(e,n,r){for(var i=-1,o=Object(e),u=r(e),s=u.length;s--;){var a=u[t?s:++i];if(n(o[a],a,o)===!1)break}return e}}var r=n();t.exports=r},function(t,e){function n(t,e,n){if("function"!=typeof t)return r;if(void 0===e)return t;switch(n){case 1:return function(n){return t.call(e,n)};case 3:return function(n,r,i){return t.call(e,n,r,i)};case 4:return function(n,r,i,o){return t.call(e,n,r,i,o)};case 5:return function(n,r,i,o,u){return t.call(e,n,r,i,o,u)}}return function(){return t.apply(e,arguments)}}function r(t){return t}t.exports=n},function(t,e,n){function r(t){return function(e){return null==e?void 0:e[t]}}function i(t){return null!=t&&u(m(t))}function o(t,e){return t="number"==typeof t||p.test(t)?+t:-1,e=null==e?y:e,t>-1&&t%1==0&&t<e}function u(t){return"number"==typeof t&&t>-1&&t%1==0&&t<=y}function s(t){for(var e=c(t),n=e.length,r=n&&t.length,i=!!r&&u(r)&&(l(t)||h(t)),s=-1,a=[];++s<n;){var f=e[s];(i&&o(f,r)||v.call(t,f))&&a.push(f)}return a}function a(t){var e=typeof t;return!!t&&("object"==e||"function"==e)}function c(t){if(null==t)return[];a(t)||(t=Object(t));var e=t.length;e=e&&u(e)&&(l(t)||h(t))&&e||0;for(var n=t.constructor,r=-1,i="function"==typeof n&&n.prototype===t,s=Array(e),c=e>0;++r<e;)s[r]=r+"";for(var f in t)c&&o(f,e)||"constructor"==f&&(i||!v.call(t,f))||s.push(f);return s}var f=n(54),h=n(55),l=n(56),p=/^\d+$/,d=Object.prototype,v=d.hasOwnProperty,_=f(Object,"keys"),y=9007199254740991,m=r("length"),g=_?function(t){var e=null==t?void 0:t.constructor;return"function"==typeof e&&e.prototype===t||"function"!=typeof t&&i(t)?s(t):a(t)?_(t):[]}:s;t.exports=g},function(t,e){function n(t){return!!t&&"object"==typeof t}function r(t,e){var n=null==t?void 0:t[e];return u(n)?n:void 0}function i(t){return o(t)&&l.call(t)==s}function o(t){var e=typeof t;return!!t&&("object"==e||"function"==e)}function u(t){return null!=t&&(i(t)?p.test(f.call(t)):n(t)&&a.test(t))}var s="[object Function]",a=/^\[object .+?Constructor\]$/,c=Object.prototype,f=Function.prototype.toString,h=c.hasOwnProperty,l=c.toString,p=RegExp("^"+f.call(h).replace(/[\\^$.*+?()[\]{}|]/g,"\\$&").replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g,"$1.*?")+"$");t.exports=r},function(t,e){function n(t){return function(e){return null==e?void 0:e[t]}}function r(t){return o(t)&&v.call(t,"callee")&&(!y.call(t,"callee")||_.call(t)==h)}function i(t){return null!=t&&s(m(t))&&!u(t)}function o(t){return c(t)&&i(t)}function u(t){var e=a(t)?_.call(t):"";return e==l||e==p}function s(t){return"number"==typeof t&&t>-1&&t%1==0&&t<=f}function a(t){var e=typeof t;return!!t&&("object"==e||"function"==e)}function c(t){return!!t&&"object"==typeof t}var f=9007199254740991,h="[object Arguments]",l="[object Function]",p="[object GeneratorFunction]",d=Object.prototype,v=d.hasOwnProperty,_=d.toString,y=d.propertyIsEnumerable,m=n("length");t.exports=r},function(t,e){function n(t){return!!t&&"object"==typeof t}function r(t,e){var n=null==t?void 0:t[e];return s(n)?n:void 0}function i(t){return"number"==typeof t&&t>-1&&t%1==0&&t<=y}function o(t){return u(t)&&d.call(t)==c}function u(t){var e=typeof t;return!!t&&("object"==e||"function"==e)}function s(t){return null!=t&&(o(t)?v.test(l.call(t)):n(t)&&f.test(t))}var a="[object Array]",c="[object Function]",f=/^\[object .+?Constructor\]$/,h=Object.prototype,l=Function.prototype.toString,p=h.hasOwnProperty,d=h.toString,v=RegExp("^"+l.call(p).replace(/[\\^$.*+?()[\]{}|]/g,"\\$&").replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g,"$1.*?")+"$"),_=r(Array,"isArray"),y=9007199254740991,m=_||function(t){return n(t)&&i(t.length)&&d.call(t)==a};t.exports=m},function(t,e,n){function r(t){return p[t]}function i(t){return!!t&&"object"==typeof t}function o(t){return"symbol"==typeof t||i(t)&&v.call(t)==f}function u(t){if("string"==typeof t)return t;if(null==t)return"";if(o(t))return _?m.call(t):"";var e=t+"";return"0"==e&&1/t==-c?"-0":e}function s(t){return t=u(t),t&&l.test(t)?t.replace(h,r):t}var a=n(58),c=1/0,f="[object Symbol]",h=/[&<>"'`]/g,l=RegExp(h.source),p={"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;","`":"&#96;"},d=Object.prototype,v=d.toString,_=a.Symbol,y=_?_.prototype:void 0,m=_?y.toString:void 0;t.exports=s},function(t,e,n){(function(t,n){function r(t){return t&&t.Object===Object?t:null}var i={"function":!0,object:!0},o=i[typeof e]&&e&&!e.nodeType?e:void 0,u=i[typeof t]&&t&&!t.nodeType?t:void 0,s=r(o&&u&&"object"==typeof n&&n),a=r(i[typeof self]&&self),c=r(i[typeof window]&&window),f=r(i[typeof this]&&this),h=s||c!==(f&&f.window)&&c||a||f||Function("return this")();t.exports=h}).call(e,n(59)(t),function(){return this}())},function(t,e){t.exports=function(t){return t.webpackPolyfill||(t.deprecate=function(){},t.paths=[],t.children=[],t.webpackPolyfill=1),t}},function(t,e,n){var r=n(61),i=n(64),o=n(69),u=o(function(t){return i(r(t,!1,!0))});t.exports=u},function(t,e,n){function r(t){return!!t&&"object"==typeof t}function i(t,e){for(var n=-1,r=e.length,i=t.length;++n<r;)t[i+n]=e[n];return t}function o(t,e,n,u){u||(u=[]);for(var a=-1,h=t.length;++a<h;){var l=t[a];r(l)&&s(l)&&(n||f(l)||c(l))?e?o(l,e,n,u):i(u,l):n||(u[u.length]=l)}return u}function u(t){return function(e){return null==e?void 0:e[t]}}function s(t){return null!=t&&a(l(t))}function a(t){return"number"==typeof t&&t>-1&&t%1==0&&t<=h}var c=n(62),f=n(63),h=9007199254740991,l=u("length");t.exports=o},function(t,e){function n(t){return function(e){return null==e?void 0:e[t]}}function r(t){return o(t)&&v.call(t,"callee")&&(!y.call(t,"callee")||_.call(t)==h)}function i(t){return null!=t&&s(m(t))&&!u(t)}function o(t){return c(t)&&i(t)}function u(t){var e=a(t)?_.call(t):"";return e==l||e==p}function s(t){return"number"==typeof t&&t>-1&&t%1==0&&t<=f}function a(t){var e=typeof t;return!!t&&("object"==e||"function"==e)}function c(t){return!!t&&"object"==typeof t}var f=9007199254740991,h="[object Arguments]",l="[object Function]",p="[object GeneratorFunction]",d=Object.prototype,v=d.hasOwnProperty,_=d.toString,y=d.propertyIsEnumerable,m=n("length");t.exports=r},function(t,e){function n(t){return!!t&&"object"==typeof t}function r(t,e){var n=null==t?void 0:t[e];return s(n)?n:void 0}function i(t){return"number"==typeof t&&t>-1&&t%1==0&&t<=y}function o(t){return u(t)&&d.call(t)==c}function u(t){var e=typeof t;return!!t&&("object"==e||"function"==e)}function s(t){return null!=t&&(o(t)?v.test(l.call(t)):n(t)&&f.test(t))}var a="[object Array]",c="[object Function]",f=/^\[object .+?Constructor\]$/,h=Object.prototype,l=Function.prototype.toString,p=h.hasOwnProperty,d=h.toString,v=RegExp("^"+l.call(p).replace(/[\\^$.*+?()[\]{}|]/g,"\\$&").replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g,"$1.*?")+"$"),_=r(Array,"isArray"),y=9007199254740991,m=_||function(t){return n(t)&&i(t.length)&&d.call(t)==a};t.exports=m},function(t,e,n){function r(t,e){var n=-1,r=i,a=t.length,c=!0,f=c&&a>=s,h=f?u():null,l=[];h?(r=o,c=!1):(f=!1,h=e?[]:l);t:for(;++n<a;){var p=t[n],d=e?e(p,n,t):p;if(c&&p===p){for(var v=h.length;v--;)if(h[v]===d)continue t;e&&h.push(d),l.push(p)}else r(h,d,0)<0&&((e||f)&&h.push(d),l.push(p))}return l}var i=n(65),o=n(66),u=n(67),s=200;t.exports=r},function(t,e){function n(t,e,n){if(e!==e)return r(t,n);for(var i=n-1,o=t.length;++i<o;)if(t[i]===e)return i;return-1}function r(t,e,n){for(var r=t.length,i=e+(n?0:-1);n?i--:++i<r;){var o=t[i];if(o!==o)return i}return-1}t.exports=n},function(t,e){function n(t,e){var n=t.data,i="string"==typeof e||r(e)?n.set.has(e):n.hash[e];return i?0:-1}function r(t){var e=typeof t;return!!t&&("object"==e||"function"==e)}t.exports=n},function(t,e,n){(function(e){function r(t){var e=t?t.length:0;for(this.data={hash:c(null),set:new a};e--;)this.push(t[e])}function i(t){var e=this.data;"string"==typeof t||u(t)?e.set.add(t):e.hash[t]=!0}function o(t){return c&&a?new r(t):null}function u(t){var e=typeof t;return!!t&&("object"==e||"function"==e)}var s=n(68),a=s(e,"Set"),c=s(Object,"create");r.prototype.push=i,t.exports=o}).call(e,function(){return this}())},function(t,e){function n(t){return!!t&&"object"==typeof t}function r(t,e){var n=null==t?void 0:t[e];return u(n)?n:void 0}function i(t){return o(t)&&l.call(t)==s}function o(t){var e=typeof t;return!!t&&("object"==e||"function"==e)}function u(t){return null!=t&&(i(t)?p.test(f.call(t)):n(t)&&a.test(t))}var s="[object Function]",a=/^\[object .+?Constructor\]$/,c=Object.prototype,f=Function.prototype.toString,h=c.hasOwnProperty,l=c.toString,p=RegExp("^"+f.call(h).replace(/[\\^$.*+?()[\]{}|]/g,"\\$&").replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g,"$1.*?")+"$");t.exports=r},function(t,e){function n(t,e){if("function"!=typeof t)throw new TypeError(r);return e=i(void 0===e?t.length-1:+e||0,0),function(){for(var n=arguments,r=-1,o=i(n.length-e,0),u=Array(o);++r<o;)u[r]=n[e+r];switch(e){case 0:return t.call(this,u);case 1:return t.call(this,n[0],u);case 2:return t.call(this,n[0],n[1],u)}var s=Array(e+1);for(r=-1;++r<e;)s[r]=n[r];return s[e]=u,t.apply(this,s)}}var r="Expected a function",i=Math.max;t.exports=n},function(t,e,n){var r=Object.assign||function(t){for(var e=1;e<arguments.length;e++){var n=arguments[e];for(var r in n)Object.prototype.hasOwnProperty.call(n,r)&&(t[r]=n[r])}return t},i=n(50),o=n(57),u=n(71);t.exports=function s(t){var e=[],s=t.data.style||{};return s.delayed&&r(s,s.delayed),i(s,function(t,n){"string"==typeof t&&e.push(u(n)+": "+o(t))}),e.length?'style="'+e.join("; ")+'"':""}},function(t,e,n){function r(t,e,n,r){var i=-1,o=t.length;for(r&&o&&(n=t[++i]);++i<o;)n=e(n,t[i],i,t);return n}function i(t){return function(e){return r(u(o(e)),t,"")}}var o=n(72),u=n(74),s=i(function(t,e,n){return t+(n?"-":"")+e.toLowerCase()});t.exports=s},function(t,e,n){function r(t){return _[t]}function i(t){return!!t&&"object"==typeof t}function o(t){return"symbol"==typeof t||i(t)&&m.call(t)==f}function u(t){if("string"==typeof t)return t;if(null==t)return"";if(o(t))return g?b.call(t):"";var e=t+"";return"0"==e&&1/t==-c?"-0":e}function s(t){return t=u(t),t&&t.replace(h,r).replace(v,"")}var a=n(73),c=1/0,f="[object Symbol]",h=/[\xc0-\xd6\xd8-\xde\xdf-\xf6\xf8-\xff]/g,l="\\u0300-\\u036f\\ufe20-\\ufe23",p="\\u20d0-\\u20f0",d="["+l+p+"]",v=RegExp(d,"g"),_={"À":"A","Á":"A","Â":"A","Ã":"A","Ä":"A","Å":"A","à":"a","á":"a","â":"a","ã":"a","ä":"a","å":"a","Ç":"C","ç":"c","Ð":"D","ð":"d","È":"E","É":"E","Ê":"E","Ë":"E","è":"e","é":"e","ê":"e","ë":"e","Ì":"I","Í":"I","Î":"I","Ï":"I","ì":"i","í":"i","î":"i","ï":"i","Ñ":"N","ñ":"n","Ò":"O","Ó":"O","Ô":"O","Õ":"O","Ö":"O","Ø":"O","ò":"o","ó":"o","ô":"o","õ":"o","ö":"o","ø":"o","Ù":"U","Ú":"U","Û":"U","Ü":"U","ù":"u","ú":"u","û":"u","ü":"u","Ý":"Y","ý":"y","ÿ":"y","Æ":"Ae","æ":"ae","Þ":"Th","þ":"th","ß":"ss"},y=Object.prototype,m=y.toString,g=a.Symbol,w=g?g.prototype:void 0,b=g?w.toString:void 0;t.exports=s},function(t,e,n){(function(t,n){function r(t){return t&&t.Object===Object?t:null}var i={"function":!0,object:!0},o=i[typeof e]&&e&&!e.nodeType?e:void 0,u=i[typeof t]&&t&&!t.nodeType?t:void 0,s=r(o&&u&&"object"==typeof n&&n),a=r(i[typeof self]&&self),c=r(i[typeof window]&&window),f=r(i[typeof this]&&this),h=s||c!==(f&&f.window)&&c||a||f||Function("return this")();t.exports=h}).call(e,n(59)(t),function(){return this}())},function(t,e,n){function r(t){return!!t&&"object"==typeof t}function i(t){return"symbol"==typeof t||r(t)&&H.call(t)==c}function o(t){if("string"==typeof t)return t;if(null==t)return"";if(i(t))return V?J.call(t):"";var e=t+"";return"0"==e&&1/t==-a?"-0":e}function u(t,e,n){return t=o(t),e=n?void 0:e,void 0===e&&(e=K.test(t)?B:U),t.match(e)||[]}var s=n(75),a=1/0,c="[object Symbol]",f="\\ud800-\\udfff",h="\\u0300-\\u036f\\ufe20-\\ufe23",l="\\u20d0-\\u20f0",p="\\u2700-\\u27bf",d="a-z\\xdf-\\xf6\\xf8-\\xff",v="\\xac\\xb1\\xd7\\xf7",_="\\x00-\\x2f\\x3a-\\x40\\x5b-\\x60\\x7b-\\xbf",y="\\u2018\\u2019\\u201c\\u201d",m=" \\t\\x0b\\f\\xa0\\ufeff\\n\\r\\u2028\\u2029\\u1680\\u180e\\u2000\\u2001\\u2002\\u2003\\u2004\\u2005\\u2006\\u2007\\u2008\\u2009\\u200a\\u202f\\u205f\\u3000",g="A-Z\\xc0-\\xd6\\xd8-\\xde",w="\\ufe0e\\ufe0f",b=v+_+y+m,S="["+b+"]",x="["+h+l+"]",O="\\d+",E="["+p+"]",I="["+d+"]",M="[^"+f+b+O+p+d+g+"]",j="\\ud83c[\\udffb-\\udfff]",z="(?:"+x+"|"+j+")",k="[^"+f+"]",D="(?:\\ud83c[\\udde6-\\uddff]){2}",A="[\\ud800-\\udbff][\\udc00-\\udfff]",q="["+g+"]",C="\\u200d",T="(?:"+I+"|"+M+")",N="(?:"+q+"|"+M+")",R=z+"?",L="["+w+"]?",P="(?:"+C+"(?:"+[k,D,A].join("|")+")"+L+R+")*",F=L+R+P,$="(?:"+[E,D,A].join("|")+")"+F,U=/[a-zA-Z0-9]+/g,B=RegExp([q+"?"+I+"+(?="+[S,q,"$"].join("|")+")",N+"+(?="+[S,q+T,"$"].join("|")+")",q+"?"+T+"+",q+"+",O,$].join("|"),"g"),K=/[a-z][A-Z]|[0-9][a-zA-Z]|[a-zA-Z][0-9]|[^a-zA-Z0-9 ]/,W=Object.prototype,H=W.toString,V=s.Symbol,G=V?V.prototype:void 0,J=V?G.toString:void 0;t.exports=u},function(t,e,n){(function(t,n){function r(t){return t&&t.Object===Object?t:null}var i={"function":!0,object:!0},o=i[typeof e]&&e&&!e.nodeType?e:void 0,u=i[typeof t]&&t&&!t.nodeType?t:void 0,s=r(o&&u&&"object"==typeof n&&n),a=r(i[typeof self]&&self),c=r(i[typeof window]&&window),f=r(i[typeof this]&&this),h=s||c!==(f&&f.window)&&c||a||f||Function("return this")();t.exports=h}).call(e,n(59)(t),function(){return this}())},function(t,e,n){"use strict";function r(t,e){return new u(t,e)}var i=n(19),o=n(5),u=function(){function t(t,e){this._streamAdapter=t,this._mockConfig=e,e.elements?this._elements=e.elements:this._elements=t.adapt(o["default"].empty(),i["default"].streamSubscribe)}return t.prototype.elements=function(){return this._elements},t.prototype.events=function(t,e){for(var n=this._mockConfig,r=Object.keys(n),u=r.length,s=0;s<u;s++){var a=r[s];if(a===t)return n[a]}return this._streamAdapter.adapt(o["default"].empty(),i["default"].streamSubscribe)},t.prototype.select=function(e){for(var n=this._mockConfig,r=Object.keys(n),i=r.length,o=0;o<i;o++){var u=r[o];if(u===e)return new t(this._streamAdapter,n[u])}return new t(this._streamAdapter,{})},t}();e.MockedDOMSource=u,e.mockDOMSource=r},function(t,e,n){"use strict";function r(t){return"string"==typeof t&&t.length>0}function i(t){return r(t)&&("."===t[0]||"#"===t[0])}function o(t){return function(e,n,r){return i(e)?n&&r?u.h(t+e,n,r):n?u.h(t+e,n):u.h(t+e,{}):n?u.h(t,e,n):e?u.h(t,e):u.h(t,{})}}var u=n(28),s=["a","altGlyph","altGlyphDef","altGlyphItem","animate","animateColor","animateMotion","animateTransform","circle","clipPath","colorProfile","cursor","defs","desc","ellipse","feBlend","feColorMatrix","feComponentTransfer","feComposite","feConvolveMatrix","feDiffuseLighting","feDisplacementMap","feDistantLight","feFlood","feFuncA","feFuncB","feFuncG","feFuncR","feGaussianBlur","feImage","feMerge","feMergeNode","feMorphology","feOffset","fePointLight","feSpecularLighting","feSpotlight","feTile","feTurbulence","filter","font","fontFace","fontFaceFormat","fontFaceName","fontFaceSrc","fontFaceUri","foreignObject","g","glyph","glyphRef","hkern","image","line","linearGradient","marker","mask","metadata","missingGlyph","mpath","path","pattern","polygon","polyling","radialGradient","rect","script","set","stop","style","switch","symbol","text","textPath","title","tref","tspan","use","view","vkern"],a=o("svg");s.forEach(function(t){a[t]=o(t)});var c=["a","abbr","address","area","article","aside","audio","b","base","bdi","bdo","blockquote","body","br","button","canvas","caption","cite","code","col","colgroup","dd","del","dfn","dir","div","dl","dt","em","embed","fieldset","figcaption","figure","footer","form","h1","h2","h3","h4","h5","h6","head","header","hgroup","hr","html","i","iframe","img","input","ins","kbd","keygen","label","legend","li","link","main","map","mark","menu","meta","nav","noscript","object","ol","optgroup","option","p","param","pre","progress","q","rp","rt","ruby","s","samp","script","section","select","small","source","span","strong","style","sub","sup","table","tbody","td","textarea","tfoot","th","thead","title","tr","u","ul","video"],f={SVG_TAG_NAMES:s,TAG_NAMES:c,svg:a,isSelector:i,createTagFunction:o};c.forEach(function(t){f[t]=o(t)}),Object.defineProperty(e,"__esModule",{value:!0}),e["default"]=f},function(t,e,n){"use strict";function r(t,e){var n=i["default"](t,e,{streamAdapter:o["default"]}).run;return n()}var i=n(79),o=n(80);e.run=r;var u=function(t,e){return i["default"](t,e,{streamAdapter:o["default"]})};u.run=r,Object.defineProperty(e,"__esModule",{value:!0}),e["default"]=u},function(t,e){"use strict";function n(t){var e=t.stack||t;console&&console.error?console.error(e):console&&console.log&&console.log(e)}function r(t,e){var n={};for(var r in t)if(t.hasOwnProperty(r)){var i=e.makeSubject(),o=t[r].streamAdapter||e,u=o.adapt(i.stream,e.streamSubscribe);n[r]={stream:u,observer:i.observer}}return n}function i(t,e,n){var r={};for(var i in t)if(t.hasOwnProperty(i)){var o=t[i](e[i].stream,n,i),u=t[i].streamAdapter;u&&u.isValidStream(o)?r[i]=n.adapt(o,u.streamSubscribe):r[i]=o}return r}function o(t,e,r){var i=Object.keys(t).filter(function(t){return!!e[t]}).map(function(i){return r.streamSubscribe(t[i],{next:function(t){e[i].observer.next(t)},error:function(t){n(t),e[i].observer.error(t)},complete:function(t){e[i].observer.complete(t)}})}),o=i.filter(function(t){return"function"==typeof t});return function(){o.forEach(function(t){return t()})}}function u(t){for(var e in t)t.hasOwnProperty(e)&&t[e]&&"function"==typeof t[e].dispose&&t[e].dispose()}function s(t,e,n){if("function"!=typeof t)throw new Error("First argument given to Cycle must be the 'main' function.");if("object"!=typeof e||null===e)throw new Error("Second argument given to Cycle must be an object with driver functions as properties.");if(a(e))throw new Error("Second argument given to Cycle must be an object with at least one driver function declared as a property.");var s=n.streamAdapter;if(!s||a(s))throw new Error("Third argument given to Cycle must be an options object with the streamAdapter key supplied with a valid stream adapter.");var c=r(e,s),f=i(e,c,s),h=t(f);"undefined"!=typeof window&&(window.Cyclejs={sinks:h});var l=function(){var t=o(h,c,s);return function(){u(f),t()}};return{sinks:h,sources:f,run:l}}var a=function(t){return 0===Object.keys(t).length};Object.defineProperty(e,"__esModule",{value:!0}),e["default"]=s},function(t,e,n){"use strict";var r=n(5),i={adapt:function(t,e){if(i.isValidStream(t))return t;var n=null;return r["default"].create({start:function(r){var i=r;n=e(t,i)},stop:function(){"function"==typeof n&&n()}})},makeSubject:function(){var t=r["default"].create(),e={next:function(e){t.shamefullySendNext(e)},error:function(e){t.shamefullySendError(e)},complete:function(){t.shamefullySendComplete()}};return{observer:e,stream:t}},remember:function(t){return t.remember()},isValidStream:function(t){return"function"==typeof t.addListener&&"function"==typeof t.shamefullySendNext},streamSubscribe:function(t,e){return t.addListener(e),function(){return t.removeListener(e)}}};Object.defineProperty(e,"__esModule",{value:!0}),e["default"]=i}]);
+	
+	/**
+	 * Splits a string into an array of strings using a regex or string separator. Matches of the
+	 * separator are not included in the result array. However, if `separator` is a regex that contains
+	 * capturing groups, backreferences are spliced into the result each time `separator` is matched.
+	 * Fixes browser bugs compared to the native `String.prototype.split` and can be used reliably
+	 * cross-browser.
+	 * @param {String} str String to split.
+	 * @param {RegExp|String} separator Regex or string to use for separating the string.
+	 * @param {Number} [limit] Maximum number of items to include in the result array.
+	 * @returns {Array} Array of substrings.
+	 * @example
+	 *
+	 * // Basic use
+	 * split('a b c d', ' ');
+	 * // -> ['a', 'b', 'c', 'd']
+	 *
+	 * // With limit
+	 * split('a b c d', ' ', 2);
+	 * // -> ['a', 'b']
+	 *
+	 * // Backreferences in result array
+	 * split('..word1 word2..', /([a-z]+)(\d+)/i);
+	 * // -> ['..', 'word', '1', ' ', 'word', '2', '..']
+	 */
+	module.exports = (function split(undef) {
+	
+	  var nativeSplit = String.prototype.split,
+	    compliantExecNpcg = /()??/.exec("")[1] === undef,
+	    // NPCG: nonparticipating capturing group
+	    self;
+	
+	  self = function(str, separator, limit) {
+	    // If `separator` is not a regex, use `nativeSplit`
+	    if (Object.prototype.toString.call(separator) !== "[object RegExp]") {
+	      return nativeSplit.call(str, separator, limit);
+	    }
+	    var output = [],
+	      flags = (separator.ignoreCase ? "i" : "") + (separator.multiline ? "m" : "") + (separator.extended ? "x" : "") + // Proposed for ES6
+	      (separator.sticky ? "y" : ""),
+	      // Firefox 3+
+	      lastLastIndex = 0,
+	      // Make `global` and avoid `lastIndex` issues by working with a copy
+	      separator = new RegExp(separator.source, flags + "g"),
+	      separator2, match, lastIndex, lastLength;
+	    str += ""; // Type-convert
+	    if (!compliantExecNpcg) {
+	      // Doesn't need flags gy, but they don't hurt
+	      separator2 = new RegExp("^" + separator.source + "$(?!\\s)", flags);
+	    }
+	    /* Values for `limit`, per the spec:
+	     * If undefined: 4294967295 // Math.pow(2, 32) - 1
+	     * If 0, Infinity, or NaN: 0
+	     * If positive number: limit = Math.floor(limit); if (limit > 4294967295) limit -= 4294967296;
+	     * If negative number: 4294967296 - Math.floor(Math.abs(limit))
+	     * If other: Type-convert, then use the above rules
+	     */
+	    limit = limit === undef ? -1 >>> 0 : // Math.pow(2, 32) - 1
+	    limit >>> 0; // ToUint32(limit)
+	    while (match = separator.exec(str)) {
+	      // `separator.lastIndex` is not reliable cross-browser
+	      lastIndex = match.index + match[0].length;
+	      if (lastIndex > lastLastIndex) {
+	        output.push(str.slice(lastLastIndex, match.index));
+	        // Fix browsers whose `exec` methods don't consistently return `undefined` for
+	        // nonparticipating capturing groups
+	        if (!compliantExecNpcg && match.length > 1) {
+	          match[0].replace(separator2, function() {
+	            for (var i = 1; i < arguments.length - 2; i++) {
+	              if (arguments[i] === undef) {
+	                match[i] = undef;
+	              }
+	            }
+	          });
+	        }
+	        if (match.length > 1 && match.index < str.length) {
+	          Array.prototype.push.apply(output, match.slice(1));
+	        }
+	        lastLength = match[0].length;
+	        lastLastIndex = lastIndex;
+	        if (output.length >= limit) {
+	          break;
+	        }
+	      }
+	      if (separator.lastIndex === match.index) {
+	        separator.lastIndex++; // Avoid an infinite loop
+	      }
+	    }
+	    if (lastLastIndex === str.length) {
+	      if (lastLength || !separator.test("")) {
+	        output.push("");
+	      }
+	    } else {
+	      output.push(str.slice(lastLastIndex));
+	    }
+	    return output.length > limit ? output.slice(0, limit) : output;
+	  };
+	
+	  return self;
+	})();
+
+
+/***/ },
+/* 46 */
+/***/ function(module, exports) {
+
+	
+	// http://www.w3.org/html/wg/drafts/html/master/syntax.html#void-elements
+	
+	module.exports = {
+	  area: true,
+	  base: true,
+	  br: true,
+	  col: true,
+	  embed: true,
+	  hr: true,
+	  img: true,
+	  input: true,
+	  keygen: true,
+	  link: true,
+	  meta: true,
+	  param: true,
+	  source: true,
+	  track: true,
+	  wbr: true
+	};
+
+/***/ },
+/* 47 */
+/***/ function(module, exports) {
+
+	
+	// All SVG children elements, not in this list, should self-close
+	
+	module.exports = {
+	  // http://www.w3.org/TR/SVG/intro.html#TermContainerElement
+	  'a': true,
+	  'defs': true,
+	  'glyph': true,
+	  'g': true,
+	  'marker': true,
+	  'mask': true,
+	  'missing-glyph': true,
+	  'pattern': true,
+	  'svg': true,
+	  'switch': true,
+	  'symbol': true,
+	
+	  // http://www.w3.org/TR/SVG/intro.html#TermDescriptiveElement
+	  'desc': true,
+	  'metadata': true,
+	  'title': true
+	};
+
+/***/ },
+/* 48 */
+/***/ function(module, exports, __webpack_require__) {
+
+	
+	var forOwn = __webpack_require__(49);
+	var escape = __webpack_require__(56);
+	var union = __webpack_require__(59);
+	
+	var parseSelector = __webpack_require__(44);
+	
+	// data.attrs, data.props, data.class
+	
+	module.exports = function attributes(vnode) {
+	  var selector = parseSelector(vnode.sel);
+	  var parsedClasses = selector.className.split(' ');
+	
+	  var attributes = [];
+	  var classes = [];
+	  var values = {};
+	
+	  if (selector.id) {
+	    values.id = selector.id;
+	  }
+	
+	  setAttributes(vnode.data.props, values);
+	  setAttributes(vnode.data.attrs, values); // `attrs` override `props`, not sure if this is good so
+	
+	  if (vnode.data.class) {
+	    // Omit `className` attribute if `class` is set on vnode
+	    values.class = undefined;
+	  }
+	  forOwn(vnode.data.class, function (value, key) {
+	    if (value === true) {
+	      classes.push(key);
+	    }
+	  });
+	  classes = union(classes, values.class, parsedClasses).filter(function (x) {
+	    return x !== '';
+	  });
+	
+	  if (classes.length) {
+	    values.class = classes.join(' ');
+	  }
+	
+	  forOwn(values, function (value, key) {
+	    attributes.push(value === true ? key : key + '="' + escape(value) + '"');
+	  });
+	
+	  return attributes.length ? attributes.join(' ') : '';
+	};
+	
+	function setAttributes(values, target) {
+	  forOwn(values, function (value, key) {
+	    if (key === 'htmlFor') {
+	      target['for'] = value;
+	      return;
+	    }
+	    if (key === 'className') {
+	      target['class'] = value.split(' ');
+	      return;
+	    }
+	    if (key === 'innerHTML') {
+	      return;
+	    }
+	    target[key] = value;
+	  });
+	}
+
+/***/ },
+/* 49 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * lodash 3.0.2 (Custom Build) <https://lodash.com/>
+	 * Build: `lodash modern modularize exports="npm" -o ./`
+	 * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
+	 * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+	 * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+	 * Available under MIT license <https://lodash.com/license>
+	 */
+	var baseFor = __webpack_require__(50),
+	    bindCallback = __webpack_require__(51),
+	    keys = __webpack_require__(52);
+	
+	/**
+	 * The base implementation of `_.forOwn` without support for callback
+	 * shorthands and `this` binding.
+	 *
+	 * @private
+	 * @param {Object} object The object to iterate over.
+	 * @param {Function} iteratee The function invoked per iteration.
+	 * @returns {Object} Returns `object`.
+	 */
+	function baseForOwn(object, iteratee) {
+	  return baseFor(object, iteratee, keys);
+	}
+	
+	/**
+	 * Creates a function for `_.forOwn` or `_.forOwnRight`.
+	 *
+	 * @private
+	 * @param {Function} objectFunc The function to iterate over an object.
+	 * @returns {Function} Returns the new each function.
+	 */
+	function createForOwn(objectFunc) {
+	  return function(object, iteratee, thisArg) {
+	    if (typeof iteratee != 'function' || thisArg !== undefined) {
+	      iteratee = bindCallback(iteratee, thisArg, 3);
+	    }
+	    return objectFunc(object, iteratee);
+	  };
+	}
+	
+	/**
+	 * Iterates over own enumerable properties of an object invoking `iteratee`
+	 * for each property. The `iteratee` is bound to `thisArg` and invoked with
+	 * three arguments: (value, key, object). Iteratee functions may exit iteration
+	 * early by explicitly returning `false`.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Object
+	 * @param {Object} object The object to iterate over.
+	 * @param {Function} [iteratee=_.identity] The function invoked per iteration.
+	 * @param {*} [thisArg] The `this` binding of `iteratee`.
+	 * @returns {Object} Returns `object`.
+	 * @example
+	 *
+	 * function Foo() {
+	 *   this.a = 1;
+	 *   this.b = 2;
+	 * }
+	 *
+	 * Foo.prototype.c = 3;
+	 *
+	 * _.forOwn(new Foo, function(value, key) {
+	 *   console.log(key);
+	 * });
+	 * // => logs 'a' and 'b' (iteration order is not guaranteed)
+	 */
+	var forOwn = createForOwn(baseForOwn);
+	
+	module.exports = forOwn;
+
+
+/***/ },
+/* 50 */
+/***/ function(module, exports) {
+
+	/**
+	 * lodash 3.0.3 (Custom Build) <https://lodash.com/>
+	 * Build: `lodash modularize exports="npm" -o ./`
+	 * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
+	 * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+	 * Copyright 2009-2016 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+	 * Available under MIT license <https://lodash.com/license>
+	 */
+	
+	/**
+	 * The base implementation of `baseForIn` and `baseForOwn` which iterates
+	 * over `object` properties returned by `keysFunc` invoking `iteratee` for
+	 * each property. Iteratee functions may exit iteration early by explicitly
+	 * returning `false`.
+	 *
+	 * @private
+	 * @param {Object} object The object to iterate over.
+	 * @param {Function} iteratee The function invoked per iteration.
+	 * @param {Function} keysFunc The function to get the keys of `object`.
+	 * @returns {Object} Returns `object`.
+	 */
+	var baseFor = createBaseFor();
+	
+	/**
+	 * Creates a base function for methods like `_.forIn`.
+	 *
+	 * @private
+	 * @param {boolean} [fromRight] Specify iterating from right to left.
+	 * @returns {Function} Returns the new base function.
+	 */
+	function createBaseFor(fromRight) {
+	  return function(object, iteratee, keysFunc) {
+	    var index = -1,
+	        iterable = Object(object),
+	        props = keysFunc(object),
+	        length = props.length;
+	
+	    while (length--) {
+	      var key = props[fromRight ? length : ++index];
+	      if (iteratee(iterable[key], key, iterable) === false) {
+	        break;
+	      }
+	    }
+	    return object;
+	  };
+	}
+	
+	module.exports = baseFor;
+
+
+/***/ },
+/* 51 */
+/***/ function(module, exports) {
+
+	/**
+	 * lodash 3.0.1 (Custom Build) <https://lodash.com/>
+	 * Build: `lodash modern modularize exports="npm" -o ./`
+	 * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
+	 * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+	 * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+	 * Available under MIT license <https://lodash.com/license>
+	 */
+	
+	/**
+	 * A specialized version of `baseCallback` which only supports `this` binding
+	 * and specifying the number of arguments to provide to `func`.
+	 *
+	 * @private
+	 * @param {Function} func The function to bind.
+	 * @param {*} thisArg The `this` binding of `func`.
+	 * @param {number} [argCount] The number of arguments to provide to `func`.
+	 * @returns {Function} Returns the callback.
+	 */
+	function bindCallback(func, thisArg, argCount) {
+	  if (typeof func != 'function') {
+	    return identity;
+	  }
+	  if (thisArg === undefined) {
+	    return func;
+	  }
+	  switch (argCount) {
+	    case 1: return function(value) {
+	      return func.call(thisArg, value);
+	    };
+	    case 3: return function(value, index, collection) {
+	      return func.call(thisArg, value, index, collection);
+	    };
+	    case 4: return function(accumulator, value, index, collection) {
+	      return func.call(thisArg, accumulator, value, index, collection);
+	    };
+	    case 5: return function(value, other, key, object, source) {
+	      return func.call(thisArg, value, other, key, object, source);
+	    };
+	  }
+	  return function() {
+	    return func.apply(thisArg, arguments);
+	  };
+	}
+	
+	/**
+	 * This method returns the first argument provided to it.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Utility
+	 * @param {*} value Any value.
+	 * @returns {*} Returns `value`.
+	 * @example
+	 *
+	 * var object = { 'user': 'fred' };
+	 *
+	 * _.identity(object) === object;
+	 * // => true
+	 */
+	function identity(value) {
+	  return value;
+	}
+	
+	module.exports = bindCallback;
+
+
+/***/ },
+/* 52 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * lodash 3.1.2 (Custom Build) <https://lodash.com/>
+	 * Build: `lodash modern modularize exports="npm" -o ./`
+	 * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
+	 * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+	 * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+	 * Available under MIT license <https://lodash.com/license>
+	 */
+	var getNative = __webpack_require__(53),
+	    isArguments = __webpack_require__(54),
+	    isArray = __webpack_require__(55);
+	
+	/** Used to detect unsigned integer values. */
+	var reIsUint = /^\d+$/;
+	
+	/** Used for native method references. */
+	var objectProto = Object.prototype;
+	
+	/** Used to check objects for own properties. */
+	var hasOwnProperty = objectProto.hasOwnProperty;
+	
+	/* Native method references for those with the same name as other `lodash` methods. */
+	var nativeKeys = getNative(Object, 'keys');
+	
+	/**
+	 * Used as the [maximum length](http://ecma-international.org/ecma-262/6.0/#sec-number.max_safe_integer)
+	 * of an array-like value.
+	 */
+	var MAX_SAFE_INTEGER = 9007199254740991;
+	
+	/**
+	 * The base implementation of `_.property` without support for deep paths.
+	 *
+	 * @private
+	 * @param {string} key The key of the property to get.
+	 * @returns {Function} Returns the new function.
+	 */
+	function baseProperty(key) {
+	  return function(object) {
+	    return object == null ? undefined : object[key];
+	  };
+	}
+	
+	/**
+	 * Gets the "length" property value of `object`.
+	 *
+	 * **Note:** This function is used to avoid a [JIT bug](https://bugs.webkit.org/show_bug.cgi?id=142792)
+	 * that affects Safari on at least iOS 8.1-8.3 ARM64.
+	 *
+	 * @private
+	 * @param {Object} object The object to query.
+	 * @returns {*} Returns the "length" value.
+	 */
+	var getLength = baseProperty('length');
+	
+	/**
+	 * Checks if `value` is array-like.
+	 *
+	 * @private
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is array-like, else `false`.
+	 */
+	function isArrayLike(value) {
+	  return value != null && isLength(getLength(value));
+	}
+	
+	/**
+	 * Checks if `value` is a valid array-like index.
+	 *
+	 * @private
+	 * @param {*} value The value to check.
+	 * @param {number} [length=MAX_SAFE_INTEGER] The upper bounds of a valid index.
+	 * @returns {boolean} Returns `true` if `value` is a valid index, else `false`.
+	 */
+	function isIndex(value, length) {
+	  value = (typeof value == 'number' || reIsUint.test(value)) ? +value : -1;
+	  length = length == null ? MAX_SAFE_INTEGER : length;
+	  return value > -1 && value % 1 == 0 && value < length;
+	}
+	
+	/**
+	 * Checks if `value` is a valid array-like length.
+	 *
+	 * **Note:** This function is based on [`ToLength`](http://ecma-international.org/ecma-262/6.0/#sec-tolength).
+	 *
+	 * @private
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is a valid length, else `false`.
+	 */
+	function isLength(value) {
+	  return typeof value == 'number' && value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;
+	}
+	
+	/**
+	 * A fallback implementation of `Object.keys` which creates an array of the
+	 * own enumerable property names of `object`.
+	 *
+	 * @private
+	 * @param {Object} object The object to query.
+	 * @returns {Array} Returns the array of property names.
+	 */
+	function shimKeys(object) {
+	  var props = keysIn(object),
+	      propsLength = props.length,
+	      length = propsLength && object.length;
+	
+	  var allowIndexes = !!length && isLength(length) &&
+	    (isArray(object) || isArguments(object));
+	
+	  var index = -1,
+	      result = [];
+	
+	  while (++index < propsLength) {
+	    var key = props[index];
+	    if ((allowIndexes && isIndex(key, length)) || hasOwnProperty.call(object, key)) {
+	      result.push(key);
+	    }
+	  }
+	  return result;
+	}
+	
+	/**
+	 * Checks if `value` is the [language type](https://es5.github.io/#x8) of `Object`.
+	 * (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is an object, else `false`.
+	 * @example
+	 *
+	 * _.isObject({});
+	 * // => true
+	 *
+	 * _.isObject([1, 2, 3]);
+	 * // => true
+	 *
+	 * _.isObject(1);
+	 * // => false
+	 */
+	function isObject(value) {
+	  // Avoid a V8 JIT bug in Chrome 19-20.
+	  // See https://code.google.com/p/v8/issues/detail?id=2291 for more details.
+	  var type = typeof value;
+	  return !!value && (type == 'object' || type == 'function');
+	}
+	
+	/**
+	 * Creates an array of the own enumerable property names of `object`.
+	 *
+	 * **Note:** Non-object values are coerced to objects. See the
+	 * [ES spec](http://ecma-international.org/ecma-262/6.0/#sec-object.keys)
+	 * for more details.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Object
+	 * @param {Object} object The object to query.
+	 * @returns {Array} Returns the array of property names.
+	 * @example
+	 *
+	 * function Foo() {
+	 *   this.a = 1;
+	 *   this.b = 2;
+	 * }
+	 *
+	 * Foo.prototype.c = 3;
+	 *
+	 * _.keys(new Foo);
+	 * // => ['a', 'b'] (iteration order is not guaranteed)
+	 *
+	 * _.keys('hi');
+	 * // => ['0', '1']
+	 */
+	var keys = !nativeKeys ? shimKeys : function(object) {
+	  var Ctor = object == null ? undefined : object.constructor;
+	  if ((typeof Ctor == 'function' && Ctor.prototype === object) ||
+	      (typeof object != 'function' && isArrayLike(object))) {
+	    return shimKeys(object);
+	  }
+	  return isObject(object) ? nativeKeys(object) : [];
+	};
+	
+	/**
+	 * Creates an array of the own and inherited enumerable property names of `object`.
+	 *
+	 * **Note:** Non-object values are coerced to objects.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Object
+	 * @param {Object} object The object to query.
+	 * @returns {Array} Returns the array of property names.
+	 * @example
+	 *
+	 * function Foo() {
+	 *   this.a = 1;
+	 *   this.b = 2;
+	 * }
+	 *
+	 * Foo.prototype.c = 3;
+	 *
+	 * _.keysIn(new Foo);
+	 * // => ['a', 'b', 'c'] (iteration order is not guaranteed)
+	 */
+	function keysIn(object) {
+	  if (object == null) {
+	    return [];
+	  }
+	  if (!isObject(object)) {
+	    object = Object(object);
+	  }
+	  var length = object.length;
+	  length = (length && isLength(length) &&
+	    (isArray(object) || isArguments(object)) && length) || 0;
+	
+	  var Ctor = object.constructor,
+	      index = -1,
+	      isProto = typeof Ctor == 'function' && Ctor.prototype === object,
+	      result = Array(length),
+	      skipIndexes = length > 0;
+	
+	  while (++index < length) {
+	    result[index] = (index + '');
+	  }
+	  for (var key in object) {
+	    if (!(skipIndexes && isIndex(key, length)) &&
+	        !(key == 'constructor' && (isProto || !hasOwnProperty.call(object, key)))) {
+	      result.push(key);
+	    }
+	  }
+	  return result;
+	}
+	
+	module.exports = keys;
+
+
+/***/ },
+/* 53 */
+/***/ function(module, exports) {
+
+	/**
+	 * lodash 3.9.1 (Custom Build) <https://lodash.com/>
+	 * Build: `lodash modern modularize exports="npm" -o ./`
+	 * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
+	 * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+	 * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+	 * Available under MIT license <https://lodash.com/license>
+	 */
+	
+	/** `Object#toString` result references. */
+	var funcTag = '[object Function]';
+	
+	/** Used to detect host constructors (Safari > 5). */
+	var reIsHostCtor = /^\[object .+?Constructor\]$/;
+	
+	/**
+	 * Checks if `value` is object-like.
+	 *
+	 * @private
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
+	 */
+	function isObjectLike(value) {
+	  return !!value && typeof value == 'object';
+	}
+	
+	/** Used for native method references. */
+	var objectProto = Object.prototype;
+	
+	/** Used to resolve the decompiled source of functions. */
+	var fnToString = Function.prototype.toString;
+	
+	/** Used to check objects for own properties. */
+	var hasOwnProperty = objectProto.hasOwnProperty;
+	
+	/**
+	 * Used to resolve the [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
+	 * of values.
+	 */
+	var objToString = objectProto.toString;
+	
+	/** Used to detect if a method is native. */
+	var reIsNative = RegExp('^' +
+	  fnToString.call(hasOwnProperty).replace(/[\\^$.*+?()[\]{}|]/g, '\\$&')
+	  .replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g, '$1.*?') + '$'
+	);
+	
+	/**
+	 * Gets the native function at `key` of `object`.
+	 *
+	 * @private
+	 * @param {Object} object The object to query.
+	 * @param {string} key The key of the method to get.
+	 * @returns {*} Returns the function if it's native, else `undefined`.
+	 */
+	function getNative(object, key) {
+	  var value = object == null ? undefined : object[key];
+	  return isNative(value) ? value : undefined;
+	}
+	
+	/**
+	 * Checks if `value` is classified as a `Function` object.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
+	 * @example
+	 *
+	 * _.isFunction(_);
+	 * // => true
+	 *
+	 * _.isFunction(/abc/);
+	 * // => false
+	 */
+	function isFunction(value) {
+	  // The use of `Object#toString` avoids issues with the `typeof` operator
+	  // in older versions of Chrome and Safari which return 'function' for regexes
+	  // and Safari 8 equivalents which return 'object' for typed array constructors.
+	  return isObject(value) && objToString.call(value) == funcTag;
+	}
+	
+	/**
+	 * Checks if `value` is the [language type](https://es5.github.io/#x8) of `Object`.
+	 * (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is an object, else `false`.
+	 * @example
+	 *
+	 * _.isObject({});
+	 * // => true
+	 *
+	 * _.isObject([1, 2, 3]);
+	 * // => true
+	 *
+	 * _.isObject(1);
+	 * // => false
+	 */
+	function isObject(value) {
+	  // Avoid a V8 JIT bug in Chrome 19-20.
+	  // See https://code.google.com/p/v8/issues/detail?id=2291 for more details.
+	  var type = typeof value;
+	  return !!value && (type == 'object' || type == 'function');
+	}
+	
+	/**
+	 * Checks if `value` is a native function.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is a native function, else `false`.
+	 * @example
+	 *
+	 * _.isNative(Array.prototype.push);
+	 * // => true
+	 *
+	 * _.isNative(_);
+	 * // => false
+	 */
+	function isNative(value) {
+	  if (value == null) {
+	    return false;
+	  }
+	  if (isFunction(value)) {
+	    return reIsNative.test(fnToString.call(value));
+	  }
+	  return isObjectLike(value) && reIsHostCtor.test(value);
+	}
+	
+	module.exports = getNative;
+
+
+/***/ },
+/* 54 */
+/***/ function(module, exports) {
+
+	/**
+	 * lodash 3.0.8 (Custom Build) <https://lodash.com/>
+	 * Build: `lodash modularize exports="npm" -o ./`
+	 * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
+	 * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+	 * Copyright 2009-2016 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+	 * Available under MIT license <https://lodash.com/license>
+	 */
+	
+	/** Used as references for various `Number` constants. */
+	var MAX_SAFE_INTEGER = 9007199254740991;
+	
+	/** `Object#toString` result references. */
+	var argsTag = '[object Arguments]',
+	    funcTag = '[object Function]',
+	    genTag = '[object GeneratorFunction]';
+	
+	/** Used for built-in method references. */
+	var objectProto = Object.prototype;
+	
+	/** Used to check objects for own properties. */
+	var hasOwnProperty = objectProto.hasOwnProperty;
+	
+	/**
+	 * Used to resolve the [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
+	 * of values.
+	 */
+	var objectToString = objectProto.toString;
+	
+	/** Built-in value references. */
+	var propertyIsEnumerable = objectProto.propertyIsEnumerable;
+	
+	/**
+	 * The base implementation of `_.property` without support for deep paths.
+	 *
+	 * @private
+	 * @param {string} key The key of the property to get.
+	 * @returns {Function} Returns the new function.
+	 */
+	function baseProperty(key) {
+	  return function(object) {
+	    return object == null ? undefined : object[key];
+	  };
+	}
+	
+	/**
+	 * Gets the "length" property value of `object`.
+	 *
+	 * **Note:** This function is used to avoid a [JIT bug](https://bugs.webkit.org/show_bug.cgi?id=142792)
+	 * that affects Safari on at least iOS 8.1-8.3 ARM64.
+	 *
+	 * @private
+	 * @param {Object} object The object to query.
+	 * @returns {*} Returns the "length" value.
+	 */
+	var getLength = baseProperty('length');
+	
+	/**
+	 * Checks if `value` is likely an `arguments` object.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
+	 * @example
+	 *
+	 * _.isArguments(function() { return arguments; }());
+	 * // => true
+	 *
+	 * _.isArguments([1, 2, 3]);
+	 * // => false
+	 */
+	function isArguments(value) {
+	  // Safari 8.1 incorrectly makes `arguments.callee` enumerable in strict mode.
+	  return isArrayLikeObject(value) && hasOwnProperty.call(value, 'callee') &&
+	    (!propertyIsEnumerable.call(value, 'callee') || objectToString.call(value) == argsTag);
+	}
+	
+	/**
+	 * Checks if `value` is array-like. A value is considered array-like if it's
+	 * not a function and has a `value.length` that's an integer greater than or
+	 * equal to `0` and less than or equal to `Number.MAX_SAFE_INTEGER`.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is array-like, else `false`.
+	 * @example
+	 *
+	 * _.isArrayLike([1, 2, 3]);
+	 * // => true
+	 *
+	 * _.isArrayLike(document.body.children);
+	 * // => true
+	 *
+	 * _.isArrayLike('abc');
+	 * // => true
+	 *
+	 * _.isArrayLike(_.noop);
+	 * // => false
+	 */
+	function isArrayLike(value) {
+	  return value != null && isLength(getLength(value)) && !isFunction(value);
+	}
+	
+	/**
+	 * This method is like `_.isArrayLike` except that it also checks if `value`
+	 * is an object.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is an array-like object, else `false`.
+	 * @example
+	 *
+	 * _.isArrayLikeObject([1, 2, 3]);
+	 * // => true
+	 *
+	 * _.isArrayLikeObject(document.body.children);
+	 * // => true
+	 *
+	 * _.isArrayLikeObject('abc');
+	 * // => false
+	 *
+	 * _.isArrayLikeObject(_.noop);
+	 * // => false
+	 */
+	function isArrayLikeObject(value) {
+	  return isObjectLike(value) && isArrayLike(value);
+	}
+	
+	/**
+	 * Checks if `value` is classified as a `Function` object.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
+	 * @example
+	 *
+	 * _.isFunction(_);
+	 * // => true
+	 *
+	 * _.isFunction(/abc/);
+	 * // => false
+	 */
+	function isFunction(value) {
+	  // The use of `Object#toString` avoids issues with the `typeof` operator
+	  // in Safari 8 which returns 'object' for typed array and weak map constructors,
+	  // and PhantomJS 1.9 which returns 'function' for `NodeList` instances.
+	  var tag = isObject(value) ? objectToString.call(value) : '';
+	  return tag == funcTag || tag == genTag;
+	}
+	
+	/**
+	 * Checks if `value` is a valid array-like length.
+	 *
+	 * **Note:** This function is loosely based on [`ToLength`](http://ecma-international.org/ecma-262/6.0/#sec-tolength).
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is a valid length, else `false`.
+	 * @example
+	 *
+	 * _.isLength(3);
+	 * // => true
+	 *
+	 * _.isLength(Number.MIN_VALUE);
+	 * // => false
+	 *
+	 * _.isLength(Infinity);
+	 * // => false
+	 *
+	 * _.isLength('3');
+	 * // => false
+	 */
+	function isLength(value) {
+	  return typeof value == 'number' &&
+	    value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;
+	}
+	
+	/**
+	 * Checks if `value` is the [language type](https://es5.github.io/#x8) of `Object`.
+	 * (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is an object, else `false`.
+	 * @example
+	 *
+	 * _.isObject({});
+	 * // => true
+	 *
+	 * _.isObject([1, 2, 3]);
+	 * // => true
+	 *
+	 * _.isObject(_.noop);
+	 * // => true
+	 *
+	 * _.isObject(null);
+	 * // => false
+	 */
+	function isObject(value) {
+	  var type = typeof value;
+	  return !!value && (type == 'object' || type == 'function');
+	}
+	
+	/**
+	 * Checks if `value` is object-like. A value is object-like if it's not `null`
+	 * and has a `typeof` result of "object".
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
+	 * @example
+	 *
+	 * _.isObjectLike({});
+	 * // => true
+	 *
+	 * _.isObjectLike([1, 2, 3]);
+	 * // => true
+	 *
+	 * _.isObjectLike(_.noop);
+	 * // => false
+	 *
+	 * _.isObjectLike(null);
+	 * // => false
+	 */
+	function isObjectLike(value) {
+	  return !!value && typeof value == 'object';
+	}
+	
+	module.exports = isArguments;
+
+
+/***/ },
+/* 55 */
+/***/ function(module, exports) {
+
+	/**
+	 * lodash 3.0.4 (Custom Build) <https://lodash.com/>
+	 * Build: `lodash modern modularize exports="npm" -o ./`
+	 * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
+	 * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+	 * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+	 * Available under MIT license <https://lodash.com/license>
+	 */
+	
+	/** `Object#toString` result references. */
+	var arrayTag = '[object Array]',
+	    funcTag = '[object Function]';
+	
+	/** Used to detect host constructors (Safari > 5). */
+	var reIsHostCtor = /^\[object .+?Constructor\]$/;
+	
+	/**
+	 * Checks if `value` is object-like.
+	 *
+	 * @private
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
+	 */
+	function isObjectLike(value) {
+	  return !!value && typeof value == 'object';
+	}
+	
+	/** Used for native method references. */
+	var objectProto = Object.prototype;
+	
+	/** Used to resolve the decompiled source of functions. */
+	var fnToString = Function.prototype.toString;
+	
+	/** Used to check objects for own properties. */
+	var hasOwnProperty = objectProto.hasOwnProperty;
+	
+	/**
+	 * Used to resolve the [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
+	 * of values.
+	 */
+	var objToString = objectProto.toString;
+	
+	/** Used to detect if a method is native. */
+	var reIsNative = RegExp('^' +
+	  fnToString.call(hasOwnProperty).replace(/[\\^$.*+?()[\]{}|]/g, '\\$&')
+	  .replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g, '$1.*?') + '$'
+	);
+	
+	/* Native method references for those with the same name as other `lodash` methods. */
+	var nativeIsArray = getNative(Array, 'isArray');
+	
+	/**
+	 * Used as the [maximum length](http://ecma-international.org/ecma-262/6.0/#sec-number.max_safe_integer)
+	 * of an array-like value.
+	 */
+	var MAX_SAFE_INTEGER = 9007199254740991;
+	
+	/**
+	 * Gets the native function at `key` of `object`.
+	 *
+	 * @private
+	 * @param {Object} object The object to query.
+	 * @param {string} key The key of the method to get.
+	 * @returns {*} Returns the function if it's native, else `undefined`.
+	 */
+	function getNative(object, key) {
+	  var value = object == null ? undefined : object[key];
+	  return isNative(value) ? value : undefined;
+	}
+	
+	/**
+	 * Checks if `value` is a valid array-like length.
+	 *
+	 * **Note:** This function is based on [`ToLength`](http://ecma-international.org/ecma-262/6.0/#sec-tolength).
+	 *
+	 * @private
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is a valid length, else `false`.
+	 */
+	function isLength(value) {
+	  return typeof value == 'number' && value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;
+	}
+	
+	/**
+	 * Checks if `value` is classified as an `Array` object.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
+	 * @example
+	 *
+	 * _.isArray([1, 2, 3]);
+	 * // => true
+	 *
+	 * _.isArray(function() { return arguments; }());
+	 * // => false
+	 */
+	var isArray = nativeIsArray || function(value) {
+	  return isObjectLike(value) && isLength(value.length) && objToString.call(value) == arrayTag;
+	};
+	
+	/**
+	 * Checks if `value` is classified as a `Function` object.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
+	 * @example
+	 *
+	 * _.isFunction(_);
+	 * // => true
+	 *
+	 * _.isFunction(/abc/);
+	 * // => false
+	 */
+	function isFunction(value) {
+	  // The use of `Object#toString` avoids issues with the `typeof` operator
+	  // in older versions of Chrome and Safari which return 'function' for regexes
+	  // and Safari 8 equivalents which return 'object' for typed array constructors.
+	  return isObject(value) && objToString.call(value) == funcTag;
+	}
+	
+	/**
+	 * Checks if `value` is the [language type](https://es5.github.io/#x8) of `Object`.
+	 * (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is an object, else `false`.
+	 * @example
+	 *
+	 * _.isObject({});
+	 * // => true
+	 *
+	 * _.isObject([1, 2, 3]);
+	 * // => true
+	 *
+	 * _.isObject(1);
+	 * // => false
+	 */
+	function isObject(value) {
+	  // Avoid a V8 JIT bug in Chrome 19-20.
+	  // See https://code.google.com/p/v8/issues/detail?id=2291 for more details.
+	  var type = typeof value;
+	  return !!value && (type == 'object' || type == 'function');
+	}
+	
+	/**
+	 * Checks if `value` is a native function.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is a native function, else `false`.
+	 * @example
+	 *
+	 * _.isNative(Array.prototype.push);
+	 * // => true
+	 *
+	 * _.isNative(_);
+	 * // => false
+	 */
+	function isNative(value) {
+	  if (value == null) {
+	    return false;
+	  }
+	  if (isFunction(value)) {
+	    return reIsNative.test(fnToString.call(value));
+	  }
+	  return isObjectLike(value) && reIsHostCtor.test(value);
+	}
+	
+	module.exports = isArray;
+
+
+/***/ },
+/* 56 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * lodash 3.2.0 (Custom Build) <https://lodash.com/>
+	 * Build: `lodash modularize exports="npm" -o ./`
+	 * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
+	 * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+	 * Copyright 2009-2016 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+	 * Available under MIT license <https://lodash.com/license>
+	 */
+	var root = __webpack_require__(57);
+	
+	/** Used as references for various `Number` constants. */
+	var INFINITY = 1 / 0;
+	
+	/** `Object#toString` result references. */
+	var symbolTag = '[object Symbol]';
+	
+	/** Used to match HTML entities and HTML characters. */
+	var reUnescapedHtml = /[&<>"'`]/g,
+	    reHasUnescapedHtml = RegExp(reUnescapedHtml.source);
+	
+	/** Used to map characters to HTML entities. */
+	var htmlEscapes = {
+	  '&': '&amp;',
+	  '<': '&lt;',
+	  '>': '&gt;',
+	  '"': '&quot;',
+	  "'": '&#39;',
+	  '`': '&#96;'
+	};
+	
+	/**
+	 * Used by `_.escape` to convert characters to HTML entities.
+	 *
+	 * @private
+	 * @param {string} chr The matched character to escape.
+	 * @returns {string} Returns the escaped character.
+	 */
+	function escapeHtmlChar(chr) {
+	  return htmlEscapes[chr];
+	}
+	
+	/** Used for built-in method references. */
+	var objectProto = Object.prototype;
+	
+	/**
+	 * Used to resolve the [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
+	 * of values.
+	 */
+	var objectToString = objectProto.toString;
+	
+	/** Built-in value references. */
+	var Symbol = root.Symbol;
+	
+	/** Used to convert symbols to primitives and strings. */
+	var symbolProto = Symbol ? Symbol.prototype : undefined,
+	    symbolToString = Symbol ? symbolProto.toString : undefined;
+	
+	/**
+	 * Checks if `value` is object-like. A value is object-like if it's not `null`
+	 * and has a `typeof` result of "object".
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
+	 * @example
+	 *
+	 * _.isObjectLike({});
+	 * // => true
+	 *
+	 * _.isObjectLike([1, 2, 3]);
+	 * // => true
+	 *
+	 * _.isObjectLike(_.noop);
+	 * // => false
+	 *
+	 * _.isObjectLike(null);
+	 * // => false
+	 */
+	function isObjectLike(value) {
+	  return !!value && typeof value == 'object';
+	}
+	
+	/**
+	 * Checks if `value` is classified as a `Symbol` primitive or object.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
+	 * @example
+	 *
+	 * _.isSymbol(Symbol.iterator);
+	 * // => true
+	 *
+	 * _.isSymbol('abc');
+	 * // => false
+	 */
+	function isSymbol(value) {
+	  return typeof value == 'symbol' ||
+	    (isObjectLike(value) && objectToString.call(value) == symbolTag);
+	}
+	
+	/**
+	 * Converts `value` to a string if it's not one. An empty string is returned
+	 * for `null` and `undefined` values. The sign of `-0` is preserved.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Lang
+	 * @param {*} value The value to process.
+	 * @returns {string} Returns the string.
+	 * @example
+	 *
+	 * _.toString(null);
+	 * // => ''
+	 *
+	 * _.toString(-0);
+	 * // => '-0'
+	 *
+	 * _.toString([1, 2, 3]);
+	 * // => '1,2,3'
+	 */
+	function toString(value) {
+	  // Exit early for strings to avoid a performance hit in some environments.
+	  if (typeof value == 'string') {
+	    return value;
+	  }
+	  if (value == null) {
+	    return '';
+	  }
+	  if (isSymbol(value)) {
+	    return Symbol ? symbolToString.call(value) : '';
+	  }
+	  var result = (value + '');
+	  return (result == '0' && (1 / value) == -INFINITY) ? '-0' : result;
+	}
+	
+	/**
+	 * Converts the characters "&", "<", ">", '"', "'", and "\`" in `string` to
+	 * their corresponding HTML entities.
+	 *
+	 * **Note:** No other characters are escaped. To escape additional
+	 * characters use a third-party library like [_he_](https://mths.be/he).
+	 *
+	 * Though the ">" character is escaped for symmetry, characters like
+	 * ">" and "/" don't need escaping in HTML and have no special meaning
+	 * unless they're part of a tag or unquoted attribute value.
+	 * See [Mathias Bynens's article](https://mathiasbynens.be/notes/ambiguous-ampersands)
+	 * (under "semi-related fun fact") for more details.
+	 *
+	 * Backticks are escaped because in IE < 9, they can break out of
+	 * attribute values or HTML comments. See [#59](https://html5sec.org/#59),
+	 * [#102](https://html5sec.org/#102), [#108](https://html5sec.org/#108), and
+	 * [#133](https://html5sec.org/#133) of the [HTML5 Security Cheatsheet](https://html5sec.org/)
+	 * for more details.
+	 *
+	 * When working with HTML you should always [quote attribute values](http://wonko.com/post/html-escaping)
+	 * to reduce XSS vectors.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category String
+	 * @param {string} [string=''] The string to escape.
+	 * @returns {string} Returns the escaped string.
+	 * @example
+	 *
+	 * _.escape('fred, barney, & pebbles');
+	 * // => 'fred, barney, &amp; pebbles'
+	 */
+	function escape(string) {
+	  string = toString(string);
+	  return (string && reHasUnescapedHtml.test(string))
+	    ? string.replace(reUnescapedHtml, escapeHtmlChar)
+	    : string;
+	}
+	
+	module.exports = escape;
+
+
+/***/ },
+/* 57 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(module, global) {/**
+	 * lodash 3.0.1 (Custom Build) <https://lodash.com/>
+	 * Build: `lodash modularize exports="npm" -o ./`
+	 * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
+	 * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+	 * Copyright 2009-2016 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+	 * Available under MIT license <https://lodash.com/license>
+	 */
+	
+	/** Used to determine if values are of the language type `Object`. */
+	var objectTypes = {
+	  'function': true,
+	  'object': true
+	};
+	
+	/** Detect free variable `exports`. */
+	var freeExports = (objectTypes[typeof exports] && exports && !exports.nodeType)
+	  ? exports
+	  : undefined;
+	
+	/** Detect free variable `module`. */
+	var freeModule = (objectTypes[typeof module] && module && !module.nodeType)
+	  ? module
+	  : undefined;
+	
+	/** Detect free variable `global` from Node.js. */
+	var freeGlobal = checkGlobal(freeExports && freeModule && typeof global == 'object' && global);
+	
+	/** Detect free variable `self`. */
+	var freeSelf = checkGlobal(objectTypes[typeof self] && self);
+	
+	/** Detect free variable `window`. */
+	var freeWindow = checkGlobal(objectTypes[typeof window] && window);
+	
+	/** Detect `this` as the global object. */
+	var thisGlobal = checkGlobal(objectTypes[typeof this] && this);
+	
+	/**
+	 * Used as a reference to the global object.
+	 *
+	 * The `this` value is used if it's the global object to avoid Greasemonkey's
+	 * restricted `window` object, otherwise the `window` object is used.
+	 */
+	var root = freeGlobal ||
+	  ((freeWindow !== (thisGlobal && thisGlobal.window)) && freeWindow) ||
+	    freeSelf || thisGlobal || Function('return this')();
+	
+	/**
+	 * Checks if `value` is a global object.
+	 *
+	 * @private
+	 * @param {*} value The value to check.
+	 * @returns {null|Object} Returns `value` if it's a global object, else `null`.
+	 */
+	function checkGlobal(value) {
+	  return (value && value.Object === Object) ? value : null;
+	}
+	
+	module.exports = root;
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(58)(module), (function() { return this; }())))
+
+/***/ },
+/* 58 */
+/***/ function(module, exports) {
+
+	module.exports = function(module) {
+		if(!module.webpackPolyfill) {
+			module.deprecate = function() {};
+			module.paths = [];
+			// module.parent = undefined by default
+			module.children = [];
+			module.webpackPolyfill = 1;
+		}
+		return module;
+	}
+
+
+/***/ },
+/* 59 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * lodash 3.1.0 (Custom Build) <https://lodash.com/>
+	 * Build: `lodash modern modularize exports="npm" -o ./`
+	 * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
+	 * Based on Underscore.js 1.8.2 <http://underscorejs.org/LICENSE>
+	 * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+	 * Available under MIT license <https://lodash.com/license>
+	 */
+	var baseFlatten = __webpack_require__(60),
+	    baseUniq = __webpack_require__(63),
+	    restParam = __webpack_require__(68);
+	
+	/**
+	 * Creates an array of unique values, in order, of the provided arrays using
+	 * `SameValueZero` for equality comparisons.
+	 *
+	 * **Note:** [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+	 * comparisons are like strict equality comparisons, e.g. `===`, except that
+	 * `NaN` matches `NaN`.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Array
+	 * @param {...Array} [arrays] The arrays to inspect.
+	 * @returns {Array} Returns the new array of combined values.
+	 * @example
+	 *
+	 * _.union([1, 2], [4, 2], [2, 1]);
+	 * // => [1, 2, 4]
+	 */
+	var union = restParam(function(arrays) {
+	  return baseUniq(baseFlatten(arrays, false, true));
+	});
+	
+	module.exports = union;
+
+
+/***/ },
+/* 60 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * lodash 3.1.4 (Custom Build) <https://lodash.com/>
+	 * Build: `lodash modern modularize exports="npm" -o ./`
+	 * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
+	 * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+	 * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+	 * Available under MIT license <https://lodash.com/license>
+	 */
+	var isArguments = __webpack_require__(61),
+	    isArray = __webpack_require__(62);
+	
+	/**
+	 * Checks if `value` is object-like.
+	 *
+	 * @private
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
+	 */
+	function isObjectLike(value) {
+	  return !!value && typeof value == 'object';
+	}
+	
+	/**
+	 * Used as the [maximum length](http://ecma-international.org/ecma-262/6.0/#sec-number.max_safe_integer)
+	 * of an array-like value.
+	 */
+	var MAX_SAFE_INTEGER = 9007199254740991;
+	
+	/**
+	 * Appends the elements of `values` to `array`.
+	 *
+	 * @private
+	 * @param {Array} array The array to modify.
+	 * @param {Array} values The values to append.
+	 * @returns {Array} Returns `array`.
+	 */
+	function arrayPush(array, values) {
+	  var index = -1,
+	      length = values.length,
+	      offset = array.length;
+	
+	  while (++index < length) {
+	    array[offset + index] = values[index];
+	  }
+	  return array;
+	}
+	
+	/**
+	 * The base implementation of `_.flatten` with added support for restricting
+	 * flattening and specifying the start index.
+	 *
+	 * @private
+	 * @param {Array} array The array to flatten.
+	 * @param {boolean} [isDeep] Specify a deep flatten.
+	 * @param {boolean} [isStrict] Restrict flattening to arrays-like objects.
+	 * @param {Array} [result=[]] The initial result value.
+	 * @returns {Array} Returns the new flattened array.
+	 */
+	function baseFlatten(array, isDeep, isStrict, result) {
+	  result || (result = []);
+	
+	  var index = -1,
+	      length = array.length;
+	
+	  while (++index < length) {
+	    var value = array[index];
+	    if (isObjectLike(value) && isArrayLike(value) &&
+	        (isStrict || isArray(value) || isArguments(value))) {
+	      if (isDeep) {
+	        // Recursively flatten arrays (susceptible to call stack limits).
+	        baseFlatten(value, isDeep, isStrict, result);
+	      } else {
+	        arrayPush(result, value);
+	      }
+	    } else if (!isStrict) {
+	      result[result.length] = value;
+	    }
+	  }
+	  return result;
+	}
+	
+	/**
+	 * The base implementation of `_.property` without support for deep paths.
+	 *
+	 * @private
+	 * @param {string} key The key of the property to get.
+	 * @returns {Function} Returns the new function.
+	 */
+	function baseProperty(key) {
+	  return function(object) {
+	    return object == null ? undefined : object[key];
+	  };
+	}
+	
+	/**
+	 * Gets the "length" property value of `object`.
+	 *
+	 * **Note:** This function is used to avoid a [JIT bug](https://bugs.webkit.org/show_bug.cgi?id=142792)
+	 * that affects Safari on at least iOS 8.1-8.3 ARM64.
+	 *
+	 * @private
+	 * @param {Object} object The object to query.
+	 * @returns {*} Returns the "length" value.
+	 */
+	var getLength = baseProperty('length');
+	
+	/**
+	 * Checks if `value` is array-like.
+	 *
+	 * @private
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is array-like, else `false`.
+	 */
+	function isArrayLike(value) {
+	  return value != null && isLength(getLength(value));
+	}
+	
+	/**
+	 * Checks if `value` is a valid array-like length.
+	 *
+	 * **Note:** This function is based on [`ToLength`](http://ecma-international.org/ecma-262/6.0/#sec-tolength).
+	 *
+	 * @private
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is a valid length, else `false`.
+	 */
+	function isLength(value) {
+	  return typeof value == 'number' && value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;
+	}
+	
+	module.exports = baseFlatten;
+
+
+/***/ },
+/* 61 */
+/***/ function(module, exports) {
+
+	/**
+	 * lodash 3.0.8 (Custom Build) <https://lodash.com/>
+	 * Build: `lodash modularize exports="npm" -o ./`
+	 * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
+	 * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+	 * Copyright 2009-2016 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+	 * Available under MIT license <https://lodash.com/license>
+	 */
+	
+	/** Used as references for various `Number` constants. */
+	var MAX_SAFE_INTEGER = 9007199254740991;
+	
+	/** `Object#toString` result references. */
+	var argsTag = '[object Arguments]',
+	    funcTag = '[object Function]',
+	    genTag = '[object GeneratorFunction]';
+	
+	/** Used for built-in method references. */
+	var objectProto = Object.prototype;
+	
+	/** Used to check objects for own properties. */
+	var hasOwnProperty = objectProto.hasOwnProperty;
+	
+	/**
+	 * Used to resolve the [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
+	 * of values.
+	 */
+	var objectToString = objectProto.toString;
+	
+	/** Built-in value references. */
+	var propertyIsEnumerable = objectProto.propertyIsEnumerable;
+	
+	/**
+	 * The base implementation of `_.property` without support for deep paths.
+	 *
+	 * @private
+	 * @param {string} key The key of the property to get.
+	 * @returns {Function} Returns the new function.
+	 */
+	function baseProperty(key) {
+	  return function(object) {
+	    return object == null ? undefined : object[key];
+	  };
+	}
+	
+	/**
+	 * Gets the "length" property value of `object`.
+	 *
+	 * **Note:** This function is used to avoid a [JIT bug](https://bugs.webkit.org/show_bug.cgi?id=142792)
+	 * that affects Safari on at least iOS 8.1-8.3 ARM64.
+	 *
+	 * @private
+	 * @param {Object} object The object to query.
+	 * @returns {*} Returns the "length" value.
+	 */
+	var getLength = baseProperty('length');
+	
+	/**
+	 * Checks if `value` is likely an `arguments` object.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
+	 * @example
+	 *
+	 * _.isArguments(function() { return arguments; }());
+	 * // => true
+	 *
+	 * _.isArguments([1, 2, 3]);
+	 * // => false
+	 */
+	function isArguments(value) {
+	  // Safari 8.1 incorrectly makes `arguments.callee` enumerable in strict mode.
+	  return isArrayLikeObject(value) && hasOwnProperty.call(value, 'callee') &&
+	    (!propertyIsEnumerable.call(value, 'callee') || objectToString.call(value) == argsTag);
+	}
+	
+	/**
+	 * Checks if `value` is array-like. A value is considered array-like if it's
+	 * not a function and has a `value.length` that's an integer greater than or
+	 * equal to `0` and less than or equal to `Number.MAX_SAFE_INTEGER`.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is array-like, else `false`.
+	 * @example
+	 *
+	 * _.isArrayLike([1, 2, 3]);
+	 * // => true
+	 *
+	 * _.isArrayLike(document.body.children);
+	 * // => true
+	 *
+	 * _.isArrayLike('abc');
+	 * // => true
+	 *
+	 * _.isArrayLike(_.noop);
+	 * // => false
+	 */
+	function isArrayLike(value) {
+	  return value != null && isLength(getLength(value)) && !isFunction(value);
+	}
+	
+	/**
+	 * This method is like `_.isArrayLike` except that it also checks if `value`
+	 * is an object.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is an array-like object, else `false`.
+	 * @example
+	 *
+	 * _.isArrayLikeObject([1, 2, 3]);
+	 * // => true
+	 *
+	 * _.isArrayLikeObject(document.body.children);
+	 * // => true
+	 *
+	 * _.isArrayLikeObject('abc');
+	 * // => false
+	 *
+	 * _.isArrayLikeObject(_.noop);
+	 * // => false
+	 */
+	function isArrayLikeObject(value) {
+	  return isObjectLike(value) && isArrayLike(value);
+	}
+	
+	/**
+	 * Checks if `value` is classified as a `Function` object.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
+	 * @example
+	 *
+	 * _.isFunction(_);
+	 * // => true
+	 *
+	 * _.isFunction(/abc/);
+	 * // => false
+	 */
+	function isFunction(value) {
+	  // The use of `Object#toString` avoids issues with the `typeof` operator
+	  // in Safari 8 which returns 'object' for typed array and weak map constructors,
+	  // and PhantomJS 1.9 which returns 'function' for `NodeList` instances.
+	  var tag = isObject(value) ? objectToString.call(value) : '';
+	  return tag == funcTag || tag == genTag;
+	}
+	
+	/**
+	 * Checks if `value` is a valid array-like length.
+	 *
+	 * **Note:** This function is loosely based on [`ToLength`](http://ecma-international.org/ecma-262/6.0/#sec-tolength).
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is a valid length, else `false`.
+	 * @example
+	 *
+	 * _.isLength(3);
+	 * // => true
+	 *
+	 * _.isLength(Number.MIN_VALUE);
+	 * // => false
+	 *
+	 * _.isLength(Infinity);
+	 * // => false
+	 *
+	 * _.isLength('3');
+	 * // => false
+	 */
+	function isLength(value) {
+	  return typeof value == 'number' &&
+	    value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;
+	}
+	
+	/**
+	 * Checks if `value` is the [language type](https://es5.github.io/#x8) of `Object`.
+	 * (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is an object, else `false`.
+	 * @example
+	 *
+	 * _.isObject({});
+	 * // => true
+	 *
+	 * _.isObject([1, 2, 3]);
+	 * // => true
+	 *
+	 * _.isObject(_.noop);
+	 * // => true
+	 *
+	 * _.isObject(null);
+	 * // => false
+	 */
+	function isObject(value) {
+	  var type = typeof value;
+	  return !!value && (type == 'object' || type == 'function');
+	}
+	
+	/**
+	 * Checks if `value` is object-like. A value is object-like if it's not `null`
+	 * and has a `typeof` result of "object".
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
+	 * @example
+	 *
+	 * _.isObjectLike({});
+	 * // => true
+	 *
+	 * _.isObjectLike([1, 2, 3]);
+	 * // => true
+	 *
+	 * _.isObjectLike(_.noop);
+	 * // => false
+	 *
+	 * _.isObjectLike(null);
+	 * // => false
+	 */
+	function isObjectLike(value) {
+	  return !!value && typeof value == 'object';
+	}
+	
+	module.exports = isArguments;
+
+
+/***/ },
+/* 62 */
+/***/ function(module, exports) {
+
+	/**
+	 * lodash 3.0.4 (Custom Build) <https://lodash.com/>
+	 * Build: `lodash modern modularize exports="npm" -o ./`
+	 * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
+	 * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+	 * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+	 * Available under MIT license <https://lodash.com/license>
+	 */
+	
+	/** `Object#toString` result references. */
+	var arrayTag = '[object Array]',
+	    funcTag = '[object Function]';
+	
+	/** Used to detect host constructors (Safari > 5). */
+	var reIsHostCtor = /^\[object .+?Constructor\]$/;
+	
+	/**
+	 * Checks if `value` is object-like.
+	 *
+	 * @private
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
+	 */
+	function isObjectLike(value) {
+	  return !!value && typeof value == 'object';
+	}
+	
+	/** Used for native method references. */
+	var objectProto = Object.prototype;
+	
+	/** Used to resolve the decompiled source of functions. */
+	var fnToString = Function.prototype.toString;
+	
+	/** Used to check objects for own properties. */
+	var hasOwnProperty = objectProto.hasOwnProperty;
+	
+	/**
+	 * Used to resolve the [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
+	 * of values.
+	 */
+	var objToString = objectProto.toString;
+	
+	/** Used to detect if a method is native. */
+	var reIsNative = RegExp('^' +
+	  fnToString.call(hasOwnProperty).replace(/[\\^$.*+?()[\]{}|]/g, '\\$&')
+	  .replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g, '$1.*?') + '$'
+	);
+	
+	/* Native method references for those with the same name as other `lodash` methods. */
+	var nativeIsArray = getNative(Array, 'isArray');
+	
+	/**
+	 * Used as the [maximum length](http://ecma-international.org/ecma-262/6.0/#sec-number.max_safe_integer)
+	 * of an array-like value.
+	 */
+	var MAX_SAFE_INTEGER = 9007199254740991;
+	
+	/**
+	 * Gets the native function at `key` of `object`.
+	 *
+	 * @private
+	 * @param {Object} object The object to query.
+	 * @param {string} key The key of the method to get.
+	 * @returns {*} Returns the function if it's native, else `undefined`.
+	 */
+	function getNative(object, key) {
+	  var value = object == null ? undefined : object[key];
+	  return isNative(value) ? value : undefined;
+	}
+	
+	/**
+	 * Checks if `value` is a valid array-like length.
+	 *
+	 * **Note:** This function is based on [`ToLength`](http://ecma-international.org/ecma-262/6.0/#sec-tolength).
+	 *
+	 * @private
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is a valid length, else `false`.
+	 */
+	function isLength(value) {
+	  return typeof value == 'number' && value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;
+	}
+	
+	/**
+	 * Checks if `value` is classified as an `Array` object.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
+	 * @example
+	 *
+	 * _.isArray([1, 2, 3]);
+	 * // => true
+	 *
+	 * _.isArray(function() { return arguments; }());
+	 * // => false
+	 */
+	var isArray = nativeIsArray || function(value) {
+	  return isObjectLike(value) && isLength(value.length) && objToString.call(value) == arrayTag;
+	};
+	
+	/**
+	 * Checks if `value` is classified as a `Function` object.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
+	 * @example
+	 *
+	 * _.isFunction(_);
+	 * // => true
+	 *
+	 * _.isFunction(/abc/);
+	 * // => false
+	 */
+	function isFunction(value) {
+	  // The use of `Object#toString` avoids issues with the `typeof` operator
+	  // in older versions of Chrome and Safari which return 'function' for regexes
+	  // and Safari 8 equivalents which return 'object' for typed array constructors.
+	  return isObject(value) && objToString.call(value) == funcTag;
+	}
+	
+	/**
+	 * Checks if `value` is the [language type](https://es5.github.io/#x8) of `Object`.
+	 * (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is an object, else `false`.
+	 * @example
+	 *
+	 * _.isObject({});
+	 * // => true
+	 *
+	 * _.isObject([1, 2, 3]);
+	 * // => true
+	 *
+	 * _.isObject(1);
+	 * // => false
+	 */
+	function isObject(value) {
+	  // Avoid a V8 JIT bug in Chrome 19-20.
+	  // See https://code.google.com/p/v8/issues/detail?id=2291 for more details.
+	  var type = typeof value;
+	  return !!value && (type == 'object' || type == 'function');
+	}
+	
+	/**
+	 * Checks if `value` is a native function.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is a native function, else `false`.
+	 * @example
+	 *
+	 * _.isNative(Array.prototype.push);
+	 * // => true
+	 *
+	 * _.isNative(_);
+	 * // => false
+	 */
+	function isNative(value) {
+	  if (value == null) {
+	    return false;
+	  }
+	  if (isFunction(value)) {
+	    return reIsNative.test(fnToString.call(value));
+	  }
+	  return isObjectLike(value) && reIsHostCtor.test(value);
+	}
+	
+	module.exports = isArray;
+
+
+/***/ },
+/* 63 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * lodash 3.0.3 (Custom Build) <https://lodash.com/>
+	 * Build: `lodash modern modularize exports="npm" -o ./`
+	 * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
+	 * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+	 * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+	 * Available under MIT license <https://lodash.com/license>
+	 */
+	var baseIndexOf = __webpack_require__(64),
+	    cacheIndexOf = __webpack_require__(65),
+	    createCache = __webpack_require__(66);
+	
+	/** Used as the size to enable large array optimizations. */
+	var LARGE_ARRAY_SIZE = 200;
+	
+	/**
+	 * The base implementation of `_.uniq` without support for callback shorthands
+	 * and `this` binding.
+	 *
+	 * @private
+	 * @param {Array} array The array to inspect.
+	 * @param {Function} [iteratee] The function invoked per iteration.
+	 * @returns {Array} Returns the new duplicate-value-free array.
+	 */
+	function baseUniq(array, iteratee) {
+	  var index = -1,
+	      indexOf = baseIndexOf,
+	      length = array.length,
+	      isCommon = true,
+	      isLarge = isCommon && length >= LARGE_ARRAY_SIZE,
+	      seen = isLarge ? createCache() : null,
+	      result = [];
+	
+	  if (seen) {
+	    indexOf = cacheIndexOf;
+	    isCommon = false;
+	  } else {
+	    isLarge = false;
+	    seen = iteratee ? [] : result;
+	  }
+	  outer:
+	  while (++index < length) {
+	    var value = array[index],
+	        computed = iteratee ? iteratee(value, index, array) : value;
+	
+	    if (isCommon && value === value) {
+	      var seenIndex = seen.length;
+	      while (seenIndex--) {
+	        if (seen[seenIndex] === computed) {
+	          continue outer;
+	        }
+	      }
+	      if (iteratee) {
+	        seen.push(computed);
+	      }
+	      result.push(value);
+	    }
+	    else if (indexOf(seen, computed, 0) < 0) {
+	      if (iteratee || isLarge) {
+	        seen.push(computed);
+	      }
+	      result.push(value);
+	    }
+	  }
+	  return result;
+	}
+	
+	module.exports = baseUniq;
+
+
+/***/ },
+/* 64 */
+/***/ function(module, exports) {
+
+	/**
+	 * lodash 3.1.0 (Custom Build) <https://lodash.com/>
+	 * Build: `lodash modern modularize exports="npm" -o ./`
+	 * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
+	 * Based on Underscore.js 1.8.2 <http://underscorejs.org/LICENSE>
+	 * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+	 * Available under MIT license <https://lodash.com/license>
+	 */
+	
+	/**
+	 * The base implementation of `_.indexOf` without support for binary searches.
+	 *
+	 * @private
+	 * @param {Array} array The array to search.
+	 * @param {*} value The value to search for.
+	 * @param {number} fromIndex The index to search from.
+	 * @returns {number} Returns the index of the matched value, else `-1`.
+	 */
+	function baseIndexOf(array, value, fromIndex) {
+	  if (value !== value) {
+	    return indexOfNaN(array, fromIndex);
+	  }
+	  var index = fromIndex - 1,
+	      length = array.length;
+	
+	  while (++index < length) {
+	    if (array[index] === value) {
+	      return index;
+	    }
+	  }
+	  return -1;
+	}
+	
+	/**
+	 * Gets the index at which the first occurrence of `NaN` is found in `array`.
+	 * If `fromRight` is provided elements of `array` are iterated from right to left.
+	 *
+	 * @private
+	 * @param {Array} array The array to search.
+	 * @param {number} fromIndex The index to search from.
+	 * @param {boolean} [fromRight] Specify iterating from right to left.
+	 * @returns {number} Returns the index of the matched `NaN`, else `-1`.
+	 */
+	function indexOfNaN(array, fromIndex, fromRight) {
+	  var length = array.length,
+	      index = fromIndex + (fromRight ? 0 : -1);
+	
+	  while ((fromRight ? index-- : ++index < length)) {
+	    var other = array[index];
+	    if (other !== other) {
+	      return index;
+	    }
+	  }
+	  return -1;
+	}
+	
+	module.exports = baseIndexOf;
+
+
+/***/ },
+/* 65 */
+/***/ function(module, exports) {
+
+	/**
+	 * lodash 3.0.2 (Custom Build) <https://lodash.com/>
+	 * Build: `lodash modern modularize exports="npm" -o ./`
+	 * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
+	 * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+	 * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+	 * Available under MIT license <https://lodash.com/license>
+	 */
+	
+	/**
+	 * Checks if `value` is in `cache` mimicking the return signature of
+	 * `_.indexOf` by returning `0` if the value is found, else `-1`.
+	 *
+	 * @private
+	 * @param {Object} cache The cache to search.
+	 * @param {*} value The value to search for.
+	 * @returns {number} Returns `0` if `value` is found, else `-1`.
+	 */
+	function cacheIndexOf(cache, value) {
+	  var data = cache.data,
+	      result = (typeof value == 'string' || isObject(value)) ? data.set.has(value) : data.hash[value];
+	
+	  return result ? 0 : -1;
+	}
+	
+	/**
+	 * Checks if `value` is the [language type](https://es5.github.io/#x8) of `Object`.
+	 * (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is an object, else `false`.
+	 * @example
+	 *
+	 * _.isObject({});
+	 * // => true
+	 *
+	 * _.isObject([1, 2, 3]);
+	 * // => true
+	 *
+	 * _.isObject(1);
+	 * // => false
+	 */
+	function isObject(value) {
+	  // Avoid a V8 JIT bug in Chrome 19-20.
+	  // See https://code.google.com/p/v8/issues/detail?id=2291 for more details.
+	  var type = typeof value;
+	  return !!value && (type == 'object' || type == 'function');
+	}
+	
+	module.exports = cacheIndexOf;
+
+
+/***/ },
+/* 66 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(global) {/**
+	 * lodash 3.1.2 (Custom Build) <https://lodash.com/>
+	 * Build: `lodash modern modularize exports="npm" -o ./`
+	 * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
+	 * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+	 * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+	 * Available under MIT license <https://lodash.com/license>
+	 */
+	var getNative = __webpack_require__(67);
+	
+	/** Native method references. */
+	var Set = getNative(global, 'Set');
+	
+	/* Native method references for those with the same name as other `lodash` methods. */
+	var nativeCreate = getNative(Object, 'create');
+	
+	/**
+	 *
+	 * Creates a cache object to store unique values.
+	 *
+	 * @private
+	 * @param {Array} [values] The values to cache.
+	 */
+	function SetCache(values) {
+	  var length = values ? values.length : 0;
+	
+	  this.data = { 'hash': nativeCreate(null), 'set': new Set };
+	  while (length--) {
+	    this.push(values[length]);
+	  }
+	}
+	
+	/**
+	 * Adds `value` to the cache.
+	 *
+	 * @private
+	 * @name push
+	 * @memberOf SetCache
+	 * @param {*} value The value to cache.
+	 */
+	function cachePush(value) {
+	  var data = this.data;
+	  if (typeof value == 'string' || isObject(value)) {
+	    data.set.add(value);
+	  } else {
+	    data.hash[value] = true;
+	  }
+	}
+	
+	/**
+	 * Creates a `Set` cache object to optimize linear searches of large arrays.
+	 *
+	 * @private
+	 * @param {Array} [values] The values to cache.
+	 * @returns {null|Object} Returns the new cache object if `Set` is supported, else `null`.
+	 */
+	function createCache(values) {
+	  return (nativeCreate && Set) ? new SetCache(values) : null;
+	}
+	
+	/**
+	 * Checks if `value` is the [language type](https://es5.github.io/#x8) of `Object`.
+	 * (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is an object, else `false`.
+	 * @example
+	 *
+	 * _.isObject({});
+	 * // => true
+	 *
+	 * _.isObject([1, 2, 3]);
+	 * // => true
+	 *
+	 * _.isObject(1);
+	 * // => false
+	 */
+	function isObject(value) {
+	  // Avoid a V8 JIT bug in Chrome 19-20.
+	  // See https://code.google.com/p/v8/issues/detail?id=2291 for more details.
+	  var type = typeof value;
+	  return !!value && (type == 'object' || type == 'function');
+	}
+	
+	// Add functions to the `Set` cache.
+	SetCache.prototype.push = cachePush;
+	
+	module.exports = createCache;
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
+
+/***/ },
+/* 67 */
+/***/ function(module, exports) {
+
+	/**
+	 * lodash 3.9.1 (Custom Build) <https://lodash.com/>
+	 * Build: `lodash modern modularize exports="npm" -o ./`
+	 * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
+	 * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+	 * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+	 * Available under MIT license <https://lodash.com/license>
+	 */
+	
+	/** `Object#toString` result references. */
+	var funcTag = '[object Function]';
+	
+	/** Used to detect host constructors (Safari > 5). */
+	var reIsHostCtor = /^\[object .+?Constructor\]$/;
+	
+	/**
+	 * Checks if `value` is object-like.
+	 *
+	 * @private
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
+	 */
+	function isObjectLike(value) {
+	  return !!value && typeof value == 'object';
+	}
+	
+	/** Used for native method references. */
+	var objectProto = Object.prototype;
+	
+	/** Used to resolve the decompiled source of functions. */
+	var fnToString = Function.prototype.toString;
+	
+	/** Used to check objects for own properties. */
+	var hasOwnProperty = objectProto.hasOwnProperty;
+	
+	/**
+	 * Used to resolve the [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
+	 * of values.
+	 */
+	var objToString = objectProto.toString;
+	
+	/** Used to detect if a method is native. */
+	var reIsNative = RegExp('^' +
+	  fnToString.call(hasOwnProperty).replace(/[\\^$.*+?()[\]{}|]/g, '\\$&')
+	  .replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g, '$1.*?') + '$'
+	);
+	
+	/**
+	 * Gets the native function at `key` of `object`.
+	 *
+	 * @private
+	 * @param {Object} object The object to query.
+	 * @param {string} key The key of the method to get.
+	 * @returns {*} Returns the function if it's native, else `undefined`.
+	 */
+	function getNative(object, key) {
+	  var value = object == null ? undefined : object[key];
+	  return isNative(value) ? value : undefined;
+	}
+	
+	/**
+	 * Checks if `value` is classified as a `Function` object.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
+	 * @example
+	 *
+	 * _.isFunction(_);
+	 * // => true
+	 *
+	 * _.isFunction(/abc/);
+	 * // => false
+	 */
+	function isFunction(value) {
+	  // The use of `Object#toString` avoids issues with the `typeof` operator
+	  // in older versions of Chrome and Safari which return 'function' for regexes
+	  // and Safari 8 equivalents which return 'object' for typed array constructors.
+	  return isObject(value) && objToString.call(value) == funcTag;
+	}
+	
+	/**
+	 * Checks if `value` is the [language type](https://es5.github.io/#x8) of `Object`.
+	 * (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is an object, else `false`.
+	 * @example
+	 *
+	 * _.isObject({});
+	 * // => true
+	 *
+	 * _.isObject([1, 2, 3]);
+	 * // => true
+	 *
+	 * _.isObject(1);
+	 * // => false
+	 */
+	function isObject(value) {
+	  // Avoid a V8 JIT bug in Chrome 19-20.
+	  // See https://code.google.com/p/v8/issues/detail?id=2291 for more details.
+	  var type = typeof value;
+	  return !!value && (type == 'object' || type == 'function');
+	}
+	
+	/**
+	 * Checks if `value` is a native function.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is a native function, else `false`.
+	 * @example
+	 *
+	 * _.isNative(Array.prototype.push);
+	 * // => true
+	 *
+	 * _.isNative(_);
+	 * // => false
+	 */
+	function isNative(value) {
+	  if (value == null) {
+	    return false;
+	  }
+	  if (isFunction(value)) {
+	    return reIsNative.test(fnToString.call(value));
+	  }
+	  return isObjectLike(value) && reIsHostCtor.test(value);
+	}
+	
+	module.exports = getNative;
+
+
+/***/ },
+/* 68 */
+/***/ function(module, exports) {
+
+	/**
+	 * lodash 3.6.1 (Custom Build) <https://lodash.com/>
+	 * Build: `lodash modern modularize exports="npm" -o ./`
+	 * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
+	 * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+	 * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+	 * Available under MIT license <https://lodash.com/license>
+	 */
+	
+	/** Used as the `TypeError` message for "Functions" methods. */
+	var FUNC_ERROR_TEXT = 'Expected a function';
+	
+	/* Native method references for those with the same name as other `lodash` methods. */
+	var nativeMax = Math.max;
+	
+	/**
+	 * Creates a function that invokes `func` with the `this` binding of the
+	 * created function and arguments from `start` and beyond provided as an array.
+	 *
+	 * **Note:** This method is based on the [rest parameter](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/rest_parameters).
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Function
+	 * @param {Function} func The function to apply a rest parameter to.
+	 * @param {number} [start=func.length-1] The start position of the rest parameter.
+	 * @returns {Function} Returns the new function.
+	 * @example
+	 *
+	 * var say = _.restParam(function(what, names) {
+	 *   return what + ' ' + _.initial(names).join(', ') +
+	 *     (_.size(names) > 1 ? ', & ' : '') + _.last(names);
+	 * });
+	 *
+	 * say('hello', 'fred', 'barney', 'pebbles');
+	 * // => 'hello fred, barney, & pebbles'
+	 */
+	function restParam(func, start) {
+	  if (typeof func != 'function') {
+	    throw new TypeError(FUNC_ERROR_TEXT);
+	  }
+	  start = nativeMax(start === undefined ? (func.length - 1) : (+start || 0), 0);
+	  return function() {
+	    var args = arguments,
+	        index = -1,
+	        length = nativeMax(args.length - start, 0),
+	        rest = Array(length);
+	
+	    while (++index < length) {
+	      rest[index] = args[start + index];
+	    }
+	    switch (start) {
+	      case 0: return func.call(this, rest);
+	      case 1: return func.call(this, args[0], rest);
+	      case 2: return func.call(this, args[0], args[1], rest);
+	    }
+	    var otherArgs = Array(start + 1);
+	    index = -1;
+	    while (++index < start) {
+	      otherArgs[index] = args[index];
+	    }
+	    otherArgs[start] = rest;
+	    return func.apply(this, otherArgs);
+	  };
+	}
+	
+	module.exports = restParam;
+
+
+/***/ },
+/* 69 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+	
+	var forOwn = __webpack_require__(49);
+	var escape = __webpack_require__(56);
+	var kebabCase = __webpack_require__(70);
+	
+	// data.style
+	
+	module.exports = function style(vnode) {
+	  var styles = [];
+	  var style = vnode.data.style || {};
+	
+	  // merge in `delayed` properties
+	  if (style.delayed) {
+	    _extends(style, style.delayed);
+	  }
+	
+	  forOwn(style, function (value, key) {
+	    // omit hook objects
+	    if (typeof value === 'string') {
+	      styles.push(kebabCase(key) + ': ' + escape(value));
+	    }
+	  });
+	
+	  return styles.length ? 'style="' + styles.join('; ') + '"' : '';
+	};
+
+/***/ },
+/* 70 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * lodash 3.1.1 (Custom Build) <https://lodash.com/>
+	 * Build: `lodash modularize exports="npm" -o ./`
+	 * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
+	 * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+	 * Copyright 2009-2016 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+	 * Available under MIT license <https://lodash.com/license>
+	 */
+	var deburr = __webpack_require__(71),
+	    words = __webpack_require__(73);
+	
+	/**
+	 * A specialized version of `_.reduce` for arrays without support for
+	 * iteratee shorthands.
+	 *
+	 * @private
+	 * @param {Array} array The array to iterate over.
+	 * @param {Function} iteratee The function invoked per iteration.
+	 * @param {*} [accumulator] The initial value.
+	 * @param {boolean} [initAccum] Specify using the first element of `array` as the initial value.
+	 * @returns {*} Returns the accumulated value.
+	 */
+	function arrayReduce(array, iteratee, accumulator, initAccum) {
+	  var index = -1,
+	      length = array.length;
+	
+	  if (initAccum && length) {
+	    accumulator = array[++index];
+	  }
+	  while (++index < length) {
+	    accumulator = iteratee(accumulator, array[index], index, array);
+	  }
+	  return accumulator;
+	}
+	
+	/**
+	 * Creates a function like `_.camelCase`.
+	 *
+	 * @private
+	 * @param {Function} callback The function to combine each word.
+	 * @returns {Function} Returns the new compounder function.
+	 */
+	function createCompounder(callback) {
+	  return function(string) {
+	    return arrayReduce(words(deburr(string)), callback, '');
+	  };
+	}
+	
+	/**
+	 * Converts `string` to [kebab case](https://en.wikipedia.org/wiki/Letter_case#Special_case_styles).
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category String
+	 * @param {string} [string=''] The string to convert.
+	 * @returns {string} Returns the kebab cased string.
+	 * @example
+	 *
+	 * _.kebabCase('Foo Bar');
+	 * // => 'foo-bar'
+	 *
+	 * _.kebabCase('fooBar');
+	 * // => 'foo-bar'
+	 *
+	 * _.kebabCase('__foo_bar__');
+	 * // => 'foo-bar'
+	 */
+	var kebabCase = createCompounder(function(result, word, index) {
+	  return result + (index ? '-' : '') + word.toLowerCase();
+	});
+	
+	module.exports = kebabCase;
+
+
+/***/ },
+/* 71 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * lodash 3.2.0 (Custom Build) <https://lodash.com/>
+	 * Build: `lodash modularize exports="npm" -o ./`
+	 * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
+	 * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+	 * Copyright 2009-2016 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+	 * Available under MIT license <https://lodash.com/license>
+	 */
+	var root = __webpack_require__(72);
+	
+	/** Used as references for various `Number` constants. */
+	var INFINITY = 1 / 0;
+	
+	/** `Object#toString` result references. */
+	var symbolTag = '[object Symbol]';
+	
+	/** Used to match latin-1 supplementary letters (excluding mathematical operators). */
+	var reLatin1 = /[\xc0-\xd6\xd8-\xde\xdf-\xf6\xf8-\xff]/g;
+	
+	/** Used to compose unicode character classes. */
+	var rsComboMarksRange = '\\u0300-\\u036f\\ufe20-\\ufe23',
+	    rsComboSymbolsRange = '\\u20d0-\\u20f0';
+	
+	/** Used to compose unicode capture groups. */
+	var rsCombo = '[' + rsComboMarksRange + rsComboSymbolsRange + ']';
+	
+	/**
+	 * Used to match [combining diacritical marks](https://en.wikipedia.org/wiki/Combining_Diacritical_Marks) and
+	 * [combining diacritical marks for symbols](https://en.wikipedia.org/wiki/Combining_Diacritical_Marks_for_Symbols).
+	 */
+	var reComboMark = RegExp(rsCombo, 'g');
+	
+	/** Used to map latin-1 supplementary letters to basic latin letters. */
+	var deburredLetters = {
+	  '\xc0': 'A',  '\xc1': 'A', '\xc2': 'A', '\xc3': 'A', '\xc4': 'A', '\xc5': 'A',
+	  '\xe0': 'a',  '\xe1': 'a', '\xe2': 'a', '\xe3': 'a', '\xe4': 'a', '\xe5': 'a',
+	  '\xc7': 'C',  '\xe7': 'c',
+	  '\xd0': 'D',  '\xf0': 'd',
+	  '\xc8': 'E',  '\xc9': 'E', '\xca': 'E', '\xcb': 'E',
+	  '\xe8': 'e',  '\xe9': 'e', '\xea': 'e', '\xeb': 'e',
+	  '\xcC': 'I',  '\xcd': 'I', '\xce': 'I', '\xcf': 'I',
+	  '\xeC': 'i',  '\xed': 'i', '\xee': 'i', '\xef': 'i',
+	  '\xd1': 'N',  '\xf1': 'n',
+	  '\xd2': 'O',  '\xd3': 'O', '\xd4': 'O', '\xd5': 'O', '\xd6': 'O', '\xd8': 'O',
+	  '\xf2': 'o',  '\xf3': 'o', '\xf4': 'o', '\xf5': 'o', '\xf6': 'o', '\xf8': 'o',
+	  '\xd9': 'U',  '\xda': 'U', '\xdb': 'U', '\xdc': 'U',
+	  '\xf9': 'u',  '\xfa': 'u', '\xfb': 'u', '\xfc': 'u',
+	  '\xdd': 'Y',  '\xfd': 'y', '\xff': 'y',
+	  '\xc6': 'Ae', '\xe6': 'ae',
+	  '\xde': 'Th', '\xfe': 'th',
+	  '\xdf': 'ss'
+	};
+	
+	/**
+	 * Used by `_.deburr` to convert latin-1 supplementary letters to basic latin letters.
+	 *
+	 * @private
+	 * @param {string} letter The matched letter to deburr.
+	 * @returns {string} Returns the deburred letter.
+	 */
+	function deburrLetter(letter) {
+	  return deburredLetters[letter];
+	}
+	
+	/** Used for built-in method references. */
+	var objectProto = Object.prototype;
+	
+	/**
+	 * Used to resolve the [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
+	 * of values.
+	 */
+	var objectToString = objectProto.toString;
+	
+	/** Built-in value references. */
+	var Symbol = root.Symbol;
+	
+	/** Used to convert symbols to primitives and strings. */
+	var symbolProto = Symbol ? Symbol.prototype : undefined,
+	    symbolToString = Symbol ? symbolProto.toString : undefined;
+	
+	/**
+	 * Checks if `value` is object-like. A value is object-like if it's not `null`
+	 * and has a `typeof` result of "object".
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
+	 * @example
+	 *
+	 * _.isObjectLike({});
+	 * // => true
+	 *
+	 * _.isObjectLike([1, 2, 3]);
+	 * // => true
+	 *
+	 * _.isObjectLike(_.noop);
+	 * // => false
+	 *
+	 * _.isObjectLike(null);
+	 * // => false
+	 */
+	function isObjectLike(value) {
+	  return !!value && typeof value == 'object';
+	}
+	
+	/**
+	 * Checks if `value` is classified as a `Symbol` primitive or object.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
+	 * @example
+	 *
+	 * _.isSymbol(Symbol.iterator);
+	 * // => true
+	 *
+	 * _.isSymbol('abc');
+	 * // => false
+	 */
+	function isSymbol(value) {
+	  return typeof value == 'symbol' ||
+	    (isObjectLike(value) && objectToString.call(value) == symbolTag);
+	}
+	
+	/**
+	 * Converts `value` to a string if it's not one. An empty string is returned
+	 * for `null` and `undefined` values. The sign of `-0` is preserved.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Lang
+	 * @param {*} value The value to process.
+	 * @returns {string} Returns the string.
+	 * @example
+	 *
+	 * _.toString(null);
+	 * // => ''
+	 *
+	 * _.toString(-0);
+	 * // => '-0'
+	 *
+	 * _.toString([1, 2, 3]);
+	 * // => '1,2,3'
+	 */
+	function toString(value) {
+	  // Exit early for strings to avoid a performance hit in some environments.
+	  if (typeof value == 'string') {
+	    return value;
+	  }
+	  if (value == null) {
+	    return '';
+	  }
+	  if (isSymbol(value)) {
+	    return Symbol ? symbolToString.call(value) : '';
+	  }
+	  var result = (value + '');
+	  return (result == '0' && (1 / value) == -INFINITY) ? '-0' : result;
+	}
+	
+	/**
+	 * Deburrs `string` by converting [latin-1 supplementary letters](https://en.wikipedia.org/wiki/Latin-1_Supplement_(Unicode_block)#Character_table)
+	 * to basic latin letters and removing [combining diacritical marks](https://en.wikipedia.org/wiki/Combining_Diacritical_Marks).
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category String
+	 * @param {string} [string=''] The string to deburr.
+	 * @returns {string} Returns the deburred string.
+	 * @example
+	 *
+	 * _.deburr('déjà vu');
+	 * // => 'deja vu'
+	 */
+	function deburr(string) {
+	  string = toString(string);
+	  return string && string.replace(reLatin1, deburrLetter).replace(reComboMark, '');
+	}
+	
+	module.exports = deburr;
+
+
+/***/ },
+/* 72 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(module, global) {/**
+	 * lodash 3.0.1 (Custom Build) <https://lodash.com/>
+	 * Build: `lodash modularize exports="npm" -o ./`
+	 * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
+	 * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+	 * Copyright 2009-2016 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+	 * Available under MIT license <https://lodash.com/license>
+	 */
+	
+	/** Used to determine if values are of the language type `Object`. */
+	var objectTypes = {
+	  'function': true,
+	  'object': true
+	};
+	
+	/** Detect free variable `exports`. */
+	var freeExports = (objectTypes[typeof exports] && exports && !exports.nodeType)
+	  ? exports
+	  : undefined;
+	
+	/** Detect free variable `module`. */
+	var freeModule = (objectTypes[typeof module] && module && !module.nodeType)
+	  ? module
+	  : undefined;
+	
+	/** Detect free variable `global` from Node.js. */
+	var freeGlobal = checkGlobal(freeExports && freeModule && typeof global == 'object' && global);
+	
+	/** Detect free variable `self`. */
+	var freeSelf = checkGlobal(objectTypes[typeof self] && self);
+	
+	/** Detect free variable `window`. */
+	var freeWindow = checkGlobal(objectTypes[typeof window] && window);
+	
+	/** Detect `this` as the global object. */
+	var thisGlobal = checkGlobal(objectTypes[typeof this] && this);
+	
+	/**
+	 * Used as a reference to the global object.
+	 *
+	 * The `this` value is used if it's the global object to avoid Greasemonkey's
+	 * restricted `window` object, otherwise the `window` object is used.
+	 */
+	var root = freeGlobal ||
+	  ((freeWindow !== (thisGlobal && thisGlobal.window)) && freeWindow) ||
+	    freeSelf || thisGlobal || Function('return this')();
+	
+	/**
+	 * Checks if `value` is a global object.
+	 *
+	 * @private
+	 * @param {*} value The value to check.
+	 * @returns {null|Object} Returns `value` if it's a global object, else `null`.
+	 */
+	function checkGlobal(value) {
+	  return (value && value.Object === Object) ? value : null;
+	}
+	
+	module.exports = root;
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(58)(module), (function() { return this; }())))
+
+/***/ },
+/* 73 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * lodash 3.2.0 (Custom Build) <https://lodash.com/>
+	 * Build: `lodash modularize exports="npm" -o ./`
+	 * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
+	 * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+	 * Copyright 2009-2016 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+	 * Available under MIT license <https://lodash.com/license>
+	 */
+	var root = __webpack_require__(74);
+	
+	/** Used as references for various `Number` constants. */
+	var INFINITY = 1 / 0;
+	
+	/** `Object#toString` result references. */
+	var symbolTag = '[object Symbol]';
+	
+	/** Used to compose unicode character classes. */
+	var rsAstralRange = '\\ud800-\\udfff',
+	    rsComboMarksRange = '\\u0300-\\u036f\\ufe20-\\ufe23',
+	    rsComboSymbolsRange = '\\u20d0-\\u20f0',
+	    rsDingbatRange = '\\u2700-\\u27bf',
+	    rsLowerRange = 'a-z\\xdf-\\xf6\\xf8-\\xff',
+	    rsMathOpRange = '\\xac\\xb1\\xd7\\xf7',
+	    rsNonCharRange = '\\x00-\\x2f\\x3a-\\x40\\x5b-\\x60\\x7b-\\xbf',
+	    rsQuoteRange = '\\u2018\\u2019\\u201c\\u201d',
+	    rsSpaceRange = ' \\t\\x0b\\f\\xa0\\ufeff\\n\\r\\u2028\\u2029\\u1680\\u180e\\u2000\\u2001\\u2002\\u2003\\u2004\\u2005\\u2006\\u2007\\u2008\\u2009\\u200a\\u202f\\u205f\\u3000',
+	    rsUpperRange = 'A-Z\\xc0-\\xd6\\xd8-\\xde',
+	    rsVarRange = '\\ufe0e\\ufe0f',
+	    rsBreakRange = rsMathOpRange + rsNonCharRange + rsQuoteRange + rsSpaceRange;
+	
+	/** Used to compose unicode capture groups. */
+	var rsBreak = '[' + rsBreakRange + ']',
+	    rsCombo = '[' + rsComboMarksRange + rsComboSymbolsRange + ']',
+	    rsDigits = '\\d+',
+	    rsDingbat = '[' + rsDingbatRange + ']',
+	    rsLower = '[' + rsLowerRange + ']',
+	    rsMisc = '[^' + rsAstralRange + rsBreakRange + rsDigits + rsDingbatRange + rsLowerRange + rsUpperRange + ']',
+	    rsFitz = '\\ud83c[\\udffb-\\udfff]',
+	    rsModifier = '(?:' + rsCombo + '|' + rsFitz + ')',
+	    rsNonAstral = '[^' + rsAstralRange + ']',
+	    rsRegional = '(?:\\ud83c[\\udde6-\\uddff]){2}',
+	    rsSurrPair = '[\\ud800-\\udbff][\\udc00-\\udfff]',
+	    rsUpper = '[' + rsUpperRange + ']',
+	    rsZWJ = '\\u200d';
+	
+	/** Used to compose unicode regexes. */
+	var rsLowerMisc = '(?:' + rsLower + '|' + rsMisc + ')',
+	    rsUpperMisc = '(?:' + rsUpper + '|' + rsMisc + ')',
+	    reOptMod = rsModifier + '?',
+	    rsOptVar = '[' + rsVarRange + ']?',
+	    rsOptJoin = '(?:' + rsZWJ + '(?:' + [rsNonAstral, rsRegional, rsSurrPair].join('|') + ')' + rsOptVar + reOptMod + ')*',
+	    rsSeq = rsOptVar + reOptMod + rsOptJoin,
+	    rsEmoji = '(?:' + [rsDingbat, rsRegional, rsSurrPair].join('|') + ')' + rsSeq;
+	
+	/** Used to match non-compound words composed of alphanumeric characters. */
+	var reBasicWord = /[a-zA-Z0-9]+/g;
+	
+	/** Used to match complex or compound words. */
+	var reComplexWord = RegExp([
+	  rsUpper + '?' + rsLower + '+(?=' + [rsBreak, rsUpper, '$'].join('|') + ')',
+	  rsUpperMisc + '+(?=' + [rsBreak, rsUpper + rsLowerMisc, '$'].join('|') + ')',
+	  rsUpper + '?' + rsLowerMisc + '+',
+	  rsUpper + '+',
+	  rsDigits,
+	  rsEmoji
+	].join('|'), 'g');
+	
+	/** Used to detect strings that need a more robust regexp to match words. */
+	var reHasComplexWord = /[a-z][A-Z]|[0-9][a-zA-Z]|[a-zA-Z][0-9]|[^a-zA-Z0-9 ]/;
+	
+	/** Used for built-in method references. */
+	var objectProto = Object.prototype;
+	
+	/**
+	 * Used to resolve the [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
+	 * of values.
+	 */
+	var objectToString = objectProto.toString;
+	
+	/** Built-in value references. */
+	var Symbol = root.Symbol;
+	
+	/** Used to convert symbols to primitives and strings. */
+	var symbolProto = Symbol ? Symbol.prototype : undefined,
+	    symbolToString = Symbol ? symbolProto.toString : undefined;
+	
+	/**
+	 * Checks if `value` is object-like. A value is object-like if it's not `null`
+	 * and has a `typeof` result of "object".
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
+	 * @example
+	 *
+	 * _.isObjectLike({});
+	 * // => true
+	 *
+	 * _.isObjectLike([1, 2, 3]);
+	 * // => true
+	 *
+	 * _.isObjectLike(_.noop);
+	 * // => false
+	 *
+	 * _.isObjectLike(null);
+	 * // => false
+	 */
+	function isObjectLike(value) {
+	  return !!value && typeof value == 'object';
+	}
+	
+	/**
+	 * Checks if `value` is classified as a `Symbol` primitive or object.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
+	 * @example
+	 *
+	 * _.isSymbol(Symbol.iterator);
+	 * // => true
+	 *
+	 * _.isSymbol('abc');
+	 * // => false
+	 */
+	function isSymbol(value) {
+	  return typeof value == 'symbol' ||
+	    (isObjectLike(value) && objectToString.call(value) == symbolTag);
+	}
+	
+	/**
+	 * Converts `value` to a string if it's not one. An empty string is returned
+	 * for `null` and `undefined` values. The sign of `-0` is preserved.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Lang
+	 * @param {*} value The value to process.
+	 * @returns {string} Returns the string.
+	 * @example
+	 *
+	 * _.toString(null);
+	 * // => ''
+	 *
+	 * _.toString(-0);
+	 * // => '-0'
+	 *
+	 * _.toString([1, 2, 3]);
+	 * // => '1,2,3'
+	 */
+	function toString(value) {
+	  // Exit early for strings to avoid a performance hit in some environments.
+	  if (typeof value == 'string') {
+	    return value;
+	  }
+	  if (value == null) {
+	    return '';
+	  }
+	  if (isSymbol(value)) {
+	    return Symbol ? symbolToString.call(value) : '';
+	  }
+	  var result = (value + '');
+	  return (result == '0' && (1 / value) == -INFINITY) ? '-0' : result;
+	}
+	
+	/**
+	 * Splits `string` into an array of its words.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category String
+	 * @param {string} [string=''] The string to inspect.
+	 * @param {RegExp|string} [pattern] The pattern to match words.
+	 * @param- {Object} [guard] Enables use as an iteratee for functions like `_.map`.
+	 * @returns {Array} Returns the words of `string`.
+	 * @example
+	 *
+	 * _.words('fred, barney, & pebbles');
+	 * // => ['fred', 'barney', 'pebbles']
+	 *
+	 * _.words('fred, barney, & pebbles', /[^, ]+/g);
+	 * // => ['fred', 'barney', '&', 'pebbles']
+	 */
+	function words(string, pattern, guard) {
+	  string = toString(string);
+	  pattern = guard ? undefined : pattern;
+	
+	  if (pattern === undefined) {
+	    pattern = reHasComplexWord.test(string) ? reComplexWord : reBasicWord;
+	  }
+	  return string.match(pattern) || [];
+	}
+	
+	module.exports = words;
+
+
+/***/ },
+/* 74 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(module, global) {/**
+	 * lodash 3.0.1 (Custom Build) <https://lodash.com/>
+	 * Build: `lodash modularize exports="npm" -o ./`
+	 * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
+	 * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+	 * Copyright 2009-2016 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+	 * Available under MIT license <https://lodash.com/license>
+	 */
+	
+	/** Used to determine if values are of the language type `Object`. */
+	var objectTypes = {
+	  'function': true,
+	  'object': true
+	};
+	
+	/** Detect free variable `exports`. */
+	var freeExports = (objectTypes[typeof exports] && exports && !exports.nodeType)
+	  ? exports
+	  : undefined;
+	
+	/** Detect free variable `module`. */
+	var freeModule = (objectTypes[typeof module] && module && !module.nodeType)
+	  ? module
+	  : undefined;
+	
+	/** Detect free variable `global` from Node.js. */
+	var freeGlobal = checkGlobal(freeExports && freeModule && typeof global == 'object' && global);
+	
+	/** Detect free variable `self`. */
+	var freeSelf = checkGlobal(objectTypes[typeof self] && self);
+	
+	/** Detect free variable `window`. */
+	var freeWindow = checkGlobal(objectTypes[typeof window] && window);
+	
+	/** Detect `this` as the global object. */
+	var thisGlobal = checkGlobal(objectTypes[typeof this] && this);
+	
+	/**
+	 * Used as a reference to the global object.
+	 *
+	 * The `this` value is used if it's the global object to avoid Greasemonkey's
+	 * restricted `window` object, otherwise the `window` object is used.
+	 */
+	var root = freeGlobal ||
+	  ((freeWindow !== (thisGlobal && thisGlobal.window)) && freeWindow) ||
+	    freeSelf || thisGlobal || Function('return this')();
+	
+	/**
+	 * Checks if `value` is a global object.
+	 *
+	 * @private
+	 * @param {*} value The value to check.
+	 * @returns {null|Object} Returns `value` if it's a global object, else `null`.
+	 */
+	function checkGlobal(value) {
+	  return (value && value.Object === Object) ? value : null;
+	}
+	
+	module.exports = root;
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(58)(module), (function() { return this; }())))
+
+/***/ },
+/* 75 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var xstream_adapter_1 = __webpack_require__(18);
+	var xstream_1 = __webpack_require__(5);
+	var MockedDOMSource = (function () {
+	    function MockedDOMSource(_streamAdapter, _mockConfig) {
+	        this._streamAdapter = _streamAdapter;
+	        this._mockConfig = _mockConfig;
+	        if (_mockConfig.elements) {
+	            this._elements = _mockConfig.elements;
+	        }
+	        else {
+	            this._elements = _streamAdapter.adapt(xstream_1.default.empty(), xstream_adapter_1.default.streamSubscribe);
+	        }
+	    }
+	    MockedDOMSource.prototype.elements = function () {
+	        return this._elements;
+	    };
+	    MockedDOMSource.prototype.events = function (eventType, options) {
+	        var mockConfig = this._mockConfig;
+	        var keys = Object.keys(mockConfig);
+	        var keysLen = keys.length;
+	        for (var i = 0; i < keysLen; i++) {
+	            var key = keys[i];
+	            if (key === eventType) {
+	                return mockConfig[key];
+	            }
+	        }
+	        return this._streamAdapter.adapt(xstream_1.default.empty(), xstream_adapter_1.default.streamSubscribe);
+	    };
+	    MockedDOMSource.prototype.select = function (selector) {
+	        var mockConfig = this._mockConfig;
+	        var keys = Object.keys(mockConfig);
+	        var keysLen = keys.length;
+	        for (var i = 0; i < keysLen; i++) {
+	            var key = keys[i];
+	            if (key === selector) {
+	                return new MockedDOMSource(this._streamAdapter, mockConfig[key]);
+	            }
+	        }
+	        return new MockedDOMSource(this._streamAdapter, {});
+	    };
+	    return MockedDOMSource;
+	}());
+	exports.MockedDOMSource = MockedDOMSource;
+	function mockDOMSource(streamAdapter, mockConfig) {
+	    return new MockedDOMSource(streamAdapter, mockConfig);
+	}
+	exports.mockDOMSource = mockDOMSource;
+	//# sourceMappingURL=mockDOMSource.js.map
+
+/***/ },
+/* 76 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var hyperscript_1 = __webpack_require__(27);
+	function isValidString(param) {
+	    return typeof param === 'string' && param.length > 0;
+	}
+	function isSelector(param) {
+	    return isValidString(param) && (param[0] === '.' || param[0] === '#');
+	}
+	function createTagFunction(tagName) {
+	    return function hyperscript(first, b, c) {
+	        if (isSelector(first)) {
+	            if (!!b && !!c) {
+	                return hyperscript_1.h(tagName + first, b, c);
+	            }
+	            else if (!!b) {
+	                return hyperscript_1.h(tagName + first, b);
+	            }
+	            else {
+	                return hyperscript_1.h(tagName + first, {});
+	            }
+	        }
+	        else if (!!b) {
+	            return hyperscript_1.h(tagName, first, b);
+	        }
+	        else if (!!first) {
+	            return hyperscript_1.h(tagName, first);
+	        }
+	        else {
+	            return hyperscript_1.h(tagName, {});
+	        }
+	    };
+	}
+	var SVG_TAG_NAMES = [
+	    'a', 'altGlyph', 'altGlyphDef', 'altGlyphItem', 'animate', 'animateColor',
+	    'animateMotion', 'animateTransform', 'circle', 'clipPath', 'colorProfile',
+	    'cursor', 'defs', 'desc', 'ellipse', 'feBlend', 'feColorMatrix',
+	    'feComponentTransfer', 'feComposite', 'feConvolveMatrix', 'feDiffuseLighting',
+	    'feDisplacementMap', 'feDistantLight', 'feFlood', 'feFuncA', 'feFuncB',
+	    'feFuncG', 'feFuncR', 'feGaussianBlur', 'feImage', 'feMerge', 'feMergeNode',
+	    'feMorphology', 'feOffset', 'fePointLight', 'feSpecularLighting',
+	    'feSpotlight', 'feTile', 'feTurbulence', 'filter', 'font', 'fontFace',
+	    'fontFaceFormat', 'fontFaceName', 'fontFaceSrc', 'fontFaceUri',
+	    'foreignObject', 'g', 'glyph', 'glyphRef', 'hkern', 'image', 'line',
+	    'linearGradient', 'marker', 'mask', 'metadata', 'missingGlyph', 'mpath',
+	    'path', 'pattern', 'polygon', 'polyling', 'radialGradient', 'rect', 'script',
+	    'set', 'stop', 'style', 'switch', 'symbol', 'text', 'textPath', 'title',
+	    'tref', 'tspan', 'use', 'view', 'vkern'
+	];
+	var svg = createTagFunction('svg');
+	SVG_TAG_NAMES.forEach(function (tag) {
+	    svg[tag] = createTagFunction(tag);
+	});
+	var TAG_NAMES = [
+	    'a', 'abbr', 'address', 'area', 'article', 'aside', 'audio', 'b', 'base',
+	    'bdi', 'bdo', 'blockquote', 'body', 'br', 'button', 'canvas', 'caption',
+	    'cite', 'code', 'col', 'colgroup', 'dd', 'del', 'dfn', 'dir', 'div', 'dl',
+	    'dt', 'em', 'embed', 'fieldset', 'figcaption', 'figure', 'footer', 'form',
+	    'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'head', 'header', 'hgroup', 'hr', 'html',
+	    'i', 'iframe', 'img', 'input', 'ins', 'kbd', 'keygen', 'label', 'legend',
+	    'li', 'link', 'main', 'map', 'mark', 'menu', 'meta', 'nav', 'noscript',
+	    'object', 'ol', 'optgroup', 'option', 'p', 'param', 'pre', 'progress', 'q',
+	    'rp', 'rt', 'ruby', 's', 'samp', 'script', 'section', 'select', 'small',
+	    'source', 'span', 'strong', 'style', 'sub', 'sup', 'table', 'tbody', 'td',
+	    'textarea', 'tfoot', 'th', 'thead', 'title', 'tr', 'u', 'ul', 'video'
+	];
+	var exported = { SVG_TAG_NAMES: SVG_TAG_NAMES, TAG_NAMES: TAG_NAMES, svg: svg, isSelector: isSelector, createTagFunction: createTagFunction };
+	TAG_NAMES.forEach(function (n) {
+	    exported[n] = createTagFunction(n);
+	});
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = exported;
+	//# sourceMappingURL=hyperscript-helpers.js.map
+
+/***/ },
+/* 77 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var base_1 = __webpack_require__(78);
+	var xstream_adapter_1 = __webpack_require__(79);
+	/**
+	 * Takes a `main` function and circularly connects it to the given collection
+	 * of driver functions.
+	 *
+	 * **Example:**
+	 * ```js
+	 * import {run} from '@cycle/xstream-run';
+	 * const dispose = run(main, drivers);
+	 * // ...
+	 * dispose();
+	 * ```
+	 *
+	 * The `main` function expects a collection of "source" streams (returned from
+	 * drivers) as input, and should return a collection of "sink" streams (to be
+	 * given to drivers). A "collection of streams" is a JavaScript object where
+	 * keys match the driver names registered by the `drivers` object, and values
+	 * are the streams. Refer to the documentation of each driver to see more
+	 * details on what types of sources it outputs and sinks it receives.
+	 *
+	 * @param {Function} main a function that takes `sources` as input and outputs
+	 * `sinks`.
+	 * @param {Object} drivers an object where keys are driver names and values
+	 * are driver functions.
+	 * @return {Function} a dispose function, used to terminate the execution of the
+	 * Cycle.js program, cleaning up resources used.
+	 * @function run
+	 */
+	function run(main, drivers) {
+	    var run = base_1.default(main, drivers, { streamAdapter: xstream_adapter_1.default }).run;
+	    return run();
+	}
+	exports.run = run;
+	/**
+	 * A function that prepares the Cycle application to be executed. Takes a `main`
+	 * function and prepares to circularly connects it to the given collection of
+	 * driver functions. As an output, `Cycle()` returns an object with three
+	 * properties: `sources`, `sinks` and `run`. Only when `run()` is called will
+	 * the application actually execute. Refer to the documentation of `run()` for
+	 * more details.
+	 *
+	 * **Example:**
+	 * ```js
+	 * import Cycle from '@cycle/xstream-run';
+	 * const {sources, sinks, run} = Cycle(main, drivers);
+	 * // ...
+	 * const dispose = run(); // Executes the application
+	 * // ...
+	 * dispose();
+	 * ```
+	 *
+	 * @param {Function} main a function that takes `sources` as input and outputs
+	 * `sinks`.
+	 * @param {Object} drivers an object where keys are driver names and values
+	 * are driver functions.
+	 * @return {Object} an object with three properties: `sources`, `sinks` and
+	 * `run`. `sources` is the collection of driver sources, `sinks` is the
+	 * collection of driver sinks, these can be used for debugging or testing. `run`
+	 * is the function that once called will execute the application.
+	 * @function Cycle
+	 */
+	var Cycle = function (main, drivers) {
+	    return base_1.default(main, drivers, { streamAdapter: xstream_adapter_1.default });
+	};
+	Cycle.run = run;
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = Cycle;
+	//# sourceMappingURL=index.js.map
+
+/***/ },
+/* 78 */
+/***/ function(module, exports) {
+
+	"use strict";
+	function logToConsoleError(err) {
+	    var target = err.stack || err;
+	    if (console && console.error) {
+	        console.error(target);
+	    }
+	    else if (console && console.log) {
+	        console.log(target);
+	    }
+	}
+	function makeSinkProxies(drivers, streamAdapter) {
+	    var sinkProxies = {};
+	    for (var name_1 in drivers) {
+	        if (drivers.hasOwnProperty(name_1)) {
+	            var holdSubject = streamAdapter.makeSubject();
+	            var driverStreamAdapter = drivers[name_1].streamAdapter || streamAdapter;
+	            var stream = driverStreamAdapter.adapt(holdSubject.stream, streamAdapter.streamSubscribe);
+	            sinkProxies[name_1] = {
+	                stream: stream,
+	                observer: holdSubject.observer,
+	            };
+	        }
+	    }
+	    return sinkProxies;
+	}
+	function callDrivers(drivers, sinkProxies, streamAdapter) {
+	    var sources = {};
+	    for (var name_2 in drivers) {
+	        if (drivers.hasOwnProperty(name_2)) {
+	            var driverOutput = drivers[name_2](sinkProxies[name_2].stream, streamAdapter, name_2);
+	            var driverStreamAdapter = drivers[name_2].streamAdapter;
+	            if (driverStreamAdapter && driverStreamAdapter.isValidStream(driverOutput)) {
+	                sources[name_2] = streamAdapter.adapt(driverOutput, driverStreamAdapter.streamSubscribe);
+	            }
+	            else {
+	                sources[name_2] = driverOutput;
+	            }
+	        }
+	    }
+	    return sources;
+	}
+	function replicateMany(sinks, sinkProxies, streamAdapter) {
+	    var results = Object.keys(sinks)
+	        .filter(function (name) { return !!sinkProxies[name]; })
+	        .map(function (name) {
+	        return streamAdapter.streamSubscribe(sinks[name], {
+	            next: function (x) { sinkProxies[name].observer.next(x); },
+	            error: function (err) {
+	                logToConsoleError(err);
+	                sinkProxies[name].observer.error(err);
+	            },
+	            complete: function (x) {
+	                sinkProxies[name].observer.complete(x);
+	            }
+	        });
+	    });
+	    var disposeFunctions = results
+	        .filter(function (dispose) { return typeof dispose === 'function'; });
+	    return function () {
+	        disposeFunctions.forEach(function (dispose) { return dispose(); });
+	    };
+	}
+	function disposeSources(sources) {
+	    for (var k in sources) {
+	        if (sources.hasOwnProperty(k) && sources[k]
+	            && typeof sources[k].dispose === 'function') {
+	            sources[k].dispose();
+	        }
+	    }
+	}
+	var isObjectEmpty = function (obj) { return Object.keys(obj).length === 0; };
+	function Cycle(main, drivers, options) {
+	    if (typeof main !== "function") {
+	        throw new Error("First argument given to Cycle must be the 'main' " +
+	            "function.");
+	    }
+	    if (typeof drivers !== "object" || drivers === null) {
+	        throw new Error("Second argument given to Cycle must be an object " +
+	            "with driver functions as properties.");
+	    }
+	    if (isObjectEmpty(drivers)) {
+	        throw new Error("Second argument given to Cycle must be an object " +
+	            "with at least one driver function declared as a property.");
+	    }
+	    var streamAdapter = options.streamAdapter;
+	    if (!streamAdapter || isObjectEmpty(streamAdapter)) {
+	        throw new Error("Third argument given to Cycle must be an options object " +
+	            "with the streamAdapter key supplied with a valid stream adapter.");
+	    }
+	    var sinkProxies = makeSinkProxies(drivers, streamAdapter);
+	    var sources = callDrivers(drivers, sinkProxies, streamAdapter);
+	    var sinks = main(sources);
+	    if (typeof window !== 'undefined') {
+	        window.Cyclejs = { sinks: sinks };
+	    }
+	    var run = function () {
+	        var disposeReplication = replicateMany(sinks, sinkProxies, streamAdapter);
+	        return function () {
+	            disposeSources(sources);
+	            disposeReplication();
+	        };
+	    };
+	    return { sinks: sinks, sources: sources, run: run };
+	}
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = Cycle;
+	//# sourceMappingURL=index.js.map
+
+/***/ },
+/* 79 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var xstream_1 = __webpack_require__(5);
+	var XStreamAdapter = {
+	    adapt: function (originStream, originStreamSubscribe) {
+	        if (XStreamAdapter.isValidStream(originStream)) {
+	            return originStream;
+	        }
+	        ;
+	        var dispose = null;
+	        return xstream_1.default.create({
+	            start: function (out) {
+	                var observer = out;
+	                dispose = originStreamSubscribe(originStream, observer);
+	            },
+	            stop: function () {
+	                if (typeof dispose === 'function') {
+	                    dispose();
+	                }
+	            }
+	        });
+	    },
+	    makeSubject: function () {
+	        var stream = xstream_1.default.create();
+	        var observer = {
+	            next: function (x) { stream.shamefullySendNext(x); },
+	            error: function (err) { stream.shamefullySendError(err); },
+	            complete: function () { stream.shamefullySendComplete(); }
+	        };
+	        return { observer: observer, stream: stream };
+	    },
+	    remember: function (stream) {
+	        return stream.remember();
+	    },
+	    isValidStream: function (stream) {
+	        return (typeof stream.addListener === 'function' &&
+	            typeof stream.shamefullySendNext === 'function');
+	    },
+	    streamSubscribe: function (stream, observer) {
+	        stream.addListener(observer);
+	        return function () { return stream.removeListener(observer); };
+	    }
+	};
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = XStreamAdapter;
+	//# sourceMappingURL=index.js.map
+
+/***/ },
+/* 80 */,
+/* 81 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var core_1 = __webpack_require__(6);
+	var empty = {};
+	var DropRepeatsOperator = (function () {
+	    function DropRepeatsOperator(fn, ins) {
+	        this.fn = fn;
+	        this.ins = ins;
+	        this.type = 'dropRepeats';
+	        this.out = null;
+	        this.v = empty;
+	    }
+	    DropRepeatsOperator.prototype._start = function (out) {
+	        this.out = out;
+	        this.ins._add(this);
+	    };
+	    DropRepeatsOperator.prototype._stop = function () {
+	        this.ins._remove(this);
+	        this.out = null;
+	        this.v = empty;
+	    };
+	    DropRepeatsOperator.prototype.isEq = function (x, y) {
+	        return this.fn ? this.fn(x, y) : x === y;
+	    };
+	    DropRepeatsOperator.prototype._n = function (t) {
+	        var u = this.out;
+	        if (!u)
+	            return;
+	        var v = this.v;
+	        if (v === empty || !this.isEq(t, v)) {
+	            u._n(t);
+	        }
+	        this.v = t;
+	    };
+	    DropRepeatsOperator.prototype._e = function (err) {
+	        var u = this.out;
+	        if (!u)
+	            return;
+	        u._e(err);
+	    };
+	    DropRepeatsOperator.prototype._c = function () {
+	        var u = this.out;
+	        if (!u)
+	            return;
+	        u._c();
+	    };
+	    return DropRepeatsOperator;
+	}());
+	exports.DropRepeatsOperator = DropRepeatsOperator;
+	/**
+	 * Drops consecutive duplicate values in a stream.
+	 *
+	 * Marble diagram:
+	 *
+	 * ```text
+	 * --1--2--1--1--1--2--3--4--3--3|
+	 *     dropRepeats
+	 * --1--2--1--------2--3--4--3---|
+	 * ```
+	 *
+	 * Example:
+	 *
+	 * ```js
+	 * import dropRepeats from 'xstream/extra/dropRepeats'
+	 *
+	 * const stream = xs.of(1, 2, 1, 1, 1, 2, 3, 4, 3, 3)
+	 *   .compose(dropRepeats())
+	 *
+	 * stream.addListener({
+	 *   next: i => console.log(i),
+	 *   error: err => console.error(err),
+	 *   complete: () => console.log('completed')
+	 * })
+	 * ```
+	 *
+	 * ```text
+	 * > 1
+	 * > 2
+	 * > 1
+	 * > 2
+	 * > 3
+	 * > 4
+	 * > 3
+	 * > completed
+	 * ```
+	 *
+	 * Example with a custom isEqual function:
+	 *
+	 * ```js
+	 * import dropRepeats from 'xstream/extra/dropRepeats'
+	 *
+	 * const stream = xs.of('a', 'b', 'a', 'A', 'B', 'b')
+	 *   .compose(dropRepeats((x, y) => x.toLowerCase() === y.toLowerCase()))
+	 *
+	 * stream.addListener({
+	 *   next: i => console.log(i),
+	 *   error: err => console.error(err),
+	 *   complete: () => console.log('completed')
+	 * })
+	 * ```
+	 *
+	 * ```text
+	 * > a
+	 * > b
+	 * > a
+	 * > B
+	 * > completed
+	 * ```
+	 *
+	 * @param {Function} isEqual An optional function of type
+	 * `(x: T, y: T) => boolean` that takes an event from the input stream and
+	 * checks if it is equal to previous event, by returning a boolean.
+	 * @return {Stream}
+	 */
+	function dropRepeats(isEqual) {
+	    if (isEqual === void 0) { isEqual = null; }
+	    return function dropRepeatsOperator(ins) {
+	        return new core_1.Stream(new DropRepeatsOperator(isEqual, ins));
+	    };
+	}
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = dropRepeats;
+	//# sourceMappingURL=dropRepeats.js.map
+
+/***/ }
+/******/ ]);
 //# sourceMappingURL=app.js.map
