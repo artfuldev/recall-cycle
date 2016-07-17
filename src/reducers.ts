@@ -2,69 +2,22 @@ import Stream from 'xstream';
 import delay from 'xstream/extra/delay';
 import { IIntent } from './intent';
 import { IResult, IState } from './definitions';
-import { Record } from 'immutable';
+import flattenConcurrently from 'xstream/extra/flattenConcurrently';
+import dropRepeats from 'xstream/extra/dropRepeats';
 
-const ResultRecord = Record({
-  correct: [],
-  wrong: [],
-  missed: []
-});
-
-class Result extends ResultRecord implements IResult {
-  correct: Array<number>
-  wrong: Array<number>
-  missed: Array<number>
-
-  constructor(props: IResult) {
-    super(props);
-  }
-};
-
-const InitialResult = new Result({
-  correct: [],
-  wrong: [],
-  missed: []
-});
-
-const StateRecord = Record({
-  puzzle: [],
-  allowed: false,
-  selected: [],
-  over: false,
-  score: 0,
-  result: null
-});
-
-class State extends StateRecord implements IState {
-  puzzle: Array<number>
-  allowed: boolean
-  selected: Array<number>
-  over: boolean
-  score: number
-  result: IResult
-
-  constructor(props: IState) {
-    super(props);
-  }
+function reduce<T>(reducer$: Stream<(prev: T) => T>, initial: T) {
+  const value$ = reducer$.fold((current, reducer) => reducer(current), initial);
+  return value$;
 }
 
-export const InitialState = new State({
-  puzzle: [],
-  allowed: false,
-  selected: [],
-  over: false,
-  score: 0,
-  result: InitialResult
-}) as IState;
-
-function reducers(actions: IIntent): Stream<(state: IState) => IState> {
+function reducers(actions: IIntent): IState {
   // alias
   const xs = Stream;
 
-  const puzzleReducer$ =
+  const puzzle$ =
     actions.newGame$
-      .mapTo((state: IState) => {
-        const puzzle = [];
+      .map(() => {
+        const puzzle: number[] = [];
         const maxSize = 9;
         for (var i = 0; i < maxSize; i++) {
           var nextNumber = Math.floor(Math.random() * 25);
@@ -72,102 +25,83 @@ function reducers(actions: IIntent): Stream<(state: IState) => IState> {
             nextNumber = Math.floor(Math.random() * 25);
           puzzle.push(nextNumber);
         }
-        return (state as State).set('puzzle', puzzle) as State;
-      });
+        return puzzle;
+      }).remember();
 
-  const allowedReducer$ = xs.merge(
-    actions.newGame$
-      .mapTo((state: IState) => (state as State).set('allowed', false) as State),
-    actions.newGame$
-      .compose(delay(4000))
-      .mapTo((state: IState) => (state as State).set('allowed', true) as State),
-    actions.selectCell$
-      .mapTo((state: IState) => {
-        const selected = state.selected || [];
-        return selected.length === 9
-          ? (state as State).set('allowed', false) as State
-          : state;
-      })
-  );
+  const selectedCellsReducer$ =
+    xs.merge(
+      puzzle$
+        .mapTo(() => new Array<number>()),
+      actions.reset$
+        .mapTo(() => new Array<number>()),
+      actions.selectCell$
+        .map(clicked =>
+          (selectedCells: number[]) => {
+            var selected = selectedCells.indexOf(clicked) !== -1;
+            return selected
+              ? selectedCells.filter(x => x != clicked)
+              : selectedCells.concat(clicked);
+          })
+    );
+  const selectedCells$ =
+    reduce(selectedCellsReducer$, new Array<number>())
+      .remember();
 
-  const selectedReducer$ = xs.merge(
-    actions.newGame$
-      .mapTo((state: IState) => (state as State).set('selected', []) as State),
-    actions.reset$
-      .mapTo((state: IState) => {
-        const allowed = state.allowed;
-        return allowed
-          ? (state as State).set('selected', []) as State
-          : state;
-      }),
-    actions.selectCell$
-      .map(clicked =>
-        (state: IState) => {
-          const allowed = state.allowed;
-          if (!allowed)
-            return state;
-          var selected = state.selected || [];
-          var index = selected.indexOf(clicked);
-          if (index === -1)
-            return (state as State).set('selected', selected.concat(clicked)) as State;
-          else
-            return (state as State).set('selected', selected.filter(x => x != clicked)) as State;
-        })
-  );
+  const allowed$ =
+    xs.merge(
+      puzzle$
+        .mapTo(false),
+      puzzle$
+        .compose(delay(4000))
+        .mapTo(true)
+    ).remember();
+
+  const over$ =
+    selectedCells$
+      .map((selected) => selected.length === 9)
+      .compose(dropRepeats<boolean>((prev, next) => prev === next));
+
+  const result$ =
+    xs.merge(
+      puzzle$
+        .mapTo(null),
+      over$
+        .filter(Boolean)
+        .map(() =>
+          puzzle$.map(puzzle =>
+            selectedCells$.map(selected => {
+              const result: IResult = {
+                correct: selected.filter(s => puzzle.indexOf(s) !== -1),
+                wrong: selected.filter(s => puzzle.indexOf(s) === -1),
+                missed: puzzle.filter(p => selected.indexOf(p) === -1)
+              };
+              return result;
+            })
+          ).flatten()
+        ).flatten()
+    ).startWith(null);
 
   const scoreReducer$ =
-    actions.selectCell$
-      .mapTo((state: State) => {
-        const over = state.over;
-        if (over)
-          return state;
-        const selected = state.selected || [];
-        if (selected.length !== 9)
-          return state;
-        const puzzle = state.puzzle || [];
-        const won = selected.every(s => puzzle.indexOf(s) !== -1);
-        const score = state.score || 0;
-        return won
-          ? state.set('score', score + 1) as State
-          : state;
-      });
-
-  const overReducer$ = xs.merge(
-    actions.newGame$
-      .mapTo((state: IState) => (state as State).set('over', false) as State),
-    actions.selectCell$
-      .mapTo((state: IState) => {
-        const selected = state.selected || [];
-        return selected.length === 9
-          ? (state as State).set('over', true) as State
-          : state;
-      })
-  );
-
-  const resultReducer$ = xs.merge(
-    actions.newGame$
-      .mapTo((state: IState) => (state as State).set('result', InitialResult) as State),
-    actions.selectCell$
-      .mapTo((state: IState) => {
-        const selected = state.selected || [];
-        const puzzle = state.puzzle || [];
-        const result = new Result({
-          correct: selected.filter(s => puzzle.indexOf(s) !== -1),
-          wrong: selected.filter(s => puzzle.indexOf(s) === -1),
-          missed: puzzle.filter(p => selected.indexOf(p) === -1)
+    result$
+      .filter(Boolean)
+      .map(result =>
+        (score: number) => {
+          const won = result.correct.length === 9;
+          score = score || 0;
+          return won ? score + 1 : score;
         });
-        return (state as State).set('result', result) as State;
-      })
-  );
+  const score$ =
+    reduce(scoreReducer$, 0)
+      .remember();
 
-  return xs.merge(
-    puzzleReducer$,
-    allowedReducer$,
-    selectedReducer$,
-    scoreReducer$,
-    overReducer$,
-    resultReducer$
-  );
+  return {
+    puzzle$,
+    allowed$,
+    selectedCells$,
+    over$,
+    score$,
+    result$
+  };
 }
 
 export default reducers;

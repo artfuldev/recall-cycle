@@ -1,10 +1,19 @@
-
 import { Stream } from 'xstream';
 import { div, header, h1, p, strong, a, main, span, footer, VNode} from '@cycle/dom';
-import { IState, ISinks } from './definitions';
+import { IState, IResult } from './definitions';
 
-function renderCell(index: number, state: IState): VNode {
-  var classes = '';
+interface IViewState {
+  puzzle: number[];
+  allowed: boolean;
+  selected: number[];
+  over: boolean;
+  score: number;
+  result: IResult;
+}
+
+function renderCell(index: number, state: IViewState): VNode {
+  const disabled = (!state.allowed || state.over) ? '.disabled' : '';
+  var classes = disabled;
   if (state.over && state.result) {
     if (state.result.correct.indexOf(index) > -1)
       classes += '.correct';
@@ -19,13 +28,38 @@ function renderCell(index: number, state: IState): VNode {
     else if (state.allowed && state.selected.indexOf(index) > -1)
       classes += '.selected';
   }
-  return div(classes + '.cell', { attrs: { 'data-index': index } }, [span()]);
+  return div(classes + '.cell', { attrs: { 'data-index': index } }, [span(disabled)]);
 }
 
 const grid = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24];
 
-function view(state$: Stream<IState>): ISinks {
-  const vtree$ = state$.map(state => {
+function states(state: IState): Stream<IViewState> {
+  const xs = Stream;
+  const state$ =
+    xs.combine(
+      state.puzzle$,
+      state.allowed$,
+      state.selectedCells$,
+      state.over$,
+      state.score$,
+      state.result$
+    ).map(([puzzle, allowed, selected, over, score, result]) => {
+      const viewState: IViewState = {
+        puzzle,
+        allowed,
+        selected,
+        over,
+        score,
+        result
+      };
+      return viewState;
+    });
+  return state$;
+}
+
+function view(state: IState): Stream<VNode> {
+  const state$ = states(state);
+  const vdom$ = state$.map(state => {
     const score = state.score.toString();
     return div('#root', [
       div('.container', [
@@ -52,21 +86,19 @@ function view(state$: Stream<IState>): ISinks {
         ]),
         footer([
           'Made with ',
-          span('.heart','❤'),
+          span('.heart', '❤'),
           ' using ',
-          span('.cycle','Cycle.js'),
+          span('.cycle', 'Cycle.js'),
           ' by ',
           a('.author', { props: { href: 'https://github.com/artfuldev' } }, '@artfuldev'),
           div([
-              a('.source', { props: { href: 'https://github.com/artfuldev/recall-cycle/tree/gh-pages/' } }, 'View Source')
+            a('.source', { props: { href: 'https://github.com/artfuldev/recall-cycle/tree/gh-pages/' } }, 'View Source')
           ])
         ])
       ])
     ]);
   });
-  return {
-    dom: vtree$
-  };
+  return vdom$;
 }
 
 export default view;

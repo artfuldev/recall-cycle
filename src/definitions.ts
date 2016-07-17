@@ -3,24 +3,24 @@ import { VNode } from '@cycle/dom';
 import { Stream } from 'xstream'; 
 
 export interface ISources {
-    dom: DOMSource
+    dom: DOMSource;
 }
 
 export interface ISinks {
-  dom: Stream<VNode>
+  dom: Stream<VNode>;
 }
 
 export interface IResult {
-    correct: Array<number>
-    wrong: Array<number>
-    missed: Array<number>
+    correct: Array<number>;
+    wrong: Array<number>;
+    missed: Array<number>;
 }
 
 export interface IState {
-    puzzle: Array<number>
-    allowed: boolean
-    selected: Array<number>
-    over: boolean
-    score: number
-    result: IResult
+    puzzle$: Stream<Array<number>>;
+    allowed$: Stream<boolean>;
+    selectedCells$: Stream<Array<number>>;
+    over$: Stream<boolean>;
+    score$: Stream<number>;
+    result$: Stream<IResult>;
 }
