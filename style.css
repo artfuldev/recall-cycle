@@ -1,0 +1,226 @@
+html, body {
+    height: 100%;
+    width: 100%;
+    background: #9c27b0;
+    margin: 0;
+    padding: 0;
+    font-family: 'Raleway', Arial, Helvetica, sans-serif;
+    color: white;
+}
+
+html, body {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+*, *:before, *:after {
+    -webkit-box-sizing: inherit;
+    -moz-box-sizing: inherit;
+    box-sizing: inherit;
+}
+
+.container {
+    width: 100%;
+    max-width: 540px;
+    margin: 0 auto;
+    padding: 20px;
+    padding-top: 80px;
+}
+
+h1 {
+    display: block;
+    float: left;
+    font-weight: 100;
+    font-size: 3em;
+    margin: 0;
+}
+
+.actions {
+    float: right;
+    list-style: none;
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+}
+
+.scores {
+    float: right;
+    text-align: right;
+}
+
+.score {
+    position: relative;
+    display: inline-block;
+    background: white;
+    padding: 15px 25px;
+    font-size: 1.5em;
+    line-height: 3em;
+    font-weight: bold;
+    border-radius: 3px;
+    color: #9c27b0;
+    margin-top: 8px;
+    text-align: center;
+    margin-left: 5px;
+    width: 3em;
+    height: 2.5em;
+}
+
+.score span {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 4px;
+    padding-top: 10px;
+}
+
+.score span::after {
+    position: absolute;
+    width: 100%;
+    top: 10px;
+    left: 0;
+    text-transform: uppercase;
+    font-size: 13px;
+    line-height: 13px;
+    text-align: center;
+}
+
+.current.score span::after {
+    content: 'score'
+}
+
+.best.score span::after {
+    content: 'best';
+}
+
+.info {
+    clear: left;
+}
+
+.info p {
+    margin-bottom: 20px;
+    float:left;
+    line-height: 3em;
+}
+
+a {
+    color: white;
+}
+
+a.new {
+    text-transform: uppercase;
+    border-radius: 2px;
+    border: 1px solid white;
+    padding: 0 28px;
+    text-decoration: none;
+    height: 3em;
+    line-height: 3em;
+    cursor: pointer;
+    display: block;
+    text-align: center;
+    float: right;
+}
+
+a.new:hover {
+    text-decoration: none;
+    background: white;
+    color:#9c27b0;
+    cursor: pointer;
+}
+
+.container, .panel, .grid {
+    overflow: auto;
+}
+
+.panel {
+    position: relative;
+    clear: left;
+}
+
+.cell {
+    height: 20%;
+    width: 20%;
+    background: white;
+    color: #9c27b0;
+    display: block;
+    padding: 10%;
+    box-sizing: border-box;
+    float: left;
+    position: relative;
+}
+
+.cell:first-child, .cell:nth-child(5n + 1) {
+    clear: left;
+}
+
+.cell span {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 4px;
+    border: 1px solid #9c27b0;
+    font-weight: 700;
+}
+
+.cell.highlighted, .cell.selected, .cell.correct {
+    background: #68efad;
+}
+
+.cell.wrong {
+    background: #ff8a80;
+}
+
+.cell.missed {
+    background: #ffd180;
+}
+
+.cell.correct span::after, .cell.wrong span::after, .cell.missed span::after {
+    position: absolute;
+    bottom: 4px;
+    right: 4px;
+    color: rgba(0,0,0,0.38);
+}
+
+.cell.correct span::after {
+    content: 'correct';
+}
+
+.cell.wrong span::after {
+    content: 'wrong';
+}
+
+.cell.missed span::after {
+    content: 'missed';
+}
+
+header, footer {
+    overflow: auto;
+}
+
+main {
+    margin-bottom: 20px;
+}
+
+footer {
+    padding: 20px 0;
+    text-align: center;
+}
+
+.cycle::before {
+    background: url('http://cycle.js.org/img/cyclejs_logo.svg');
+    content: '';
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    vertical-align: middle;
+    margin-right: 3px;
+}
+
+footer div {
+    margin-top: 10px;
+}
