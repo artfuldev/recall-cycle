@@ -48,13 +48,13 @@ function reducers(actions: IIntent): IState {
     reduce(selectedCellsReducer$, new Array<number>())
       .remember();
 
-  const allowed$ = 
-      puzzle$.map(() =>
-        xs.periodic(4000)
-          .mapTo(true)
-          .compose(distinctBooleans)
-          .startWith(false)
-        ).flatten();
+  const allowed$ =
+    puzzle$.map(() =>
+      xs.of(true)
+        .compose(delay<boolean>(3000))
+        .startWith(false))
+    .flatten()
+    .remember();
 
   const over$ =
     selectedCells$
