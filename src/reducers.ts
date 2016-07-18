@@ -11,6 +11,8 @@ function reduce<T>(reducer$: Stream<(prev: T) => T>, initial: T) {
   return value$;
 }
 
+const distinctBooleans = dropRepeats<boolean>((prev, next) => prev === next);
+
 function reducers(actions: IIntent): IState {
   // alias
   const xs = Stream;
@@ -46,19 +48,18 @@ function reducers(actions: IIntent): IState {
     reduce(selectedCellsReducer$, new Array<number>())
       .remember();
 
-  const allowed$ =
-    xs.merge(
-      puzzle$
-        .mapTo(false),
-      puzzle$
-        .compose(delay(4000))
-        .mapTo(true)
-    ).remember();
+  const allowed$ = 
+      puzzle$.map(() =>
+        xs.periodic(4000)
+          .mapTo(true)
+          .compose(distinctBooleans)
+          .startWith(false)
+        ).flatten();
 
   const over$ =
     selectedCells$
       .map((selected) => selected.length === 9)
-      .compose(dropRepeats<boolean>((prev, next) => prev === next));
+      .compose(distinctBooleans);
 
   const result$ =
     xs.merge(
