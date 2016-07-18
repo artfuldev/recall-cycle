@@ -4,6 +4,7 @@ import { IIntent } from './intent';
 import { IResult, IState } from './definitions';
 import flattenConcurrently from 'xstream/extra/flattenConcurrently';
 import dropRepeats from 'xstream/extra/dropRepeats';
+import { add, remove, has } from './utils';
 
 function reduce<T>(reducer$: Stream<(prev: T) => T>, initial: T) {
   const value$ = reducer$.fold((current, reducer) => reducer(current), initial);
@@ -36,12 +37,10 @@ function reducers(actions: IIntent): IState {
         .mapTo(() => new Array<number>()),
       actions.selectCell$
         .map(clicked =>
-          (selectedCells: number[]) => {
-            var selected = selectedCells.indexOf(clicked) !== -1;
-            return selected
-              ? selectedCells.filter(x => x != clicked)
-              : selectedCells.concat(clicked);
-          })
+          (selected: number[]) =>
+            has(selected, clicked)
+              ? remove(selected, clicked)
+              : add(selected, clicked))
     );
   const selectedCells$ =
     reduce(selectedCellsReducer$, new Array<number>())
