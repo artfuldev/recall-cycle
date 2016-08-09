@@ -39,7 +39,7 @@ function states(state: IState): Stream<IViewState> {
     xs.combine(
       state.puzzle$,
       state.allowed$,
-      state.selectedCells$,
+      state.selected$,
       state.over$,
       state.score$,
       state.result$

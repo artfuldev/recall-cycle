@@ -161,7 +161,7 @@
 	    var puzzle$ = intent.newGame$
 	        .map(function () { return puzzle(); })
 	        .startWith(puzzle());
-	    var selectedCells$ = xs.merge(puzzle$
+	    var selected$ = xs.merge(puzzle$
 	        .mapTo([]), intent.reset$
 	        .mapTo([]), intent.selectedCells$
 	        .map(function (selected) {
@@ -180,7 +180,7 @@
 	    })
 	        .flatten()
 	        .remember();
-	    var over$ = selectedCells$
+	    var over$ = selected$
 	        .map(function (selected) { return selected.length === 9; })
 	        .compose(distinctBooleans);
 	    var result$ = xs.merge(puzzle$
@@ -188,7 +188,7 @@
 	        .filter(Boolean)
 	        .map(function () {
 	        return puzzle$.map(function (puzzle) {
-	            return selectedCells$.map(function (selected) {
+	            return selected$.map(function (selected) {
 	                var result = {
 	                    correct: selected.filter(function (s) { return puzzle.indexOf(s) !== -1; }),
 	                    wrong: selected.filter(function (s) { return puzzle.indexOf(s) === -1; }),
@@ -212,7 +212,7 @@
 	    return {
 	        puzzle$: puzzle$,
 	        allowed$: allowed$,
-	        selectedCells$: selectedCells$,
+	        selected$: selected$,
 	        over$: over$,
 	        score$: score$,
 	        result$: result$
@@ -2226,7 +2226,7 @@
 	var grid = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24];
 	function states(state) {
 	    var xs = xstream_1.Stream;
-	    var state$ = xs.combine(state.puzzle$, state.allowed$, state.selectedCells$, state.over$, state.score$, state.result$).map(function (_a) {
+	    var state$ = xs.combine(state.puzzle$, state.allowed$, state.selected$, state.over$, state.score$, state.result$).map(function (_a) {
 	        var puzzle = _a[0], allowed = _a[1], selected = _a[2], over = _a[3], score = _a[4], result = _a[5];
 	        var viewState = {
 	            puzzle: puzzle,

@@ -34,7 +34,7 @@ function model(intent: IIntent): IState {
       .map(() => puzzle())
       .startWith(puzzle());
 
-  const selectedCells$ =
+  const selected$ =
     xs.merge(
       puzzle$
         .mapTo<number[]>([]),
@@ -60,7 +60,7 @@ function model(intent: IIntent): IState {
       .remember();
 
   const over$ =
-    selectedCells$
+    selected$
       .map(selected => selected.length === 9)
       .compose(distinctBooleans);
 
@@ -72,7 +72,7 @@ function model(intent: IIntent): IState {
         .filter(Boolean)
         .map(() =>
           puzzle$.map(puzzle =>
-            selectedCells$.map(selected => {
+            selected$.map(selected => {
               const result: IResult = {
                 correct: selected.filter(s => puzzle.indexOf(s) !== -1),
                 wrong: selected.filter(s => puzzle.indexOf(s) === -1),
@@ -100,7 +100,7 @@ function model(intent: IIntent): IState {
   return {
     puzzle$,
     allowed$,
-    selectedCells$,
+    selected$,
     over$,
     score$,
     result$
