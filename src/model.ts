@@ -62,7 +62,8 @@ function model(intent: IIntent): IState {
   const over$ =
     selected$
       .map(selected => selected.length === 9)
-      .compose(distinctBooleans);
+      .compose(distinctBooleans)
+      .startWith(false);
 
   const result$ =
     xs.merge(

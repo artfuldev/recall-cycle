@@ -182,7 +182,8 @@
 	        .remember();
 	    var over$ = selected$
 	        .map(function (selected) { return selected.length === 9; })
-	        .compose(distinctBooleans);
+	        .compose(distinctBooleans)
+	        .startWith(false);
 	    var result$ = xs.merge(puzzle$
 	        .mapTo(null), over$
 	        .filter(Boolean)
