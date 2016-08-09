@@ -13,52 +13,55 @@ function reduce<T>(reducer$: Stream<(prev: T) => T>, initial: T) {
 
 const distinctBooleans = dropRepeats<boolean>((prev, next) => prev === next);
 
-function model(actions: IIntent): IState {
+function puzzle(): number[] {
+  const puzzle: number[] = [];
+  const maxSize = 9;
+  for (var i = 0; i < maxSize; i++) {
+    var nextNumber = Math.floor(Math.random() * 25);
+    while (puzzle.indexOf(nextNumber) !== -1)
+      nextNumber = Math.floor(Math.random() * 25);
+    puzzle.push(nextNumber);
+  }
+  return puzzle;
+}
+
+function model(intent: IIntent): IState {
   // alias
   const xs = Stream;
 
   const puzzle$ =
-    actions.newGame$
-      .map(() => {
-        const puzzle: number[] = [];
-        const maxSize = 9;
-        for (var i = 0; i < maxSize; i++) {
-          var nextNumber = Math.floor(Math.random() * 25);
-          while (puzzle.indexOf(nextNumber) !== -1)
-            nextNumber = Math.floor(Math.random() * 25);
-          puzzle.push(nextNumber);
-        }
-        return puzzle;
-      }).remember();
+    intent.newGame$
+      .map(() => puzzle())
+      .startWith(puzzle());
 
-  const selectedCellsReducer$ =
+  const selectedCells$ =
     xs.merge(
       puzzle$
-        .mapTo(() => new Array<number>()),
-      actions.reset$
-        .mapTo(() => new Array<number>()),
-      actions.selectCell$
-        .map(clicked =>
-          (selected: number[]) =>
-            has(selected, clicked)
-              ? remove(selected, clicked)
-              : add(selected, clicked))
-    );
-  const selectedCells$ =
-    reduce(selectedCellsReducer$, new Array<number>())
-      .remember();
+        .mapTo<number[]>([]),
+      intent.reset$
+        .mapTo<number[]>([]),
+      intent.selectedCells$
+        .map<Stream<number[]>>(selected =>
+          intent.selectCell$
+            .map(clicked =>
+              has(selected, clicked)
+                ? remove(selected, clicked)
+                : add(selected, clicked)
+            ))
+        .flatten()
+    ).startWith([]);
 
   const allowed$ =
     puzzle$.map(() =>
       xs.of(true)
         .compose(delay<boolean>(3000))
         .startWith(false))
-    .flatten()
-    .remember();
+      .flatten()
+      .remember();
 
   const over$ =
     selectedCells$
-      .map((selected) => selected.length === 9)
+      .map(selected => selected.length === 9)
       .compose(distinctBooleans);
 
   const result$ =

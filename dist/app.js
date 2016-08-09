@@ -95,7 +95,7 @@
 	        .map(function (ev) {
 	        ev.preventDefault();
 	        return true;
-	    }).startWith(true);
+	    });
 	    var reset$ = dom
 	        .select('.reset')
 	        .events('click')
@@ -103,6 +103,13 @@
 	        .map(function (ev) {
 	        ev.preventDefault();
 	        return true;
+	    });
+	    var selectedCells$ = dom
+	        .select('main .grid')
+	        .events('DOMSubtreeModified')
+	        .map(function (ev) {
+	        var grid = ev.target;
+	        return [].slice.call(grid.querySelectorAll('.selected.cell')).map(function (el) { return findChildIndex(el); });
 	    });
 	    var selectCell$ = dom
 	        .select('.cell span')
@@ -115,7 +122,8 @@
 	    return {
 	        newGame$: newGame$,
 	        reset$: reset$,
-	        selectCell$: selectCell$
+	        selectCell$: selectCell$,
+	        selectedCells$: selectedCells$
 	    };
 	}
 	Object.defineProperty(exports, "__esModule", { value: true });
@@ -136,33 +144,35 @@
 	    return value$;
 	}
 	var distinctBooleans = dropRepeats_1.default(function (prev, next) { return prev === next; });
-	function model(actions) {
+	function puzzle() {
+	    var puzzle = [];
+	    var maxSize = 9;
+	    for (var i = 0; i < maxSize; i++) {
+	        var nextNumber = Math.floor(Math.random() * 25);
+	        while (puzzle.indexOf(nextNumber) !== -1)
+	            nextNumber = Math.floor(Math.random() * 25);
+	        puzzle.push(nextNumber);
+	    }
+	    return puzzle;
+	}
+	function model(intent) {
 	    // alias
 	    var xs = xstream_1.Stream;
-	    var puzzle$ = actions.newGame$
-	        .map(function () {
-	        var puzzle = [];
-	        var maxSize = 9;
-	        for (var i = 0; i < maxSize; i++) {
-	            var nextNumber = Math.floor(Math.random() * 25);
-	            while (puzzle.indexOf(nextNumber) !== -1)
-	                nextNumber = Math.floor(Math.random() * 25);
-	            puzzle.push(nextNumber);
-	        }
-	        return puzzle;
-	    }).remember();
-	    var selectedCellsReducer$ = xs.merge(puzzle$
-	        .mapTo(function () { return new Array(); }), actions.reset$
-	        .mapTo(function () { return new Array(); }), actions.selectCell$
-	        .map(function (clicked) {
-	        return function (selected) {
+	    var puzzle$ = intent.newGame$
+	        .map(function () { return puzzle(); })
+	        .startWith(puzzle());
+	    var selectedCells$ = xs.merge(puzzle$
+	        .mapTo([]), intent.reset$
+	        .mapTo([]), intent.selectedCells$
+	        .map(function (selected) {
+	        return intent.selectCell$
+	            .map(function (clicked) {
 	            return utils_1.has(selected, clicked)
 	                ? utils_1.remove(selected, clicked)
 	                : utils_1.add(selected, clicked);
-	        };
-	    }));
-	    var selectedCells$ = reduce(selectedCellsReducer$, new Array())
-	        .remember();
+	        });
+	    })
+	        .flatten()).startWith([]);
 	    var allowed$ = puzzle$.map(function () {
 	        return xs.of(true)
 	            .compose(delay_1.default(3000))
