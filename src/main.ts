@@ -4,7 +4,7 @@ import view from './view';
 import { ISources, ISinks } from './definitions';
 
 function main(sources: ISources): ISinks {
-  const vdom$ = view(model(intent(sources)));
+  const vdom$ = view(model(sources, intent(sources)));
   return {
     dom: vdom$
   };

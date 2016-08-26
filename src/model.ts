@@ -1,10 +1,10 @@
 import { IIntent } from './intent';
 import { Stream } from 'xstream';
-import { IState, IResult } from './definitions';
+import { IState, IResult, ISources } from './definitions';
 import delay from 'xstream/extra/delay';
 import flattenConcurrently from 'xstream/extra/flattenConcurrently';
 import dropRepeats from 'xstream/extra/dropRepeats';
-import { add, remove, has } from './utils';
+import { add, remove, has, findChildIndex } from './utils';
 
 function reduce<T>(reducer$: Stream<(prev: T) => T>, initial: T) {
   const value$ = reducer$.fold((current, reducer) => reducer(current), initial);
@@ -25,22 +25,50 @@ function puzzle(): number[] {
   return puzzle;
 }
 
-function model(intent: IIntent): IState {
-  // alias
+function model(sources: ISources, intent: IIntent): IState {
   const xs = Stream;
+  const dom = sources.dom;
+
+  const domScore$ =
+    dom
+      .select('.current.score span')
+      .events('score_updated')
+      .map(ev => {
+        return parseInt((ev.target as HTMLElement).innerText);
+      });
 
   const puzzle$ =
     intent.newGame$
       .map(() => puzzle())
       .startWith(puzzle());
 
+  const allowed$ =
+    puzzle$.map(() =>
+      xs.of(true)
+        .compose(delay<boolean>(3000))
+        .startWith(false))
+      .flatten()
+      .remember();
+
+  const domSelected$ =
+    allowed$
+      .map(allowed =>
+        dom
+          .select('main .grid')
+          .events('DOMSubtreeModified')
+          .filter(() => allowed)
+          .map(ev => {
+            const grid = ev.target as HTMLElement;
+            return [].slice.call(grid.querySelectorAll('.selected.cell')).map(el => findChildIndex(el)) as number[];
+          })
+          .startWith([]))
+      .flatten();
+
   const selected$ =
     xs.merge(
       puzzle$
         .mapTo<number[]>([]),
-      intent.reset$
-        .mapTo<number[]>([]),
-      intent.selectedCells$
+      domSelected$
         .map<Stream<number[]>>(selected =>
           intent.selectCell$
             .map(clicked =>
@@ -50,14 +78,6 @@ function model(intent: IIntent): IState {
             ))
         .flatten()
     ).startWith([]);
-
-  const allowed$ =
-    puzzle$.map(() =>
-      xs.of(true)
-        .compose(delay<boolean>(3000))
-        .startWith(false))
-      .flatten()
-      .remember();
 
   const over$ =
     selected$
@@ -85,26 +105,24 @@ function model(intent: IIntent): IState {
         ).flatten()
     ).startWith(null);
 
-  const scoreReducer$ =
-    result$
-      .filter(Boolean)
-      .map(result =>
-        (score: number) => {
-          const won = result.correct.length === 9;
-          score = score || 0;
-          return won ? score + 1 : score;
-        });
   const score$ =
-    reduce(scoreReducer$, 0)
-      .remember();
+    domScore$
+      .startWith(0)
+      .map(score =>
+        result$
+          .map(result => {
+            const won = result && result.correct && result.correct.length === 9;
+            return won ? score + 1 : score;
+          }))
+      .flatten();
 
   return {
     puzzle$,
     allowed$,
     selected$,
     over$,
-    score$,
-    result$
+    result$,
+    score$
   };
 }
 
