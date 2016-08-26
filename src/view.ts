@@ -67,7 +67,13 @@ function view(state: IState): Stream<VNode> {
           div('.title.bar', [
             h1(['Recall']),
             div('.scores', [
-              div('.current.score', [span([score])]),
+              div('.current.score', [span({
+                hook: {
+                  postpatch: (oldVNode: VNode, node: VNode) => {
+                    node.elm.dispatchEvent(new Event('score_updated'))
+                  }
+                }
+              }, [score])]),
               div('.best.score', [span([score])])
             ])
           ]),

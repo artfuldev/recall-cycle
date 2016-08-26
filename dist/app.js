@@ -59,10 +59,10 @@
 
 	"use strict";
 	var intent_1 = __webpack_require__(2);
-	var model_1 = __webpack_require__(3);
+	var model_1 = __webpack_require__(4);
 	var view_1 = __webpack_require__(9);
 	function main(sources) {
-	    var vdom$ = view_1.default(model_1.default(intent_1.default(sources)));
+	    var vdom$ = view_1.default(model_1.default(sources, intent_1.default(sources)));
 	    return {
 	        dom: vdom$
 	    };
@@ -73,18 +73,12 @@
 
 /***/ },
 /* 2 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
+	var utils_1 = __webpack_require__(3);
 	function disabled(event) {
 	    return event.target.className.indexOf('disabled') !== -1;
-	}
-	function findChildIndex(element) {
-	    var childNodes = element.parentElement.childNodes;
-	    for (var i = 0; i < childNodes.length; i++)
-	        if (childNodes[i] === element)
-	            return i;
-	    return -1;
 	}
 	function intent(sources) {
 	    var dom = sources.dom;
@@ -96,34 +90,17 @@
 	        ev.preventDefault();
 	        return true;
 	    });
-	    var reset$ = dom
-	        .select('.reset')
-	        .events('click')
-	        .filter(function (ev) { return !disabled(ev); })
-	        .map(function (ev) {
-	        ev.preventDefault();
-	        return true;
-	    });
-	    var selectedCells$ = dom
-	        .select('main .grid')
-	        .events('DOMSubtreeModified')
-	        .map(function (ev) {
-	        var grid = ev.target;
-	        return [].slice.call(grid.querySelectorAll('.selected.cell')).map(function (el) { return findChildIndex(el); });
-	    });
 	    var selectCell$ = dom
 	        .select('.cell span')
 	        .events('click')
 	        .filter(function (ev) { return !disabled(ev); })
 	        .map(function (ev) {
 	        ev.preventDefault();
-	        return findChildIndex(ev.target.parentElement);
+	        return utils_1.findChildIndex(ev.target.parentElement);
 	    });
 	    return {
 	        newGame$: newGame$,
-	        reset$: reset$,
 	        selectCell$: selectCell$,
-	        selectedCells$: selectedCells$
 	    };
 	}
 	Object.defineProperty(exports, "__esModule", { value: true });
@@ -132,13 +109,40 @@
 
 /***/ },
 /* 3 */
+/***/ function(module, exports) {
+
+	"use strict";
+	function add(array, item) {
+	    return array.concat(item);
+	}
+	exports.add = add;
+	function remove(array, item) {
+	    return array.filter(function (x) { return x !== item; });
+	}
+	exports.remove = remove;
+	function has(array, item) {
+	    return array.indexOf(item) !== -1;
+	}
+	exports.has = has;
+	function findChildIndex(element) {
+	    var childNodes = element.parentElement.childNodes;
+	    for (var i = 0; i < childNodes.length; i++)
+	        if (childNodes[i] === element)
+	            return i;
+	    return -1;
+	}
+	exports.findChildIndex = findChildIndex;
+
+
+/***/ },
+/* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var xstream_1 = __webpack_require__(4);
-	var delay_1 = __webpack_require__(6);
-	var dropRepeats_1 = __webpack_require__(7);
-	var utils_1 = __webpack_require__(8);
+	var xstream_1 = __webpack_require__(5);
+	var delay_1 = __webpack_require__(7);
+	var dropRepeats_1 = __webpack_require__(8);
+	var utils_1 = __webpack_require__(3);
 	function reduce(reducer$, initial) {
 	    var value$ = reducer$.fold(function (current, reducer) { return reducer(current); }, initial);
 	    return value$;
@@ -155,15 +159,40 @@
 	    }
 	    return puzzle;
 	}
-	function model(intent) {
-	    // alias
+	function model(sources, intent) {
 	    var xs = xstream_1.Stream;
+	    var dom = sources.dom;
+	    var domScore$ = dom
+	        .select('.current.score span')
+	        .events('score_updated')
+	        .map(function (ev) {
+	        return parseInt(ev.target.innerText);
+	    });
 	    var puzzle$ = intent.newGame$
 	        .map(function () { return puzzle(); })
 	        .startWith(puzzle());
+	    var allowed$ = puzzle$.map(function () {
+	        return xs.of(true)
+	            .compose(delay_1.default(3000))
+	            .startWith(false);
+	    })
+	        .flatten()
+	        .remember();
+	    var domSelected$ = allowed$
+	        .map(function (allowed) {
+	        return dom
+	            .select('main .grid')
+	            .events('DOMSubtreeModified')
+	            .filter(function () { return allowed; })
+	            .map(function (ev) {
+	            var grid = ev.target;
+	            return [].slice.call(grid.querySelectorAll('.selected.cell')).map(function (el) { return utils_1.findChildIndex(el); });
+	        })
+	            .startWith([]);
+	    })
+	        .flatten();
 	    var selected$ = xs.merge(puzzle$
-	        .mapTo([]), intent.reset$
-	        .mapTo([]), intent.selectedCells$
+	        .mapTo([]), domSelected$
 	        .map(function (selected) {
 	        return intent.selectCell$
 	            .map(function (clicked) {
@@ -173,13 +202,6 @@
 	        });
 	    })
 	        .flatten()).startWith([]);
-	    var allowed$ = puzzle$.map(function () {
-	        return xs.of(true)
-	            .compose(delay_1.default(3000))
-	            .startWith(false);
-	    })
-	        .flatten()
-	        .remember();
 	    var over$ = selected$
 	        .map(function (selected) { return selected.length === 9; })
 	        .compose(distinctBooleans)
@@ -199,24 +221,23 @@
 	            });
 	        }).flatten();
 	    }).flatten()).startWith(null);
-	    var scoreReducer$ = result$
-	        .filter(Boolean)
-	        .map(function (result) {
-	        return function (score) {
-	            var won = result.correct.length === 9;
-	            score = score || 0;
+	    var score$ = domScore$
+	        .startWith(0)
+	        .map(function (score) {
+	        return result$
+	            .map(function (result) {
+	            var won = result && result.correct && result.correct.length === 9;
 	            return won ? score + 1 : score;
-	        };
-	    });
-	    var score$ = reduce(scoreReducer$, 0)
-	        .remember();
+	        });
+	    })
+	        .flatten();
 	    return {
 	        puzzle$: puzzle$,
 	        allowed$: allowed$,
 	        selected$: selected$,
 	        over$: over$,
-	        score$: score$,
-	        result$: result$
+	        result$: result$,
+	        score$: score$
 	    };
 	}
 	Object.defineProperty(exports, "__esModule", { value: true });
@@ -224,11 +245,11 @@
 
 
 /***/ },
-/* 4 */
+/* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var core_1 = __webpack_require__(5);
+	var core_1 = __webpack_require__(6);
 	exports.Stream = core_1.Stream;
 	exports.MemoryStream = core_1.MemoryStream;
 	Object.defineProperty(exports, "__esModule", { value: true });
@@ -236,7 +257,7 @@
 	//# sourceMappingURL=index.js.map
 
 /***/ },
-/* 5 */
+/* 6 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -1955,11 +1976,11 @@
 	//# sourceMappingURL=core.js.map
 
 /***/ },
-/* 6 */
+/* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var core_1 = __webpack_require__(5);
+	var core_1 = __webpack_require__(6);
 	var DelayOperator = (function () {
 	    function DelayOperator(dt, ins) {
 	        this.dt = dt;
@@ -2053,11 +2074,11 @@
 	//# sourceMappingURL=delay.js.map
 
 /***/ },
-/* 7 */
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var core_1 = __webpack_require__(5);
+	var core_1 = __webpack_require__(6);
 	var empty = {};
 	var DropRepeatsOperator = (function () {
 	    function DropRepeatsOperator(fn, ins) {
@@ -2180,30 +2201,11 @@
 	//# sourceMappingURL=dropRepeats.js.map
 
 /***/ },
-/* 8 */
-/***/ function(module, exports) {
-
-	"use strict";
-	function add(array, item) {
-	    return array.concat(item);
-	}
-	exports.add = add;
-	function remove(array, item) {
-	    return array.filter(function (x) { return x !== item; });
-	}
-	exports.remove = remove;
-	function has(array, item) {
-	    return array.indexOf(item) !== -1;
-	}
-	exports.has = has;
-
-
-/***/ },
 /* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var xstream_1 = __webpack_require__(4);
+	var xstream_1 = __webpack_require__(5);
 	var dom_1 = __webpack_require__(10);
 	function renderCell(index, state) {
 	    var disabled = (!state.allowed || state.over) ? '.disabled' : '';
@@ -2251,7 +2253,13 @@
 	                    dom_1.div('.title.bar', [
 	                        dom_1.h1(['Recall']),
 	                        dom_1.div('.scores', [
-	                            dom_1.div('.current.score', [dom_1.span([score])]),
+	                            dom_1.div('.current.score', [dom_1.span({
+	                                    hook: {
+	                                        postpatch: function (oldVNode, node) {
+	                                            node.elm.dispatchEvent(new Event('score_updated'));
+	                                        }
+	                                    }
+	                                }, [score])]),
 	                            dom_1.div('.best.score', [dom_1.span([score])])
 	                        ])
 	                    ]),
@@ -2676,7 +2684,7 @@
 
 	"use strict";
 	var snabbdom_1 = __webpack_require__(16);
-	var xstream_1 = __webpack_require__(4);
+	var xstream_1 = __webpack_require__(5);
 	var MainDOMSource_1 = __webpack_require__(18);
 	var VNodeWrapper_1 = __webpack_require__(27);
 	var utils_1 = __webpack_require__(22);
@@ -3072,7 +3080,7 @@
 
 	"use strict";
 	var xstream_adapter_1 = __webpack_require__(19);
-	var xstream_1 = __webpack_require__(4);
+	var xstream_1 = __webpack_require__(5);
 	var ElementFinder_1 = __webpack_require__(20);
 	var fromEvent_1 = __webpack_require__(24);
 	var isolate_1 = __webpack_require__(25);
@@ -3238,7 +3246,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var xstream_1 = __webpack_require__(4);
+	var xstream_1 = __webpack_require__(5);
 	var XStreamAdapter = {
 	    adapt: function (originStream, originStreamSubscribe) {
 	        if (XStreamAdapter.isValidStream(originStream)) {
@@ -3436,7 +3444,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var xstream_1 = __webpack_require__(4);
+	var xstream_1 = __webpack_require__(5);
 	function fromEvent(element, eventName, useCapture) {
 	    if (useCapture === void 0) { useCapture = false; }
 	    return xstream_1.Stream.create({
@@ -4415,7 +4423,7 @@
 
 	"use strict";
 	var xstream_adapter_1 = __webpack_require__(19);
-	var xstream_1 = __webpack_require__(4);
+	var xstream_1 = __webpack_require__(5);
 	function createVTree(vnode, children) {
 	    return {
 	        sel: vnode.sel,
@@ -4501,7 +4509,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var xstream_1 = __webpack_require__(4);
+	var xstream_1 = __webpack_require__(5);
 	var xstream_adapter_1 = __webpack_require__(19);
 	var HTMLSource = (function () {
 	    function HTMLSource(html$, runSA) {
@@ -7933,7 +7941,7 @@
 
 	"use strict";
 	var xstream_adapter_1 = __webpack_require__(19);
-	var xstream_1 = __webpack_require__(4);
+	var xstream_1 = __webpack_require__(5);
 	var MockedDOMSource = (function () {
 	    function MockedDOMSource(_streamAdapter, _mockConfig) {
 	        this._streamAdapter = _streamAdapter;
@@ -8250,7 +8258,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var xstream_1 = __webpack_require__(4);
+	var xstream_1 = __webpack_require__(5);
 	var XStreamAdapter = {
 	    adapt: function (originStream, originStreamSubscribe) {
 	        if (XStreamAdapter.isValidStream(originStream)) {
