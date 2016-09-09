@@ -35,6 +35,11 @@ jspm_packages
 
 # Optional REPL history
 .node_repl_history
+
+# VS Code Specific
 .vscode/.BROWSE.VC.DB
 .vscode/.BROWSE.VC.DB-shm
 .vscode/.BROWSE.VC.DB-wal
+
+# TypeScript Specific
+typings/
