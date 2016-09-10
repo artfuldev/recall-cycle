@@ -1,6 +1,7 @@
 import xs, { Stream } from 'xstream';
 import { DOMSource } from '@cycle/dom/xstream-typings';
 import { VNode, a } from '@cycle/dom';
+import isolate from '@cycle/isolate';
 
 export interface ButtonSources {
   classes$: Stream<string>;
@@ -13,7 +14,7 @@ export interface ButtonSinks {
   click$: Stream<MouseEvent>;
 }
 
-function Button(sources: ButtonSources): ButtonSinks {
+function ButtonComponent(sources: ButtonSources): ButtonSinks {
   const click$ = sources.dom.select('a').events('click').map(event => event as MouseEvent);
   const classes$ = sources.classes$;
   const content$ = sources.content$;
@@ -25,5 +26,7 @@ function Button(sources: ButtonSources): ButtonSinks {
     click$
   };
 }
+
+const Button = (sources: ButtonSources) => isolate(ButtonComponent)(sources);
 
 export default Button;
