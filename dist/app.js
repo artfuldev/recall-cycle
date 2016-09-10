@@ -8960,13 +8960,13 @@
 	"use strict";
 	var dom_1 = __webpack_require__(11);
 	function ScoreBoardComponent(sources) {
-	    var vdom$ = sources.score$
+	    var dom = sources.score$
 	        .map(function (score) { return dom_1.div('.scores', [
 	        dom_1.div('.current.score', [dom_1.span([score.toString()])]),
 	        dom_1.div('.best.score', [dom_1.span([score.toString()])])
 	    ]); });
 	    return {
-	        dom: vdom$
+	        dom: dom
 	    };
 	}
 	Object.defineProperty(exports, "__esModule", { value: true });

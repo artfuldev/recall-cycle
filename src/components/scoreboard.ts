@@ -10,14 +10,14 @@ interface ScoreboardSinks {
 }
 
 function ScoreBoardComponent(sources: ScoreboardSources): ScoreboardSinks {
-  const vdom$ =
+  const dom =
     sources.score$
       .map(score => div('.scores', [
         div('.current.score', [span([score.toString()])]),
         div('.best.score', [span([score.toString()])])
       ]));
   return {
-    dom: vdom$
+    dom
   }
 }
 
