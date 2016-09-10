@@ -6,7 +6,7 @@ interface ScoreboardSources {
 }
 
 interface ScoreboardSinks {
-  dom: Stream<VNode>
+  dom: Stream<VNode>;
 }
 
 function ScoreBoardComponent(sources: ScoreboardSources): ScoreboardSinks {
