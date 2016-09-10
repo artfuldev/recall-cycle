@@ -64,7 +64,11 @@
 	var button_1 = __webpack_require__(129);
 	var xstream_1 = __webpack_require__(5);
 	function main(sources) {
-	    var newGameButton = button_1.default({ classes$: xstream_1.default.of('.new'), content$: xstream_1.default.of('New Game'), dom: sources.dom });
+	    var newGameButton = button_1.default({
+	        classes$: xstream_1.default.of('.new'),
+	        content$: xstream_1.default.of('New Game'),
+	        dom: sources.dom
+	    });
 	    var vdom$ = view_1.default(model_1.default(intent_1.default(sources, newGameButton.click$)), newGameButton.dom);
 	    return {
 	        dom: vdom$
