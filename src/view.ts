@@ -58,11 +58,11 @@ function states(state: State): Stream<IViewState> {
   return state$;
 }
 
-function view(state: State): Stream<VNode> {
+function view(state: State, newGameDom$: Stream<VNode>): Stream<VNode> {
   const state$ = states(state);
   const scoreBoard = Scoreboard({ score$: state.score$ });
   const scoreDom$ = scoreBoard.dom;
-  const vdom$ = xs.combine(state$, scoreDom$).map(([state, scoreDom]) => {
+  const vdom$ = xs.combine(state$, scoreDom$, newGameDom$).map(([state, scoreDom, newGameDom]) => {
     const score = state.score.toString();
     return div('#root', [
       div('.container', [
@@ -76,7 +76,7 @@ function view(state: State): Stream<VNode> {
               'Click on the ',
               strong(['nine tiles you see']),
               ' to win!']),
-            a('.new', 'New Game')
+            newGameDom
           ])
         ]),
         main([

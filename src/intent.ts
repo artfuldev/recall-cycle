@@ -10,18 +10,18 @@ function disabled(event: Event) {
   return (event.target as HTMLElement).className.indexOf('disabled') !== -1;
 }
 
-function intent(sources: Sources): Intent {
+function intent(sources: Sources, newGameClick$: Stream<MouseEvent>): Intent {
 
   const dom = sources.dom;
 
-  const newGame$ = dom
-    .select('.new')
-    .events('click')
-    .filter(ev => !disabled(ev))
-    .map(ev => {
-      ev.preventDefault();
-      return true;
-    }).startWith(true);
+  const newGame$ =
+    newGameClick$
+      .filter(ev => !disabled(ev))
+      .map(ev => {
+        ev.preventDefault();
+        return true;
+      })
+      .startWith(true);
 
   const selectCell$ = dom
     .select('.cell span')

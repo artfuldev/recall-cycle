@@ -46,7 +46,7 @@
 
 	"use strict";
 	var main_1 = __webpack_require__(1);
-	var xstream_run_1 = __webpack_require__(129);
+	var xstream_run_1 = __webpack_require__(131);
 	var dom_1 = __webpack_require__(11);
 	xstream_run_1.run(main_1.default, {
 	    dom: dom_1.makeDOMDriver('#app')
@@ -61,8 +61,11 @@
 	var intent_1 = __webpack_require__(2);
 	var model_1 = __webpack_require__(3);
 	var view_1 = __webpack_require__(10);
+	var button_1 = __webpack_require__(129);
+	var xstream_1 = __webpack_require__(5);
 	function main(sources) {
-	    var vdom$ = view_1.default(model_1.default(intent_1.default(sources)));
+	    var newGameButton = button_1.default({ classes$: xstream_1.default.of('.new'), content$: xstream_1.default.of('New Game'), dom: sources.dom });
+	    var vdom$ = view_1.default(model_1.default(intent_1.default(sources, newGameButton.click$)), newGameButton.dom);
 	    return {
 	        dom: vdom$
 	    };
@@ -79,16 +82,15 @@
 	function disabled(event) {
 	    return event.target.className.indexOf('disabled') !== -1;
 	}
-	function intent(sources) {
+	function intent(sources, newGameClick$) {
 	    var dom = sources.dom;
-	    var newGame$ = dom
-	        .select('.new')
-	        .events('click')
+	    var newGame$ = newGameClick$
 	        .filter(function (ev) { return !disabled(ev); })
 	        .map(function (ev) {
 	        ev.preventDefault();
 	        return true;
-	    }).startWith(true);
+	    })
+	        .startWith(true);
 	    var selectCell$ = dom
 	        .select('.cell span')
 	        .events('click')
@@ -2231,12 +2233,12 @@
 	    });
 	    return state$;
 	}
-	function view(state) {
+	function view(state, newGameDom$) {
 	    var state$ = states(state);
 	    var scoreBoard = scoreboard_1.default({ score$: state.score$ });
 	    var scoreDom$ = scoreBoard.dom;
-	    var vdom$ = xstream_1.default.combine(state$, scoreDom$).map(function (_a) {
-	        var state = _a[0], scoreDom = _a[1];
+	    var vdom$ = xstream_1.default.combine(state$, scoreDom$, newGameDom$).map(function (_a) {
+	        var state = _a[0], scoreDom = _a[1], newGameDom = _a[2];
 	        var score = state.score.toString();
 	        return dom_1.div('#root', [
 	            dom_1.div('.container', [
@@ -2250,7 +2252,7 @@
 	                            'Click on the ',
 	                            dom_1.strong(['nine tiles you see']),
 	                            ' to win!']),
-	                        dom_1.a('.new', 'New Game')
+	                        newGameDom
 	                    ])
 	                ]),
 	                dom_1.main([
@@ -8976,7 +8978,132 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var base_1 = __webpack_require__(130);
+	var xstream_1 = __webpack_require__(5);
+	var dom_1 = __webpack_require__(11);
+	var isolate_1 = __webpack_require__(130);
+	function ButtonComponent(sources) {
+	    var click$ = sources.dom
+	        .select('a')
+	        .events('click')
+	        .map(function (event) { return event; });
+	    var classes$ = sources.classes$;
+	    var content$ = sources.content$;
+	    var dom = xstream_1.default.combine(classes$, content$)
+	        .map(function (_a) {
+	        var classes = _a[0], content = _a[1];
+	        return dom_1.a(classes, content);
+	    });
+	    return {
+	        dom: dom,
+	        click$: click$
+	    };
+	}
+	var Button = function (sources) { return isolate_1.default(ButtonComponent)(sources); };
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = Button;
+
+
+/***/ },
+/* 130 */
+/***/ function(module, exports) {
+
+	"use strict";
+	var counter = 0;
+	function newScope() {
+	    return "cycle" + ++counter;
+	}
+	function checkIsolateArgs(dataflowComponent, scope) {
+	    if (typeof dataflowComponent !== "function") {
+	        throw new Error("First argument given to isolate() must be a " +
+	            "'dataflowComponent' function");
+	    }
+	    if (scope === null) {
+	        throw new Error("Second argument given to isolate() must not be null");
+	    }
+	}
+	function isolateAllSources(sources, scope) {
+	    var scopedSources = {};
+	    for (var key in sources) {
+	        if (sources.hasOwnProperty(key) && sources[key]
+	            && typeof sources[key].isolateSource === "function") {
+	            scopedSources[key] = sources[key].isolateSource(sources[key], scope);
+	        }
+	        else if (sources.hasOwnProperty(key)) {
+	            scopedSources[key] = sources[key];
+	        }
+	    }
+	    return scopedSources;
+	}
+	function isolateAllSinks(sources, sinks, scope) {
+	    var scopedSinks = {};
+	    for (var key in sinks) {
+	        if (sinks.hasOwnProperty(key)
+	            && sources[key]
+	            && typeof sources[key].isolateSink === "function") {
+	            scopedSinks[key] = sources[key].isolateSink(sinks[key], scope);
+	        }
+	        else if (sinks.hasOwnProperty(key)) {
+	            scopedSinks[key] = sinks[key];
+	        }
+	    }
+	    return scopedSinks;
+	}
+	/**
+	 * Takes a `dataflowComponent` function and an optional `scope` string, and
+	 * returns a scoped version of the `dataflowComponent` function.
+	 *
+	 * When the scoped dataflow component is invoked, each source provided to the
+	 * scoped dataflowComponent is isolated to the scope using
+	 * `source.isolateSource(source, scope)`, if possible. Likewise, the sinks
+	 * returned from the scoped dataflow component are isolate to the scope using
+	 * `source.isolateSink(sink, scope)`.
+	 *
+	 * If the `scope` is not provided, a new scope will be automatically created.
+	 * This means that while **`isolate(dataflowComponent, scope)` is pure**
+	 * (referentially transparent), **`isolate(dataflowComponent)` is impure**
+	 * (not referentially transparent). Two calls to `isolate(Foo, bar)` will
+	 * generate two indistinct dataflow components. But, two calls to `isolate(Foo)`
+	 * will generate two distinct dataflow components.
+	 *
+	 * Note that both `isolateSource()` and `isolateSink()` are static members of
+	 * `source`. The reason for this is that drivers produce `source` while the
+	 * application produces `sink`, and it's the driver's responsibility to
+	 * implement `isolateSource()` and `isolateSink()`.
+	 *
+	 * @param {Function} dataflowComponent a function that takes `sources` as input
+	 * and outputs a collection of `sinks`.
+	 * @param {String} scope an optional string that is used to isolate each
+	 * `sources` and `sinks` when the returned scoped dataflow component is invoked.
+	 * @return {Function} the scoped dataflow component function that, as the
+	 * original `dataflowComponent` function, takes `sources` and returns `sinks`.
+	 * @function isolate
+	 */
+	function isolate(component, scope) {
+	    if (scope === void 0) { scope = newScope(); }
+	    checkIsolateArgs(component, scope);
+	    var convertedScope = typeof scope === 'string' ? scope : scope.toString();
+	    return function scopedComponent(sources) {
+	        var rest = [];
+	        for (var _i = 1; _i < arguments.length; _i++) {
+	            rest[_i - 1] = arguments[_i];
+	        }
+	        var scopedSources = isolateAllSources(sources, convertedScope);
+	        var sinks = component.apply(void 0, [scopedSources].concat(rest));
+	        var scopedSinks = isolateAllSinks(sources, sinks, convertedScope);
+	        return scopedSinks;
+	    };
+	}
+	isolate.reset = function () { return counter = 0; };
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = isolate;
+	//# sourceMappingURL=index.js.map
+
+/***/ },
+/* 131 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var base_1 = __webpack_require__(132);
 	var xstream_adapter_1 = __webpack_require__(20);
 	/**
 	 * Takes a `main` function and circularly connects it to the given collection
@@ -9054,7 +9181,7 @@
 	//# sourceMappingURL=index.js.map
 
 /***/ },
-/* 130 */
+/* 132 */
 /***/ function(module, exports) {
 
 	"use strict";
