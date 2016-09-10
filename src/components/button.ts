@@ -3,13 +3,13 @@ import { DOMSource } from '@cycle/dom/xstream-typings';
 import { VNode, a } from '@cycle/dom';
 import isolate from '@cycle/isolate';
 
-export interface ButtonSources {
+interface ButtonSources {
   classes$: Stream<string>;
   content$: Stream<VNode[]|string>;
   dom: DOMSource;
 }
 
-export interface ButtonSinks {
+interface ButtonSinks {
   dom: Stream<VNode>;
   click$: Stream<MouseEvent>;
 }

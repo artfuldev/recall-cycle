@@ -1,11 +1,11 @@
 import { Stream } from 'xstream';
 import { VNode, div, span } from '@cycle/dom';
 
-export interface ScoreboardSources {
+interface ScoreboardSources {
   score$: Stream<number>;
 }
 
-export interface ScoreboardSinks {
+interface ScoreboardSinks {
   dom: Stream<VNode>
 }
 
