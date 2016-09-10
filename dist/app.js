@@ -46,7 +46,7 @@
 
 	"use strict";
 	var main_1 = __webpack_require__(1);
-	var xstream_run_1 = __webpack_require__(128);
+	var xstream_run_1 = __webpack_require__(129);
 	var dom_1 = __webpack_require__(11);
 	xstream_run_1.run(main_1.default, {
 	    dom: dom_1.makeDOMDriver('#app')
@@ -2204,6 +2204,7 @@
 	"use strict";
 	var xstream_1 = __webpack_require__(5);
 	var dom_1 = __webpack_require__(11);
+	var scoreboard_1 = __webpack_require__(128);
 	function renderCell(index, state) {
 	    var disabled = (!state.allowed || state.over) ? '.disabled' : '';
 	    var classes = disabled;
@@ -2242,17 +2243,17 @@
 	}
 	function view(state) {
 	    var state$ = states(state);
-	    var vdom$ = state$.map(function (state) {
+	    var scoreBoard = scoreboard_1.default({ score$: state.score$ });
+	    var scoreDom$ = scoreBoard.dom;
+	    var vdom$ = xstream_1.default.combine(state$, scoreDom$).map(function (_a) {
+	        var state = _a[0], scoreDom = _a[1];
 	        var score = state.score.toString();
 	        return dom_1.div('#root', [
 	            dom_1.div('.container', [
 	                dom_1.header([
 	                    dom_1.div('.title.bar', [
 	                        dom_1.h1(['Recall']),
-	                        dom_1.div('.scores', [
-	                            dom_1.div('.current.score', [dom_1.span([score])]),
-	                            dom_1.div('.best.score', [dom_1.span([score])])
-	                        ])
+	                        scoreDom
 	                    ]),
 	                    dom_1.div('.info', [
 	                        dom_1.p([
@@ -8965,7 +8966,27 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var base_1 = __webpack_require__(129);
+	var dom_1 = __webpack_require__(11);
+	function ScoreBoardComponent(sources) {
+	    var vdom$ = sources.score$
+	        .map(function (score) { return dom_1.div('.scores', [
+	        dom_1.div('.current.score', [dom_1.span([score.toString()])]),
+	        dom_1.div('.best.score', [dom_1.span([score.toString()])])
+	    ]); });
+	    return {
+	        dom: vdom$
+	    };
+	}
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = ScoreBoardComponent;
+
+
+/***/ },
+/* 129 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var base_1 = __webpack_require__(130);
 	var xstream_adapter_1 = __webpack_require__(20);
 	/**
 	 * Takes a `main` function and circularly connects it to the given collection
@@ -9043,7 +9064,7 @@
 	//# sourceMappingURL=index.js.map
 
 /***/ },
-/* 129 */
+/* 130 */
 /***/ function(module, exports) {
 
 	"use strict";

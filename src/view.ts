@@ -1,6 +1,7 @@
-import { Stream } from 'xstream';
+import xs, { Stream } from 'xstream';
 import { div, header, h1, p, strong, a, main, span, footer, VNode} from '@cycle/dom';
 import { State, Result } from './definitions';
+import Scoreboard from './components/scoreboard';
 
 interface IViewState {
   puzzle: number[];
@@ -59,17 +60,16 @@ function states(state: State): Stream<IViewState> {
 
 function view(state: State): Stream<VNode> {
   const state$ = states(state);
-  const vdom$ = state$.map(state => {
+  const scoreBoard = Scoreboard({ score$: state.score$ });
+  const scoreDom$ = scoreBoard.dom;
+  const vdom$ = xs.combine(state$, scoreDom$).map(([state, scoreDom]) => {
     const score = state.score.toString();
     return div('#root', [
       div('.container', [
         header([
           div('.title.bar', [
             h1(['Recall']),
-            div('.scores', [
-              div('.current.score', [span([score])]),
-              div('.best.score', [span([score])])
-            ])
+            scoreDom
           ]),
           div('.info', [
             p([
