@@ -8,7 +8,7 @@ import { Sources, Sinks } from './definitions';
 function main(sources: Sources): Sinks {
   const newGameButton =
     Button({
-      classes$: xs.of('.new'),
+      selector$: xs.of('.new'),
       content$: xs.of('New Game'),
       dom: sources.dom
     });

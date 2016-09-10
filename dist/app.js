@@ -65,7 +65,7 @@
 	var xstream_1 = __webpack_require__(5);
 	function main(sources) {
 	    var newGameButton = button_1.default({
-	        classes$: xstream_1.default.of('.new'),
+	        selector$: xstream_1.default.of('.new'),
 	        content$: xstream_1.default.of('New Game'),
 	        dom: sources.dom
 	    });
@@ -8990,12 +8990,12 @@
 	        .select('a')
 	        .events('click')
 	        .map(function (event) { return event; });
-	    var classes$ = sources.classes$;
+	    var selector$ = sources.selector$;
 	    var content$ = sources.content$;
-	    var dom = xstream_1.default.combine(classes$, content$)
+	    var dom = xstream_1.default.combine(selector$, content$)
 	        .map(function (_a) {
-	        var classes = _a[0], content = _a[1];
-	        return dom_1.a(classes, content);
+	        var selector = _a[0], content = _a[1];
+	        return dom_1.a(selector, content);
 	    });
 	    return {
 	        dom: dom,

@@ -4,7 +4,7 @@ import { VNode, a } from '@cycle/dom';
 import isolate from '@cycle/isolate';
 
 interface ButtonSources {
-  classes$: Stream<string>;
+  selector$: Stream<string>;
   content$: Stream<VNode[]|string>;
   dom: DOMSource;
 }
@@ -20,11 +20,11 @@ function ButtonComponent(sources: ButtonSources): ButtonSinks {
       .select('a')
       .events('click')
       .map(event => event as MouseEvent);
-  const classes$ = sources.classes$;
+  const selector$ = sources.selector$;
   const content$ = sources.content$;
   const dom =
-    xs.combine(classes$, content$)
-      .map(([classes, content]) => a(classes, content));
+    xs.combine(selector$, content$)
+      .map(([selector, content]) => a(selector, content));
   return {
     dom,
     click$
