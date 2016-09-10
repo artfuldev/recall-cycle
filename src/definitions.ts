@@ -2,25 +2,25 @@ import { DOMSource } from '@cycle/dom/xstream-typings';
 import { VNode } from '@cycle/dom';
 import { Stream } from 'xstream'; 
 
-export interface ISources {
+export interface Sources {
     dom: DOMSource;
 }
 
-export interface ISinks {
+export interface Sinks {
   dom: Stream<VNode>;
 }
 
-export interface IResult {
+export interface Result {
     correct: Array<number>;
     wrong: Array<number>;
     missed: Array<number>;
 }
 
-export interface IState {
+export interface State {
     puzzle$: Stream<Array<number>>;
     allowed$: Stream<boolean>;
     selectedCells$: Stream<Array<number>>;
     over$: Stream<boolean>;
     score$: Stream<number>;
-    result$: Stream<IResult>;
+    result$: Stream<Result>;
 }

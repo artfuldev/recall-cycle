@@ -1,4 +1,4 @@
-import { ISources } from './definitions';
+import { Sources } from './definitions';
 import { Stream } from 'xstream';
 
 export interface IIntent {
@@ -11,7 +11,7 @@ function disabled(event: Event) {
   return (event.target as HTMLElement).className.indexOf('disabled') !== -1;
 }
 
-function intent(sources: ISources): IIntent {
+function intent(sources: Sources): IIntent {
 
   const dom = sources.dom;
 

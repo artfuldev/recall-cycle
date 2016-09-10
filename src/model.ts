@@ -1,9 +1,9 @@
 import reducers from './reducers';
 import { IIntent } from './intent';
 import { Stream } from 'xstream';
-import { IState } from './definitions';
+import { State } from './definitions';
 
-function model(actions: IIntent): IState {
+function model(actions: IIntent): State {
   const state = reducers(actions);
   return state;
 }

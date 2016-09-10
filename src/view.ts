@@ -1,6 +1,6 @@
 import { Stream } from 'xstream';
 import { div, header, h1, p, strong, a, main, span, footer, VNode} from '@cycle/dom';
-import { IState, IResult } from './definitions';
+import { State, Result } from './definitions';
 
 interface IViewState {
   puzzle: number[];
@@ -8,7 +8,7 @@ interface IViewState {
   selected: number[];
   over: boolean;
   score: number;
-  result: IResult;
+  result: Result;
 }
 
 function renderCell(index: number, state: IViewState): VNode {
@@ -33,7 +33,7 @@ function renderCell(index: number, state: IViewState): VNode {
 
 const grid = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24];
 
-function states(state: IState): Stream<IViewState> {
+function states(state: State): Stream<IViewState> {
   const xs = Stream;
   const state$ =
     xs.combine(
@@ -57,7 +57,7 @@ function states(state: IState): Stream<IViewState> {
   return state$;
 }
 
-function view(state: IState): Stream<VNode> {
+function view(state: State): Stream<VNode> {
   const state$ = states(state);
   const vdom$ = state$.map(state => {
     const score = state.score.toString();
