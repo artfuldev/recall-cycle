@@ -89,14 +89,6 @@
 	        ev.preventDefault();
 	        return true;
 	    }).startWith(true);
-	    var reset$ = dom
-	        .select('.reset')
-	        .events('click')
-	        .filter(function (ev) { return !disabled(ev); })
-	        .map(function (ev) {
-	        ev.preventDefault();
-	        return true;
-	    });
 	    var selectCell$ = dom
 	        .select('.cell span')
 	        .events('click')
@@ -110,7 +102,6 @@
 	    });
 	    return {
 	        newGame$: newGame$,
-	        reset$: reset$,
 	        selectCell$: selectCell$
 	    };
 	}
@@ -162,7 +153,6 @@
 	        return puzzle;
 	    }).remember();
 	    var selectedCellsReducer$ = xs.merge(puzzle$
-	        .mapTo(function () { return new Array(); }), actions.reset$
 	        .mapTo(function () { return new Array(); }), actions.selectCell$
 	        .map(function (clicked) {
 	        return function (selected) {

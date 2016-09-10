@@ -1,17 +1,16 @@
 import { Sources } from './definitions';
 import { Stream } from 'xstream';
 
-export interface IIntent {
-  newGame$: Stream<boolean>
-  reset$: Stream<boolean>
-  selectCell$: Stream<number>
+export interface Intent {
+  newGame$: Stream<boolean>;
+  selectCell$: Stream<number>;
 }
 
 function disabled(event: Event) {
   return (event.target as HTMLElement).className.indexOf('disabled') !== -1;
 }
 
-function intent(sources: Sources): IIntent {
+function intent(sources: Sources): Intent {
 
   const dom = sources.dom;
 
@@ -23,15 +22,6 @@ function intent(sources: Sources): IIntent {
       ev.preventDefault();
       return true;
     }).startWith(true);
-
-  const reset$ = dom
-    .select('.reset')
-    .events('click')
-    .filter(ev => !disabled(ev))
-    .map(ev => {
-      ev.preventDefault();
-      return true;
-    });
 
   const selectCell$ = dom
     .select('.cell span')
@@ -48,7 +38,6 @@ function intent(sources: Sources): IIntent {
 
   return {
     newGame$,
-    reset$,
     selectCell$
   };
 }

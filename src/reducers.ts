@@ -1,6 +1,6 @@
 import Stream from 'xstream';
 import delay from 'xstream/extra/delay';
-import { IIntent } from './intent';
+import { Intent } from './intent';
 import { Result, State } from './definitions';
 import flattenConcurrently from 'xstream/extra/flattenConcurrently';
 import dropRepeats from 'xstream/extra/dropRepeats';
@@ -13,7 +13,7 @@ function reduce<T>(reducer$: Stream<(prev: T) => T>, initial: T) {
 
 const distinctBooleans = dropRepeats<boolean>((prev, next) => prev === next);
 
-function reducers(actions: IIntent): State {
+function reducers(actions: Intent): State {
   // alias
   const xs = Stream;
 
@@ -34,8 +34,6 @@ function reducers(actions: IIntent): State {
   const selectedCellsReducer$ =
     xs.merge(
       puzzle$
-        .mapTo(() => new Array<number>()),
-      actions.reset$
         .mapTo(() => new Array<number>()),
       actions.selectCell$
         .map(clicked =>
