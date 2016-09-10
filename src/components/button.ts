@@ -15,7 +15,11 @@ export interface ButtonSinks {
 }
 
 function ButtonComponent(sources: ButtonSources): ButtonSinks {
-  const click$ = sources.dom.select('a').events('click').map(event => event as MouseEvent);
+  const click$ =
+    sources.dom
+      .select('a')
+      .events('click')
+      .map(event => event as MouseEvent);
   const classes$ = sources.classes$;
   const content$ = sources.content$;
   const dom =
