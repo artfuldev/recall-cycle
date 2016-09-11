@@ -5,6 +5,7 @@ import { Result } from './../definitions';
 import Cell, { CellState } from './cell';
 import { add, remove, has, reduce } from './../utils';
 import delay from 'xstream/extra/delay';
+import isolate from '@cycle/isolate';
 
 interface GridSources {
   dom: DOMSource;
@@ -90,3 +91,7 @@ function GridComponent(sources: GridSources): GridSinks {
     selected$
   };
 }
+
+const Grid = (sources: GridSources) => isolate(GridComponent)(sources);
+
+export default Grid;
