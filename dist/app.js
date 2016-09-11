@@ -66,21 +66,23 @@
 	var xstream_1 = __webpack_require__(4);
 	function main(sources) {
 	    var dom = sources.dom;
+	    var proxyNewGameClick$ = xstream_1.default.create();
+	    var proxySelected$ = xstream_1.default.create();
+	    var state = model_1.default(intent_1.default(proxyNewGameClick$, proxySelected$));
+	    var puzzle$ = state.puzzle$;
+	    var result$ = state.result$;
 	    var newGameButton = button_1.default({
 	        selector$: xstream_1.default.of('.new'),
 	        content$: xstream_1.default.of('New Game'),
 	        dom: dom
 	    });
-	    var puzzle$ = xstream_1.default.create().debug();
-	    var result$ = xstream_1.default.create().debug();
 	    var grid = grid_1.default({
 	        dom: dom,
 	        puzzle$: puzzle$,
 	        result$: result$
 	    });
-	    var state = model_1.default(intent_1.default(newGameButton.click$, grid.selected$));
-	    puzzle$.imitate(state.puzzle$);
-	    result$.imitate(state.result$);
+	    proxyNewGameClick$.imitate(newGameButton.click$);
+	    proxySelected$.imitate(grid.selected$);
 	    var vdom$ = view_1.default(state, newGameButton.dom, grid.dom);
 	    return {
 	        dom: vdom$
@@ -119,7 +121,6 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var xstream_1 = __webpack_require__(4);
 	var dropRepeats_1 = __webpack_require__(6);
 	var utils_1 = __webpack_require__(7);
 	var distinctBooleans = dropRepeats_1.default(function (prev, next) { return prev === next; });
@@ -135,24 +136,26 @@
 	    return puzzle;
 	};
 	function model(actions) {
-	    var puzzle$ = xstream_1.default.merge(xstream_1.default.of(puzzle()), actions.newGame$.map(function () { return puzzle(); })).debug();
+	    var puzzle$ = actions.newGame$
+	        .map(function () { return puzzle(); })
+	        .startWith(puzzle())
+	        .debug();
 	    var over$ = actions.selected$
 	        .map(function (selected) { return selected.length === 9; })
 	        .compose(distinctBooleans)
 	        .debug();
-	    var result$ = puzzle$.map(function (puzzle) {
-	        return over$
-	            .map(function (over) {
-	            return over
-	                ? actions.selected$.map(function (selected) {
-	                    var result = {
-	                        correct: selected.filter(function (s) { return puzzle.indexOf(s) !== -1; }),
-	                        wrong: selected.filter(function (s) { return puzzle.indexOf(s) === -1; }),
-	                        missed: puzzle.filter(function (p) { return selected.indexOf(p) === -1; })
-	                    };
-	                    return result;
-	                })
-	                : xstream_1.default.of(null);
+	    var result$ = over$
+	        .filter(Boolean)
+	        .map(function (over) {
+	        return puzzle$.map(function (puzzle) {
+	            return actions.selected$.map(function (selected) {
+	                var result = {
+	                    correct: selected.filter(function (s) { return puzzle.indexOf(s) !== -1; }),
+	                    wrong: selected.filter(function (s) { return puzzle.indexOf(s) === -1; }),
+	                    missed: puzzle.filter(function (p) { return selected.indexOf(p) === -1; })
+	                };
+	                return result;
+	            });
 	        }).flatten();
 	    }).flatten()
 	        .debug();
@@ -8950,26 +8953,30 @@
 	        var dom = sources.dom;
 	        var enabled$ = xstream_1.default.merge(puzzle$
 	            .map(function () {
-	            return xstream_1.default.merge(xstream_1.default.of(false), xstream_1.default.of(true).compose(delay_1.default(3000)));
-	        }).flatten(), result$.mapTo(false));
-	        var state$ = xstream_1.default.merge(puzzle$
+	            return xstream_1.default.merge(result$.mapTo(false), xstream_1.default.of(true)
+	                .compose(delay_1.default(3000))
+	                .startWith(false));
+	        }).flatten());
+	        var state$ = puzzle$
 	            .map(function (puzzle) {
-	            return xstream_1.default.merge(xstream_1.default.of(utils_1.has(puzzle, i) ? cell_1.CellState.Highlighted : cell_1.CellState.Normal), xstream_1.default.of(cell_1.CellState.Normal).compose(delay_1.default(3000)));
-	        }).flatten(), result$
-	            .map(function (result) {
-	            if (utils_1.has(result.correct, i))
-	                return cell_1.CellState.Correct;
-	            if (utils_1.has(result.wrong, i))
-	                return cell_1.CellState.Wrong;
-	            if (utils_1.has(result.missed, i))
-	                return cell_1.CellState.Missed;
-	            return cell_1.CellState.Normal;
-	        }), selectedProxy$
-	            .map(function (selected) {
-	            return utils_1.has(selected, i)
-	                ? cell_1.CellState.Selected
-	                : cell_1.CellState.Normal;
-	        }));
+	            return xstream_1.default.merge(xstream_1.default.of(cell_1.CellState.Normal)
+	                .compose(delay_1.default(3000))
+	                .startWith(utils_1.has(puzzle, i) ? cell_1.CellState.Highlighted : cell_1.CellState.Normal), result$
+	                .map(function (result) {
+	                if (utils_1.has(result.correct, i))
+	                    return cell_1.CellState.Correct;
+	                if (utils_1.has(result.wrong, i))
+	                    return cell_1.CellState.Wrong;
+	                if (utils_1.has(result.missed, i))
+	                    return cell_1.CellState.Missed;
+	                return cell_1.CellState.Normal;
+	            }), selectedProxy$
+	                .map(function (selected) {
+	                return utils_1.has(selected, i)
+	                    ? cell_1.CellState.Selected
+	                    : cell_1.CellState.Normal;
+	            }));
+	        }).flatten();
 	        var cell = cell_1.default({
 	            dom: dom,
 	            enabled$: enabled$,
@@ -8990,7 +8997,7 @@
 	                : utils_1.add(selected, i);
 	        };
 	    }));
-	    var selected$ = xstream_1.default.merge(xstream_1.default.of([]), utils_1.reduce(selectedReducer$, nothing).drop(1)).debug();
+	    var selected$ = utils_1.reduce(selectedReducer$, nothing).filter(function () { return true; }).debug();
 	    selectedProxy$.imitate(selected$);
 	    return {
 	        dom: dom,

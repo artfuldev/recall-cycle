@@ -22,10 +22,10 @@ const puzzle = () => {
 
 function model(actions: Intent): State {
   const puzzle$ =
-    xs.merge(
-      xs.of(puzzle()),
-      actions.newGame$.map(() => puzzle())
-    ).debug();
+    actions.newGame$
+      .map(() => puzzle())
+      .startWith(puzzle())
+      .debug();
 
   const over$ =
     actions.selected$
@@ -34,21 +34,20 @@ function model(actions: Intent): State {
       .debug();
 
   const result$ =
-    puzzle$.map(puzzle =>
-      over$
-        .map(over =>
-          over
-            ? actions.selected$.map(selected => {
-              const result: Result = {
-                correct: selected.filter(s => puzzle.indexOf(s) !== -1),
-                wrong: selected.filter(s => puzzle.indexOf(s) === -1),
-                missed: puzzle.filter(p => selected.indexOf(p) === -1)
-              };
-              return result;
-            })
-            : xs.of<Result>(null)
+    over$
+      .filter(Boolean)
+      .map(over =>
+        puzzle$.map(puzzle =>
+          actions.selected$.map(selected => {
+            const result: Result = {
+              correct: selected.filter(s => puzzle.indexOf(s) !== -1),
+              wrong: selected.filter(s => puzzle.indexOf(s) === -1),
+              missed: puzzle.filter(p => selected.indexOf(p) === -1)
+            };
+            return result;
+          })
         ).flatten()
-    ).flatten()
+      ).flatten()
       .debug();
 
   const scoreReducer$ =
