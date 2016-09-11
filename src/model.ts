@@ -22,9 +22,10 @@ const puzzle = () => {
 
 function model(actions: Intent): State {
   const puzzle$ =
-    actions.newGame$
-      .map(() => puzzle())
-      .startWith(puzzle());
+    xs.merge(
+      xs.of(puzzle()),
+      actions.newGame$.map(() => puzzle())
+    );
 
   const over$ =
     actions.selected$
@@ -33,8 +34,7 @@ function model(actions: Intent): State {
 
   const result$ =
     xs.merge(
-      puzzle$
-        .mapTo(null),
+      puzzle$.mapTo(null),
       over$
         .filter(Boolean)
         .map(() =>
@@ -49,7 +49,7 @@ function model(actions: Intent): State {
             })
           ).flatten()
         ).flatten()
-    ).startWith(null);
+    );
 
   const scoreReducer$ =
     result$

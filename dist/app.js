@@ -135,14 +135,11 @@
 	    return puzzle;
 	};
 	function model(actions) {
-	    var puzzle$ = actions.newGame$
-	        .map(function () { return puzzle(); })
-	        .startWith(puzzle());
+	    var puzzle$ = xstream_1.default.merge(xstream_1.default.of(puzzle()), actions.newGame$.map(function () { return puzzle(); }));
 	    var over$ = actions.selected$
 	        .map(function (selected) { return selected.length === 9; })
 	        .compose(distinctBooleans);
-	    var result$ = xstream_1.default.merge(puzzle$
-	        .mapTo(null), over$
+	    var result$ = xstream_1.default.merge(puzzle$.mapTo(null), over$
 	        .filter(Boolean)
 	        .map(function () {
 	        return puzzle$.map(function (puzzle) {
@@ -155,7 +152,7 @@
 	                return result;
 	            });
 	        }).flatten();
-	    }).flatten()).startWith(null);
+	    }).flatten());
 	    var scoreReducer$ = result$
 	        .filter(Boolean)
 	        .map(function (result) {
@@ -8956,9 +8953,7 @@
 	            .map(function () { return false; }));
 	        var state$ = xstream_1.default.merge(puzzle$
 	            .map(function (puzzle) {
-	            return xstream_1.default.of(cell_1.CellState.Normal)
-	                .compose(delay_1.default(3000))
-	                .startWith(utils_1.has(puzzle, i) ? cell_1.CellState.Highlighted : cell_1.CellState.Normal);
+	            return xstream_1.default.merge(xstream_1.default.of(utils_1.has(puzzle, i) ? cell_1.CellState.Highlighted : cell_1.CellState.Normal), xstream_1.default.of(cell_1.CellState.Normal).compose(delay_1.default(3000)));
 	        }).flatten(), result$
 	            .map(function (result) {
 	            if (utils_1.has(result.correct, i))

@@ -41,9 +41,10 @@ function GridComponent(sources: GridSources): GridSinks {
       xs.merge(
         puzzle$
           .map(puzzle =>
-            xs.of(CellState.Normal)
-              .compose(delay<CellState>(3000))
-              .startWith(has(puzzle, i) ? CellState.Highlighted : CellState.Normal)
+            xs.merge(
+              xs.of(has(puzzle, i) ? CellState.Highlighted : CellState.Normal),
+              xs.of(CellState.Normal).compose(delay<CellState>(3000))
+            )
           ).flatten(),
         result$
           .map(result => {
