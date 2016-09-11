@@ -19,7 +19,7 @@ interface GridSinks {
 function GridComponent(sources: GridSources): GridSinks {
   const puzzle$ = sources.puzzle$;
   const result$ = sources.result$.filter(Boolean);
-  const grid = Array.apply(null, { length: 25 }).map(Number.call, Number) as number[];
+  const grid: number[] = Array.apply(null, { length: 25 }).map(Number.call, Number);
   const nothing: number[] = [];
   const selectedProxy$ = xs.create<number[]>();
   const cells = grid.map(i => {
