@@ -3,17 +3,14 @@ import { Stream } from 'xstream';
 
 export interface Intent {
   newGame$: Stream<boolean>;
-  selectCell$: Stream<number>;
+  selected$: Stream<number[]>;
 }
 
 function disabled(event: Event) {
   return (event.target as HTMLElement).className.indexOf('disabled') !== -1;
 }
 
-function intent(sources: Sources, newGameClick$: Stream<MouseEvent>): Intent {
-
-  const dom = sources.dom;
-
+function intent(newGameClick$: Stream<MouseEvent>, selected$: Stream<number[]>): Intent {
   const newGame$ =
     newGameClick$
       .filter(ev => !disabled(ev))
@@ -22,23 +19,9 @@ function intent(sources: Sources, newGameClick$: Stream<MouseEvent>): Intent {
         return true;
       })
       .startWith(true);
-
-  const selectCell$ = dom
-    .select('.cell span')
-    .events('click')
-    .filter(ev => !disabled(ev))
-    .map(ev => {
-      ev.preventDefault();
-      return parseInt(
-        (ev.target as HTMLElement)
-          .parentElement
-          .attributes['data-index']
-          .value);
-    });
-
   return {
     newGame$,
-    selectCell$
+    selected$
   };
 }
 

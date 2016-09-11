@@ -12,58 +12,10 @@ interface IViewState {
   result: Result;
 }
 
-function renderCell(index: number, state: IViewState): VNode {
-  const disabled = (!state.allowed || state.over) ? '.disabled' : '';
-  var classes = disabled;
-  if (state.over && state.result) {
-    if (state.result.correct.indexOf(index) > -1)
-      classes += '.correct';
-    else if (state.result.wrong.indexOf(index) > -1)
-      classes += '.wrong';
-    else if (state.result.missed.indexOf(index) > -1)
-      classes += '.missed';
-  }
-  else {
-    if (!state.allowed && state.puzzle.indexOf(index) > -1)
-      classes += '.highlighted';
-    else if (state.allowed && state.selected.indexOf(index) > -1)
-      classes += '.selected';
-  }
-  return div(classes + '.cell', { attrs: { 'data-index': index } }, [span(disabled)]);
-}
-
-const grid = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24];
-
-function states(state: State): Stream<IViewState> {
-  const xs = Stream;
-  const state$ =
-    xs.combine(
-      state.puzzle$,
-      state.allowed$,
-      state.selectedCells$,
-      state.over$,
-      state.score$,
-      state.result$
-    ).map(([puzzle, allowed, selected, over, score, result]) => {
-      const viewState: IViewState = {
-        puzzle,
-        allowed,
-        selected,
-        over,
-        score,
-        result
-      };
-      return viewState;
-    });
-  return state$;
-}
-
-function view(state: State, newGameDom$: Stream<VNode>): Stream<VNode> {
-  const state$ = states(state);
+function view(state: State, newGameDom$: Stream<VNode>, gridDom$: Stream<VNode>): Stream<VNode> {
   const scoreBoard = Scoreboard({ score$: state.score$ });
   const scoreDom$ = scoreBoard.dom;
-  const vdom$ = xs.combine(state$, scoreDom$, newGameDom$).map(([state, scoreDom, newGameDom]) => {
-    const score = state.score.toString();
+  const vdom$ = xs.combine(scoreDom$, newGameDom$, gridDom$).map(([scoreDom, newGameDom, gridDom]) => {
     return div('#root', [
       div('.container', [
         header([
@@ -80,9 +32,7 @@ function view(state: State, newGameDom$: Stream<VNode>): Stream<VNode> {
           ])
         ]),
         main([
-          div('.panel', [
-            div('.grid', grid.map((x) => renderCell(x, state)))
-          ])
+          div('.panel', [gridDom])
         ]),
         footer([
           'Made with ',

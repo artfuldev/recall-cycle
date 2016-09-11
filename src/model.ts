@@ -20,37 +20,14 @@ const puzzle = () => {
   return puzzle;
 };
 
-function reducers(actions: Intent): State {
+function model(actions: Intent): State {
   const puzzle$ =
     actions.newGame$
       .map(() => puzzle())
       .startWith(puzzle());
 
-  const selectedCellsReducer$ =
-    xs.merge(
-      puzzle$
-        .mapTo(() => new Array<number>()),
-      actions.selectCell$
-        .map(clicked =>
-          (selected: number[]) =>
-            has(selected, clicked)
-              ? remove(selected, clicked)
-              : add(selected, clicked))
-    );
-  const selectedCells$ =
-    reduce(selectedCellsReducer$, new Array<number>())
-      .remember();
-
-  const allowed$ =
-    puzzle$.map(() =>
-      xs.of(true)
-        .compose(delay<boolean>(3000))
-        .startWith(false))
-      .flatten()
-      .remember();
-
   const over$ =
-    selectedCells$
+    actions.selected$
       .map((selected) => selected.length === 9)
       .compose(distinctBooleans);
 
@@ -62,7 +39,7 @@ function reducers(actions: Intent): State {
         .filter(Boolean)
         .map(() =>
           puzzle$.map(puzzle =>
-            selectedCells$.map(selected => {
+            actions.selected$.map(selected => {
               const result: Result = {
                 correct: selected.filter(s => puzzle.indexOf(s) !== -1),
                 wrong: selected.filter(s => puzzle.indexOf(s) === -1),
@@ -89,17 +66,9 @@ function reducers(actions: Intent): State {
 
   return {
     puzzle$,
-    allowed$,
-    selectedCells$,
-    over$,
     score$,
     result$
   };
-}
-
-function model(actions: Intent): State {
-  const state = reducers(actions);
-  return state;
 }
 
 export default model;

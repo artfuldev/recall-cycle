@@ -18,9 +18,6 @@ export interface Result {
 
 export interface State {
     puzzle$: Stream<Array<number>>;
-    allowed$: Stream<boolean>;
-    selectedCells$: Stream<Array<number>>;
-    over$: Stream<boolean>;
     score$: Stream<number>;
     result$: Stream<Result>;
 }
