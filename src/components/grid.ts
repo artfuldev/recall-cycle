@@ -24,44 +24,44 @@ function GridComponent(sources: GridSources): GridSinks {
   const grid: number[] = Array.apply(null, { length: 25 }).map(Number.call, Number);
   const nothing: number[] = [];
   const selectedProxy$ = xs.create<number[]>();
+  const enabled$ =
+    xs.merge(
+      puzzle$
+        .map(() =>
+          xs.of(true)
+            .compose(delay<boolean>(3000))
+            .startWith(false)
+        ).flatten(),
+      result$.mapTo(false)
+    ).debug();
   const cells =
-    grid.map(i => {
+    grid.map((element, index) => {
       const dom = sources.dom;
-      const enabled$ =
+      const state$ =
         xs.merge(
           puzzle$
-            .map(() =>
+            .map(puzzle =>
               xs.merge(
-                result$.mapTo(false),
-                xs.of(true)
-                  .compose(delay<boolean>(3000))
-                  .startWith(false)
-              )
-            ).flatten()
+                xs.of(CellState.Normal)
+                  .compose(delay<CellState>(3000)),
+                xs.of(has(puzzle, index) ? CellState.Highlighted : CellState.Normal)
+              )).flatten(),
+          result$
+            .map(result => {
+              if (has(result.correct, index))
+                return CellState.Correct;
+              if (has(result.wrong, index))
+                return CellState.Wrong;
+              if (has(result.missed, index))
+                return CellState.Missed;
+              return CellState.Normal;
+            }),
+          selectedProxy$
+            .map(selected =>
+              has(selected, index)
+                ? CellState.Selected
+                : CellState.Normal)
         );
-      const state$ =
-        puzzle$
-          .map(puzzle =>
-            xs.merge(
-              xs.of(CellState.Normal)
-                .compose(delay<CellState>(3000))
-                .startWith(has(puzzle, i) ? CellState.Highlighted : CellState.Normal),
-              result$
-                .map(result => {
-                  if (has(result.correct, i))
-                    return CellState.Correct;
-                  if (has(result.wrong, i))
-                    return CellState.Wrong;
-                  if (has(result.missed, i))
-                    return CellState.Missed;
-                  return CellState.Normal;
-                }),
-              selectedProxy$
-                .map(selected =>
-                  has(selected, i)
-                    ? CellState.Selected
-                    : CellState.Normal)
-            )).flatten();
       const cell = Cell({
         dom,
         enabled$,
@@ -88,7 +88,7 @@ function GridComponent(sources: GridSources): GridSinks {
             ? remove(selected, i)
             : add(selected, i))
     );
-  const selected$ = reduce(selectedReducer$, nothing).filter(() => true).debug();
+  const selected$ = reduce(selectedReducer$, nothing).filter(() => true);
   selectedProxy$.imitate(selected$);
   return {
     dom,

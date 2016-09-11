@@ -24,14 +24,12 @@ function model(actions: Intent): State {
   const puzzle$ =
     actions.newGame$
       .map(() => puzzle())
-      .startWith(puzzle())
-      .debug();
+      .startWith(puzzle());
 
   const over$ =
     actions.selected$
       .map(selected => selected.length === 9)
-      .compose(distinctBooleans)
-      .debug();
+      .compose(distinctBooleans);
 
   const result$ =
     over$
@@ -47,8 +45,7 @@ function model(actions: Intent): State {
             return result;
           })
         ).flatten()
-      ).flatten()
-      .debug();
+      ).flatten();
 
   const scoreReducer$ =
     result$
