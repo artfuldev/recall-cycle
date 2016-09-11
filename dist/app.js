@@ -65,17 +65,23 @@
 	var grid_1 = __webpack_require__(129);
 	var xstream_1 = __webpack_require__(4);
 	function main(sources) {
+	    var dom = sources.dom;
 	    var newGameButton = button_1.default({
 	        selector$: xstream_1.default.of('.new'),
 	        content$: xstream_1.default.of('New Game'),
-	        dom: sources.dom
+	        dom: dom
 	    });
+	    var puzzle$ = xstream_1.default.create();
+	    var result$ = xstream_1.default.create();
 	    var grid = grid_1.default({
-	        dom: sources.dom,
-	        puzzle$: xstream_1.default.never(),
-	        result$: xstream_1.default.never()
+	        dom: dom,
+	        puzzle$: puzzle$,
+	        result$: result$
 	    });
-	    var vdom$ = view_1.default(model_1.default(intent_1.default(newGameButton.click$, grid.selected$)), newGameButton.dom, grid.dom);
+	    var state = model_1.default(intent_1.default(newGameButton.click$, grid.selected$));
+	    puzzle$.imitate(state.puzzle$);
+	    result$.imitate(state.result$);
+	    var vdom$ = view_1.default(state, newGameButton.dom, grid.dom);
 	    return {
 	        dom: vdom$
 	    };

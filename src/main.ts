@@ -4,25 +4,27 @@ import view from './view';
 import Button from './components/button';
 import Grid from './components/grid';
 import xs from 'xstream';
-import { Sources, Sinks } from './definitions';
+import { Sources, Sinks, Result } from './definitions';
 
 function main(sources: Sources): Sinks {
+  const dom = sources.dom;
   const newGameButton =
     Button({
       selector$: xs.of('.new'),
       content$: xs.of('New Game'),
-      dom: sources.dom
+      dom
     });
+  const puzzle$ = xs.create<number[]>();
+  const result$ = xs.create<Result>();
   const grid = Grid({
-    dom: sources.dom,
-    puzzle$: xs.never(),
-    result$: xs.never()
+    dom,
+    puzzle$,
+    result$
   });
-  const vdom$ =
-    view(
-      model(intent(newGameButton.click$, grid.selected$)),
-      newGameButton.dom,
-      grid.dom);
+  const state = model(intent(newGameButton.click$, grid.selected$));
+  puzzle$.imitate(state.puzzle$);
+  result$.imitate(state.result$);
+  const vdom$ = view(state, newGameButton.dom, grid.dom);
   return {
     dom: vdom$
   };
