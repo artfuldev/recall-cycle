@@ -4,12 +4,7 @@ import { Intent } from './intent';
 import { Result, State } from './definitions';
 import flattenConcurrently from 'xstream/extra/flattenConcurrently';
 import dropRepeats from 'xstream/extra/dropRepeats';
-import { add, remove, has } from './utils';
-
-function reduce<T>(reducer$: Stream<(prev: T) => T>, initial: T) {
-  const value$ = reducer$.fold((current, reducer) => reducer(current), initial);
-  return value$;
-}
+import { add, remove, has, reduce } from './utils';
 
 const distinctBooleans = dropRepeats<boolean>((prev, next) => prev === next);
 
