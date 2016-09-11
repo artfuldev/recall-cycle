@@ -29,8 +29,10 @@ function CellComponent(sources: CellSources): CellSinks {
       sources.dom
         .select('.cell span')
         .events('click')
-        .filter(() => enabled)
-        .map(ev => ev as MouseEvent)
+        .map(ev => {
+          ev.preventDefault();
+          return ev as MouseEvent
+        }).filter(() => enabled)
     ).flatten();
   const dom =
     sources.state$
