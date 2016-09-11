@@ -98,8 +98,7 @@
 	        .map(function (ev) {
 	        ev.preventDefault();
 	        return true;
-	    })
-	        .startWith(true);
+	    });
 	    return {
 	        newGame$: newGame$,
 	        selected$: selected$

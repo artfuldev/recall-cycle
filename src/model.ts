@@ -28,7 +28,7 @@ function model(actions: Intent): State {
 
   const over$ =
     actions.selected$
-      .map((selected) => selected.length === 9)
+      .map(selected => selected.length === 9)
       .compose(distinctBooleans);
 
   const result$ =

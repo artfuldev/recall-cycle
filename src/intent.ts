@@ -17,8 +17,7 @@ function intent(newGameClick$: Stream<MouseEvent>, selected$: Stream<number[]>):
       .map(ev => {
         ev.preventDefault();
         return true;
-      })
-      .startWith(true);
+      });
   return {
     newGame$,
     selected$
