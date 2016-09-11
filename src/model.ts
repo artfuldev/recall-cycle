@@ -25,21 +25,20 @@ function model(actions: Intent): State {
     xs.merge(
       xs.of(puzzle()),
       actions.newGame$.map(() => puzzle())
-    );
+    ).debug();
 
   const over$ =
     actions.selected$
       .map(selected => selected.length === 9)
-      .compose(distinctBooleans);
+      .compose(distinctBooleans)
+      .debug();
 
   const result$ =
-    xs.merge(
-      puzzle$.mapTo(null),
+    puzzle$.map(puzzle =>
       over$
-        .filter(Boolean)
-        .map(() =>
-          puzzle$.map(puzzle =>
-            actions.selected$.map(selected => {
+        .map(over =>
+          over
+            ? actions.selected$.map(selected => {
               const result: Result = {
                 correct: selected.filter(s => puzzle.indexOf(s) !== -1),
                 wrong: selected.filter(s => puzzle.indexOf(s) === -1),
@@ -47,9 +46,10 @@ function model(actions: Intent): State {
               };
               return result;
             })
-          ).flatten()
+            : xs.of<Result>(null)
         ).flatten()
-    );
+    ).flatten()
+      .debug();
 
   const scoreReducer$ =
     result$

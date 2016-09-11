@@ -14,8 +14,8 @@ function main(sources: Sources): Sinks {
       content$: xs.of('New Game'),
       dom
     });
-  const puzzle$ = xs.create<number[]>();
-  const result$ = xs.create<Result>();
+  const puzzle$ = xs.create<number[]>().debug();
+  const result$ = xs.create<Result>().debug();
   const grid = Grid({
     dom,
     puzzle$,

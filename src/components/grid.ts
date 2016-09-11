@@ -24,51 +24,52 @@ function GridComponent(sources: GridSources): GridSinks {
   const grid: number[] = Array.apply(null, { length: 25 }).map(Number.call, Number);
   const nothing: number[] = [];
   const selectedProxy$ = xs.create<number[]>();
-  const cells = grid.map(i => {
-    const dom = sources.dom;
-    const enabled$ =
-      xs.merge(
-        puzzle$
-          .map(() =>
-            xs.of(true)
-              .compose(delay<boolean>(3000))
-              .startWith(false)
-          ).flatten(),
-        result$
-          .map(() => false)
-      );
-    const state$ =
-      xs.merge(
-        puzzle$
-          .map(puzzle =>
-            xs.merge(
-              xs.of(has(puzzle, i) ? CellState.Highlighted : CellState.Normal),
-              xs.of(CellState.Normal).compose(delay<CellState>(3000))
-            )
-          ).flatten(),
-        result$
-          .map(result => {
-            if (has(result.correct, i))
-              return CellState.Correct;
-            if (has(result.wrong, i))
-              return CellState.Wrong;
-            if (has(result.missed, i))
-              return CellState.Missed;
-            return CellState.Normal;
-          }),
-        selectedProxy$
-          .map(selected =>
-            has(selected, i)
-              ? CellState.Selected
-              : CellState.Normal)
-      );
-    const cell = Cell({
-      dom,
-      enabled$,
-      state$
+  const cells =
+    grid.map(i => {
+      const dom = sources.dom;
+      const enabled$ =
+        xs.merge(
+          puzzle$
+            .map(() =>
+              xs.merge(
+                xs.of(false),
+                xs.of(true).compose(delay<boolean>(3000))
+              )
+            ).flatten(),
+          result$.mapTo(false)
+        );
+      const state$ =
+        xs.merge(
+          puzzle$
+            .map(puzzle =>
+              xs.merge(
+                xs.of(has(puzzle, i) ? CellState.Highlighted : CellState.Normal),
+                xs.of(CellState.Normal).compose(delay<CellState>(3000))
+              )
+            ).flatten(),
+          result$
+            .map(result => {
+              if (has(result.correct, i))
+                return CellState.Correct;
+              if (has(result.wrong, i))
+                return CellState.Wrong;
+              if (has(result.missed, i))
+                return CellState.Missed;
+              return CellState.Normal;
+            }),
+          selectedProxy$
+            .map(selected =>
+              has(selected, i)
+                ? CellState.Selected
+                : CellState.Normal)
+        );
+      const cell = Cell({
+        dom,
+        enabled$,
+        state$
+      });
+      return cell;
     });
-    return cell;
-  });
   const cellClick$ =
     xs.merge(
       ...cells.map((cell, i) =>
@@ -88,7 +89,10 @@ function GridComponent(sources: GridSources): GridSinks {
             ? remove(selected, i)
             : add(selected, i))
     );
-  const selected$ = reduce(selectedReducer$, nothing);
+  const selected$ = xs.merge(
+    xs.of<number[]>([]),
+    reduce(selectedReducer$, nothing).drop(1)
+  ).debug();
   selectedProxy$.imitate(selected$);
   return {
     dom,

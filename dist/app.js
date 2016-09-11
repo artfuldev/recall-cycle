@@ -71,8 +71,8 @@
 	        content$: xstream_1.default.of('New Game'),
 	        dom: dom
 	    });
-	    var puzzle$ = xstream_1.default.create();
-	    var result$ = xstream_1.default.create();
+	    var puzzle$ = xstream_1.default.create().debug();
+	    var result$ = xstream_1.default.create().debug();
 	    var grid = grid_1.default({
 	        dom: dom,
 	        puzzle$: puzzle$,
@@ -135,24 +135,27 @@
 	    return puzzle;
 	};
 	function model(actions) {
-	    var puzzle$ = xstream_1.default.merge(xstream_1.default.of(puzzle()), actions.newGame$.map(function () { return puzzle(); }));
+	    var puzzle$ = xstream_1.default.merge(xstream_1.default.of(puzzle()), actions.newGame$.map(function () { return puzzle(); })).debug();
 	    var over$ = actions.selected$
 	        .map(function (selected) { return selected.length === 9; })
-	        .compose(distinctBooleans);
-	    var result$ = xstream_1.default.merge(puzzle$.mapTo(null), over$
-	        .filter(Boolean)
-	        .map(function () {
-	        return puzzle$.map(function (puzzle) {
-	            return actions.selected$.map(function (selected) {
-	                var result = {
-	                    correct: selected.filter(function (s) { return puzzle.indexOf(s) !== -1; }),
-	                    wrong: selected.filter(function (s) { return puzzle.indexOf(s) === -1; }),
-	                    missed: puzzle.filter(function (p) { return selected.indexOf(p) === -1; })
-	                };
-	                return result;
-	            });
+	        .compose(distinctBooleans)
+	        .debug();
+	    var result$ = puzzle$.map(function (puzzle) {
+	        return over$
+	            .map(function (over) {
+	            return over
+	                ? actions.selected$.map(function (selected) {
+	                    var result = {
+	                        correct: selected.filter(function (s) { return puzzle.indexOf(s) !== -1; }),
+	                        wrong: selected.filter(function (s) { return puzzle.indexOf(s) === -1; }),
+	                        missed: puzzle.filter(function (p) { return selected.indexOf(p) === -1; })
+	                    };
+	                    return result;
+	                })
+	                : xstream_1.default.of(null);
 	        }).flatten();
-	    }).flatten());
+	    }).flatten()
+	        .debug();
 	    var scoreReducer$ = result$
 	        .filter(Boolean)
 	        .map(function (result) {
@@ -2080,7 +2083,8 @@
 	                        dom_1.p([
 	                            'Click on the ',
 	                            dom_1.strong(['nine tiles you see']),
-	                            ' to win!']),
+	                            ' to win!'
+	                        ]),
 	                        newGameDom
 	                    ])
 	                ]),
@@ -8946,11 +8950,8 @@
 	        var dom = sources.dom;
 	        var enabled$ = xstream_1.default.merge(puzzle$
 	            .map(function () {
-	            return xstream_1.default.of(true)
-	                .compose(delay_1.default(3000))
-	                .startWith(false);
-	        }).flatten(), result$
-	            .map(function () { return false; }));
+	            return xstream_1.default.merge(xstream_1.default.of(false), xstream_1.default.of(true).compose(delay_1.default(3000)));
+	        }).flatten(), result$.mapTo(false));
 	        var state$ = xstream_1.default.merge(puzzle$
 	            .map(function (puzzle) {
 	            return xstream_1.default.merge(xstream_1.default.of(utils_1.has(puzzle, i) ? cell_1.CellState.Highlighted : cell_1.CellState.Normal), xstream_1.default.of(cell_1.CellState.Normal).compose(delay_1.default(3000)));
@@ -8989,7 +8990,7 @@
 	                : utils_1.add(selected, i);
 	        };
 	    }));
-	    var selected$ = utils_1.reduce(selectedReducer$, nothing);
+	    var selected$ = xstream_1.default.merge(xstream_1.default.of([]), utils_1.reduce(selectedReducer$, nothing).drop(1)).debug();
 	    selectedProxy$.imitate(selected$);
 	    return {
 	        dom: dom,
