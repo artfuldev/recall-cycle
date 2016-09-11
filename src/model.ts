@@ -8,23 +8,26 @@ import { add, remove, has, reduce } from './utils';
 
 const distinctBooleans = dropRepeats<boolean>((prev, next) => prev === next);
 
+const puzzle = () => {
+  const puzzle: number[] = [];
+  const maxSize = 9;
+  for (var i = 0; i < maxSize; i++) {
+    var nextNumber = Math.floor(Math.random() * 25);
+    while (puzzle.indexOf(nextNumber) !== -1)
+      nextNumber = Math.floor(Math.random() * 25);
+    puzzle.push(nextNumber);
+  }
+  return puzzle;
+};
+
 function reducers(actions: Intent): State {
   // alias
   const xs = Stream;
 
   const puzzle$ =
     actions.newGame$
-      .map(() => {
-        const puzzle: number[] = [];
-        const maxSize = 9;
-        for (var i = 0; i < maxSize; i++) {
-          var nextNumber = Math.floor(Math.random() * 25);
-          while (puzzle.indexOf(nextNumber) !== -1)
-            nextNumber = Math.floor(Math.random() * 25);
-          puzzle.push(nextNumber);
-        }
-        return puzzle;
-      }).remember();
+      .map(() => puzzle())
+      .startWith(puzzle());
 
   const selectedCellsReducer$ =
     xs.merge(
@@ -46,8 +49,8 @@ function reducers(actions: Intent): State {
       xs.of(true)
         .compose(delay<boolean>(3000))
         .startWith(false))
-    .flatten()
-    .remember();
+      .flatten()
+      .remember();
 
   const over$ =
     selectedCells$

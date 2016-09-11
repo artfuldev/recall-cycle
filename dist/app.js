@@ -125,21 +125,23 @@
 	var dropRepeats_1 = __webpack_require__(7);
 	var utils_1 = __webpack_require__(8);
 	var distinctBooleans = dropRepeats_1.default(function (prev, next) { return prev === next; });
+	var puzzle = function () {
+	    var puzzle = [];
+	    var maxSize = 9;
+	    for (var i = 0; i < maxSize; i++) {
+	        var nextNumber = Math.floor(Math.random() * 25);
+	        while (puzzle.indexOf(nextNumber) !== -1)
+	            nextNumber = Math.floor(Math.random() * 25);
+	        puzzle.push(nextNumber);
+	    }
+	    return puzzle;
+	};
 	function reducers(actions) {
 	    // alias
 	    var xs = xstream_1.Stream;
 	    var puzzle$ = actions.newGame$
-	        .map(function () {
-	        var puzzle = [];
-	        var maxSize = 9;
-	        for (var i = 0; i < maxSize; i++) {
-	            var nextNumber = Math.floor(Math.random() * 25);
-	            while (puzzle.indexOf(nextNumber) !== -1)
-	                nextNumber = Math.floor(Math.random() * 25);
-	            puzzle.push(nextNumber);
-	        }
-	        return puzzle;
-	    }).remember();
+	        .map(function () { return puzzle(); })
+	        .startWith(puzzle());
 	    var selectedCellsReducer$ = xs.merge(puzzle$
 	        .mapTo(function () { return new Array(); }), actions.selectCell$
 	        .map(function (clicked) {
