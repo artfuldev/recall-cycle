@@ -137,12 +137,10 @@
 	    return puzzle;
 	};
 	function reducers(actions) {
-	    // alias
-	    var xs = xstream_1.Stream;
 	    var puzzle$ = actions.newGame$
 	        .map(function () { return puzzle(); })
 	        .startWith(puzzle());
-	    var selectedCellsReducer$ = xs.merge(puzzle$
+	    var selectedCellsReducer$ = xstream_1.default.merge(puzzle$
 	        .mapTo(function () { return new Array(); }), actions.selectCell$
 	        .map(function (clicked) {
 	        return function (selected) {
@@ -154,7 +152,7 @@
 	    var selectedCells$ = utils_1.reduce(selectedCellsReducer$, new Array())
 	        .remember();
 	    var allowed$ = puzzle$.map(function () {
-	        return xs.of(true)
+	        return xstream_1.default.of(true)
 	            .compose(delay_1.default(3000))
 	            .startWith(false);
 	    })
@@ -163,7 +161,7 @@
 	    var over$ = selectedCells$
 	        .map(function (selected) { return selected.length === 9; })
 	        .compose(distinctBooleans);
-	    var result$ = xs.merge(puzzle$
+	    var result$ = xstream_1.default.merge(puzzle$
 	        .mapTo(null), over$
 	        .filter(Boolean)
 	        .map(function () {

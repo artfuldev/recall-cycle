@@ -21,9 +21,6 @@ const puzzle = () => {
 };
 
 function reducers(actions: Intent): State {
-  // alias
-  const xs = Stream;
-
   const puzzle$ =
     actions.newGame$
       .map(() => puzzle())
