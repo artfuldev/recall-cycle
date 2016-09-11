@@ -1,6 +1,6 @@
 import { DOMSource } from '@cycle/dom/xstream-typings';
 import xs, { Stream } from 'xstream';
-import { VNode } from '@cycle/dom';
+import { VNode, div } from '@cycle/dom';
 import { Result } from './../definitions';
 import Cell, { CellState } from './cell';
 import { add, remove, has, reduce } from './../utils';
@@ -73,7 +73,10 @@ function GridComponent(sources: GridSources): GridSinks {
       ...cells.map((cell, i) =>
         cell.click$.map(ev => i))
     );
-  const dom = xs.of(null);
+  const cellDoms$: Stream<VNode[]> = xs.combine(...cells.map(cell => cell.dom));
+  const dom =
+    cellDoms$
+      .map(doms => div('.grid', doms));
   const selectedReducer$ =
     xs.merge(
       puzzle$.mapTo(() => nothing),
