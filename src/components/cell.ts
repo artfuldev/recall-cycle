@@ -25,26 +25,24 @@ interface CellSinks {
 
 function CellComponent(sources: CellSources): CellSinks {
   const click$ =
-    sources.dom
-      .select('.cell span')
-      .events('click')
-      .map(ev => ev as MouseEvent)
-      .filter(ev => (event.target as HTMLElement).className.indexOf('disabled') === -1);
+    sources.enabled$.map(enabled =>
+      sources.dom
+        .select('.cell span')
+        .events('click')
+        .filter(() => enabled)
+        .map(ev => ev as MouseEvent)
+    ).flatten();
   const dom =
-    xs.combine(sources.state$, sources.enabled$)
-    .map(([state, enabled]) => {
-      const disabledClass = enabled ? '' : '.disabled'; 
-      const selector =
-        disabledClass
-          + '.' + CellState[state].toLowerCase()
-          + '.cell';
-      return div(selector, [span(disabledClass)]);
-    });
+    sources.state$
+      .map(state => {
+        const selector = '.' + CellState[state].toLowerCase() + '.cell';
+        return div(selector, [span()]);
+      });
   return {
     dom,
     click$
   };
 }
 
-const Cell = sources => isolate(CellComponent)(sources);
+const Cell = (sources: CellSources) => isolate(CellComponent)(sources);
 export default Cell;
