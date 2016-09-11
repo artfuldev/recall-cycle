@@ -2,8 +2,9 @@ import { DOMSource } from '@cycle/dom/xstream-typings';
 import xs, { Stream } from 'xstream';
 import { VNode } from '@cycle/dom';
 import { Result } from './../definitions';
-import Cell from './cell';
+import Cell, { CellState } from './cell';
 import { add, remove, has, reduce } from './../utils';
+import delay from 'xstream/extra/delay';
 
 interface GridSources {
   dom: DOMSource;
@@ -24,8 +25,41 @@ function GridComponent(sources: GridSources): GridSinks {
   const selectedProxy$ = xs.create<number[]>();
   const cells = grid.map(i => {
     const dom = sources.dom;
-    const enabled$ = xs.never();
-    const state$ = xs.never();
+    const enabled$ =
+      xs.merge(
+        puzzle$
+          .map(() =>
+            xs.of(true)
+              .compose(delay<boolean>(3000))
+              .startWith(false)
+          ).flatten(),
+        result$
+          .map(() => false)
+      );
+    const state$ =
+      xs.merge(
+        puzzle$
+          .map(puzzle =>
+            xs.of(CellState.Normal)
+              .compose(delay<CellState>(3000))
+              .startWith(has(puzzle, i) ? CellState.Highlighted : CellState.Normal)
+          ).flatten(),
+        result$
+          .map(result => {
+            if (has(result.correct, i))
+              return CellState.Correct;
+            if (has(result.wrong, i))
+              return CellState.Wrong;
+            if (has(result.missed, i))
+              return CellState.Missed;
+            return CellState.Normal;
+          }),
+        selectedProxy$
+          .map(selected =>
+            has(selected, i)
+              ? CellState.Selected
+              : CellState.Normal)
+      );
     const cell = Cell({
       dom,
       enabled$,
