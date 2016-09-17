@@ -72,8 +72,8 @@
 	    var puzzle = state.puzzle$;
 	    var result = state.result$;
 	    var newGameButton = button_1.default({
-	        selector$: xstream_1.default.of('.new'),
-	        content$: xstream_1.default.of('New Game'),
+	        selector: xstream_1.default.of('.new'),
+	        content: xstream_1.default.of('New Game'),
 	        dom: dom
 	    });
 	    var grid = grid_1.default({
@@ -8667,8 +8667,8 @@
 	        .select('a')
 	        .events('click')
 	        .map(function (event) { return event; });
-	    var selector$ = sources.selector$;
-	    var content$ = sources.content$;
+	    var selector$ = sources.selector;
+	    var content$ = sources.content;
 	    var dom = xstream_1.default.combine(selector$, content$)
 	        .map(function (_a) {
 	        var selector = _a[0], content = _a[1];

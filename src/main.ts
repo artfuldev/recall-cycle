@@ -16,8 +16,8 @@ function main(sources: Sources): Sinks {
   const result = state.result$;
   const newGameButton =
     Button({
-      selector$: xs.of('.new'),
-      content$: xs.of('New Game'),
+      selector: xs.of('.new'),
+      content: xs.of('New Game'),
       dom
     });
   const grid = Grid({
