@@ -66,22 +66,20 @@
 	var xstream_1 = __webpack_require__(8);
 	function main(sources) {
 	    var dom = sources.dom;
-	    var proxyNewGameClick$ = xstream_1.default.create();
-	    var proxySelect$ = xstream_1.default.create();
-	    var state = model_1.default(intent_1.default(proxyNewGameClick$, proxySelect$));
-	    var puzzle = state.puzzle$;
-	    var result = state.result$;
 	    var newGameButton = button_1.default({
 	        selector: xstream_1.default.of('.new'),
 	        content: xstream_1.default.of('New Game'),
 	        dom: dom
 	    });
+	    var proxySelect$ = xstream_1.default.create();
+	    var state = model_1.default(intent_1.default(newGameButton.click$, proxySelect$));
+	    var puzzle = state.puzzle$;
+	    var result = state.result$;
 	    var grid = grid_1.default({
 	        dom: dom,
 	        puzzle: puzzle,
 	        result: result
 	    });
-	    proxyNewGameClick$.imitate(newGameButton.click$);
 	    proxySelect$.imitate(grid.selection);
 	    var dom$ = view_1.default(state, newGameButton.dom, grid.dom);
 	    return {
