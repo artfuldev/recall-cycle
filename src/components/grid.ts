@@ -15,7 +15,7 @@ interface GridSources {
 
 interface GridSinks {
   dom: Stream<VNode>;
-  selected$: Stream<number[]>;
+  selection: Stream<number[]>;
 }
 
 function GridComponent(sources: GridSources): GridSinks {
@@ -23,17 +23,24 @@ function GridComponent(sources: GridSources): GridSinks {
   const result$ = sources.result$.filter(Boolean);
   const grid: number[] = Array.apply(null, { length: 25 }).map(Number.call, Number);
   const nothing: number[] = [];
-  const selectedProxy$ = xs.create<number[]>();
+  const cellClickProxy$ = xs.create<number>();
+  const selectedReducer$ =
+    xs.merge(
+      puzzle$.mapTo(() => nothing),
+      result$.mapTo(() => nothing),
+      cellClickProxy$.map(i =>
+        (selected: number[]) =>
+          has(selected, i)
+            ? remove(selected, i)
+            : add(selected, i))
+    );
+  const selected$ = reduce(selectedReducer$, nothing).filter(() => true);
   const enabled$ =
     xs.merge(
-      puzzle$
-        .map(() =>
-          xs.of(true)
-            .compose(delay<boolean>(3000))
-            .startWith(false)
-        ).flatten(),
+      puzzle$.mapTo(false),
+      puzzle$.compose(delay<number[]>(3000)).mapTo(true),
       result$.mapTo(false)
-    ).debug();
+    );
   const cells =
     grid.map((element, index) => {
       const dom = sources.dom;
@@ -56,7 +63,7 @@ function GridComponent(sources: GridSources): GridSinks {
                 return CellState.Missed;
               return CellState.Normal;
             }),
-          selectedProxy$
+          selected$
             .map(selected =>
               has(selected, index)
                 ? CellState.Selected
@@ -64,35 +71,24 @@ function GridComponent(sources: GridSources): GridSinks {
         );
       const cell = Cell({
         dom,
-        enabled$,
-        state$
+        enabled: enabled$,
+        state: state$
       });
       return cell;
     });
   const cellClick$ =
     xs.merge(
       ...cells.map((cell, i) =>
-        cell.click$.map(ev => i))
+        cell.clicks.map(ev => i))
     );
+  cellClickProxy$.imitate(cellClick$);
   const cellDoms$: Stream<VNode[]> = xs.combine(...cells.map(cell => cell.dom));
-  const dom =
+  const dom$ =
     cellDoms$
       .map(doms => div('.grid', doms));
-  const selectedReducer$ =
-    xs.merge(
-      puzzle$.mapTo(() => nothing),
-      result$.mapTo(() => nothing),
-      cellClick$.map(i =>
-        (selected: number[]) =>
-          has(selected, i)
-            ? remove(selected, i)
-            : add(selected, i))
-    );
-  const selected$ = reduce(selectedReducer$, nothing).filter(() => true);
-  selectedProxy$.imitate(selected$);
   return {
-    dom,
-    selected$
+    dom: dom$,
+    selection: selected$
   };
 }
 

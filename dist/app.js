@@ -82,10 +82,10 @@
 	        result$: result$
 	    });
 	    proxyNewGameClick$.imitate(newGameButton.click$);
-	    proxySelected$.imitate(grid.selected$);
-	    var vdom$ = view_1.default(state, newGameButton.dom, grid.dom);
+	    proxySelected$.imitate(grid.selection);
+	    var dom$ = view_1.default(state, newGameButton.dom, grid.dom);
 	    return {
-	        dom: vdom$
+	        dom: dom$
 	    };
 	}
 	Object.defineProperty(exports, "__esModule", { value: true });
@@ -2406,35 +2406,48 @@
 
 	var h = __webpack_require__(11);
 	
-	function init(thunk) {
-	  var i, cur = thunk.data;
-	  cur.vnode = cur.fn.apply(undefined, cur.args);
+	function copyToThunk(vnode, thunk) {
+	  thunk.elm = vnode.elm;
+	  vnode.data.fn = thunk.data.fn;
+	  vnode.data.args = thunk.data.args;
+	  thunk.data = vnode.data;
+	  thunk.children = vnode.children;
+	  thunk.text = vnode.text;
+	  thunk.elm = vnode.elm;
 	}
 	
-	function prepatch(oldThunk, thunk) {
-	  var i, old = oldThunk.data, cur = thunk.data;
+	function init(thunk) {
+	  var i, cur = thunk.data;
+	  var vnode = cur.fn.apply(undefined, cur.args);
+	  copyToThunk(vnode, thunk);
+	}
+	
+	function prepatch(oldVnode, thunk) {
+	  var i, old = oldVnode.data, cur = thunk.data, vnode;
 	  var oldArgs = old.args, args = cur.args;
-	  cur.vnode = old.vnode;
 	  if (old.fn !== cur.fn || oldArgs.length !== args.length) {
-	    cur.vnode = cur.fn.apply(undefined, args);
-	    return;
+	    copyToThunk(cur.fn.apply(undefined, args), thunk);
 	  }
 	  for (i = 0; i < args.length; ++i) {
 	    if (oldArgs[i] !== args[i]) {
-	      cur.vnode = cur.fn.apply(undefined, args);
+	      copyToThunk(cur.fn.apply(undefined, args), thunk);
 	      return;
 	    }
 	  }
+	  copyToThunk(oldVnode, thunk);
 	}
 	
-	module.exports = function(name, fn /* args */) {
-	  var i, args = [];
-	  for (i = 2; i < arguments.length; ++i) {
-	    args[i - 2] = arguments[i];
+	module.exports = function(sel, key, fn, args) {
+	  if (args === undefined) {
+	    args = fn;
+	    fn = key;
+	    key = undefined;
 	  }
-	  return h('thunk' + name, {
+	  return h(sel, {
+	    key: key,
 	    hook: {init: init, prepatch: prepatch},
-	    fn: fn, args: args,
+	    fn: fn,
+	    args: args
 	  });
 	};
 
@@ -2457,11 +2470,11 @@
 	
 	module.exports = function h(sel, b, c) {
 	  var data = {}, children, text, i;
-	  if (arguments.length === 3) {
+	  if (c !== undefined) {
 	    data = b;
 	    if (is.array(c)) { children = c; }
 	    else if (is.primitive(c)) { text = c; }
-	  } else if (arguments.length === 2) {
+	  } else if (b !== undefined) {
 	    if (is.array(b)) { children = b; }
 	    else if (is.primitive(b)) { text = b; }
 	    else { data = b; }
@@ -2621,12 +2634,11 @@
 	  }
 	
 	  function createElm(vnode, insertedVnodeQueue) {
-	    var i, thunk, data = vnode.data;
+	    var i, data = vnode.data;
 	    if (isDef(data)) {
-	      if (isDef(i = data.hook) && isDef(i = i.init)) i(vnode);
-	      if (isDef(i = data.vnode)) {
-	          thunk = vnode;
-	          vnode = i;
+	      if (isDef(i = data.hook) && isDef(i = i.init)) {
+	        i(vnode);
+	        data = vnode.data;
 	      }
 	    }
 	    var elm, children = vnode.children, sel = vnode.sel;
@@ -2657,7 +2669,6 @@
 	    } else {
 	      elm = vnode.elm = api.createTextNode(vnode.text);
 	    }
-	    if (isDef(thunk)) thunk.elm = vnode.elm;
 	    return vnode.elm;
 	  }
 	
@@ -2677,7 +2688,6 @@
 	          invokeDestroyHook(vnode.children[j]);
 	        }
 	      }
-	      if (isDef(i = data.vnode)) invokeDestroyHook(i);
 	    }
 	  }
 	
@@ -2762,12 +2772,6 @@
 	    var i, hook;
 	    if (isDef(i = vnode.data) && isDef(hook = i.hook) && isDef(i = hook.prepatch)) {
 	      i(oldVnode, vnode);
-	    }
-	    if (isDef(i = oldVnode.data) && isDef(i = i.vnode)) oldVnode = i;
-	    if (isDef(i = vnode.data) && isDef(i = i.vnode)) {
-	      patchVnode(oldVnode, i, insertedVnodeQueue);
-	      vnode.elm = i.elm;
-	      return;
 	    }
 	    var elm = vnode.elm = oldVnode.elm, oldCh = oldVnode.children, ch = vnode.children;
 	    if (oldVnode === vnode) return;
@@ -3544,6 +3548,7 @@
 	
 	  var cn = _selectorParser.className;
 	
+	
 	  if (!vNode.data) {
 	    return cn;
 	  }
@@ -3551,6 +3556,7 @@
 	  var _vNode$data = vNode.data;
 	  var dataClass = _vNode$data.class;
 	  var props = _vNode$data.props;
+	
 	
 	  if (dataClass) {
 	    var c = Object.keys(vNode.data.class).filter(function (cl) {
@@ -3589,7 +3595,7 @@
 	function selectorParser() {
 	  var selector = arguments.length <= 0 || arguments[0] === undefined ? '' : arguments[0];
 	
-	  var tagName = undefined;
+	  var tagName = void 0;
 	  var id = '';
 	  var classes = [];
 	
@@ -3599,9 +3605,9 @@
 	    tagName = 'div';
 	  }
 	
-	  var part = undefined;
-	  var type = undefined;
-	  var i = undefined;
+	  var part = void 0;
+	  var type = void 0;
+	  var i = void 0;
 	
 	  for (i = 0; i < tagParts.length; i++) {
 	    part = tagParts[i];
@@ -3862,13 +3868,17 @@
 	
 	function arrInvoker(arr) {
 	  return function() {
+	    if (!arr.length) return;
 	    // Special case when length is two, for performance
 	    arr.length === 2 ? arr[0](arr[1]) : arr[0].apply(undefined, arr.slice(1));
 	  };
 	}
 	
 	function fnInvoker(o) {
-	  return function(ev) { o.fn(ev); };
+	  return function(ev) { 
+	    if (o.fn === null) return;
+	    o.fn(ev); 
+	  };
 	}
 	
 	function updateEventListeners(oldVnode, vnode) {
@@ -3894,6 +3904,19 @@
 	    } else {
 	      old.fn = cur;
 	      on[name] = old;
+	    }
+	  }
+	  if (oldOn) {
+	    for (name in oldOn) {
+	      if (on[name] === undefined) {
+	        var old = oldOn[name];
+	        if (is.array(old)) {
+	          old.length = 0;
+	        }
+	        else {
+	          old.fn = null;
+	        }
+	      }
 	    }
 	  }
 	}
@@ -8772,13 +8795,16 @@
 	    var result$ = sources.result$.filter(Boolean);
 	    var grid = Array.apply(null, { length: 25 }).map(Number.call, Number);
 	    var nothing = [];
-	    var selectedProxy$ = xstream_1.default.create();
-	    var enabled$ = xstream_1.default.merge(puzzle$
-	        .map(function () {
-	        return xstream_1.default.of(true)
-	            .compose(delay_1.default(3000))
-	            .startWith(false);
-	    }).flatten(), result$.mapTo(false)).debug();
+	    var cellClickProxy$ = xstream_1.default.create();
+	    var selectedReducer$ = xstream_1.default.merge(puzzle$.mapTo(function () { return nothing; }), result$.mapTo(function () { return nothing; }), cellClickProxy$.map(function (i) {
+	        return function (selected) {
+	            return utils_1.has(selected, i)
+	                ? utils_1.remove(selected, i)
+	                : utils_1.add(selected, i);
+	        };
+	    }));
+	    var selected$ = utils_1.reduce(selectedReducer$, nothing).filter(function () { return true; });
+	    var enabled$ = xstream_1.default.merge(puzzle$.mapTo(false), puzzle$.compose(delay_1.default(3000)).mapTo(true), result$.mapTo(false));
 	    var cells = grid.map(function (element, index) {
 	        var dom = sources.dom;
 	        var state$ = xstream_1.default.merge(puzzle$
@@ -8794,7 +8820,7 @@
 	            if (utils_1.has(result.missed, index))
 	                return cell_1.CellState.Missed;
 	            return cell_1.CellState.Normal;
-	        }), selectedProxy$
+	        }), selected$
 	            .map(function (selected) {
 	            return utils_1.has(selected, index)
 	                ? cell_1.CellState.Selected
@@ -8802,29 +8828,21 @@
 	        }));
 	        var cell = cell_1.default({
 	            dom: dom,
-	            enabled$: enabled$,
-	            state$: state$
+	            enabled: enabled$,
+	            state: state$
 	        });
 	        return cell;
 	    });
 	    var cellClick$ = xstream_1.default.merge.apply(xstream_1.default, cells.map(function (cell, i) {
-	        return cell.click$.map(function (ev) { return i; });
+	        return cell.clicks.map(function (ev) { return i; });
 	    }));
+	    cellClickProxy$.imitate(cellClick$);
 	    var cellDoms$ = xstream_1.default.combine.apply(xstream_1.default, cells.map(function (cell) { return cell.dom; }));
-	    var dom = cellDoms$
+	    var dom$ = cellDoms$
 	        .map(function (doms) { return dom_1.div('.grid', doms); });
-	    var selectedReducer$ = xstream_1.default.merge(puzzle$.mapTo(function () { return nothing; }), result$.mapTo(function () { return nothing; }), cellClick$.map(function (i) {
-	        return function (selected) {
-	            return utils_1.has(selected, i)
-	                ? utils_1.remove(selected, i)
-	                : utils_1.add(selected, i);
-	        };
-	    }));
-	    var selected$ = utils_1.reduce(selectedReducer$, nothing).filter(function () { return true; });
-	    selectedProxy$.imitate(selected$);
 	    return {
-	        dom: dom,
-	        selected$: selected$
+	        dom: dom$,
+	        selection: selected$
 	    };
 	}
 	var Grid = function (sources) { return isolate_1.default(GridComponent)(sources); };
@@ -8849,25 +8867,29 @@
 	})(exports.CellState || (exports.CellState = {}));
 	var CellState = exports.CellState;
 	function CellComponent(sources) {
-	    var click$ = sources.enabled$
+	    var enabled$ = sources.enabled;
+	    var state$ = sources.state;
+	    var click$ = enabled$
 	        .map(function (enabled) {
 	        return sources.dom
-	            .select('span')
+	            .select('.cell')
 	            .events('click')
 	            .filter(function () { return enabled; })
 	            .map(function (ev) {
 	            ev.preventDefault();
+	            ev.stopPropagation();
 	            return ev;
 	        });
 	    }).flatten();
-	    var dom = sources.state$
+	    var dom$ = state$
 	        .map(function (state) {
-	        var selector = '.' + CellState[state].toLowerCase() + '.cell';
-	        return dom_1.div(selector, [dom_1.span()]);
+	        return dom_1.div('.cell', [
+	            dom_1.span('.' + CellState[state].toLowerCase())
+	        ]);
 	    });
 	    return {
-	        dom: dom,
-	        click$: click$
+	        dom: dom$,
+	        clicks: click$
 	    };
 	}
 	var Cell = function (sources) { return isolate_1.default(CellComponent)(sources); };

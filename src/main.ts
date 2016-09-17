@@ -26,10 +26,10 @@ function main(sources: Sources): Sinks {
     result$
   });
   proxyNewGameClick$.imitate(newGameButton.click$);
-  proxySelected$.imitate(grid.selected$);
-  const vdom$ = view(state, newGameButton.dom, grid.dom);
+  proxySelected$.imitate(grid.selection);
+  const dom$ = view(state, newGameButton.dom, grid.dom);
   return {
-    dom: vdom$
+    dom: dom$
   };
 }
 

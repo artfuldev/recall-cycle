@@ -13,38 +13,41 @@ export enum CellState {
 }
 
 interface CellSources {
-  state$: Stream<CellState>;
-  enabled$: Stream<boolean>;
+  state: Stream<CellState>;
+  enabled: Stream<boolean>;
   dom: DOMSource;
 }
 
 interface CellSinks {
   dom: Stream<VNode>;
-  click$: Stream<MouseEvent>;
+  clicks: Stream<MouseEvent>;
 }
 
 function CellComponent(sources: CellSources): CellSinks {
+  const enabled$ = sources.enabled;
+  const state$ = sources.state;
   const click$ =
-    sources.enabled$
+    enabled$
       .map(enabled =>
         sources.dom
-          .select('span')
+          .select('.cell')
           .events('click')
           .filter(() => enabled)
           .map(ev => {
             ev.preventDefault();
-            return ev as MouseEvent
+            ev.stopPropagation();
+            return ev as MouseEvent;
           })
       ).flatten();
-  const dom =
-    sources.state$
-      .map(state => {
-        const selector = '.' + CellState[state].toLowerCase() + '.cell';
-        return div(selector, [span()]);
-      });
+  const dom$ =
+    state$
+      .map(state =>
+        div('.cell', [
+          span('.' + CellState[state].toLowerCase())
+        ]));
   return {
-    dom,
-    click$
+    dom: dom$,
+    clicks: click$
   };
 }
 

@@ -6,9 +6,6 @@ html, body {
     padding: 0;
     font-family: 'Raleway', Arial, Helvetica, sans-serif;
     color: white;
-}
-
-html, body {
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
@@ -162,39 +159,38 @@ a.new:hover {
     bottom: 0;
     left: 0;
     right: 0;
-    padding: 4px;
     border: 1px solid #9c27b0;
     font-weight: 700;
 }
 
-.cell.highlighted, .cell.selected, .cell.correct {
+.highlighted, selected, .correct {
     background: #68efad;
 }
 
-.cell.wrong {
+.wrong {
     background: #ff8a80;
 }
 
-.cell.missed {
+.missed {
     background: #ffd180;
 }
 
-.cell.correct span::after, .cell.wrong span::after, .cell.missed span::after {
+.correct::after, .wrong::after, .missed::after {
     position: absolute;
     bottom: 4px;
     right: 4px;
     color: rgba(0,0,0,0.38);
 }
 
-.cell.correct span::after {
+.correct::after {
     content: 'correct';
 }
 
-.cell.wrong span::after {
+.wrong::after {
     content: 'wrong';
 }
 
-.cell.missed span::after {
+.missed::after {
     content: 'missed';
 }
 
