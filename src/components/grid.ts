@@ -9,8 +9,8 @@ import isolate from '@cycle/isolate';
 
 interface GridSources {
   dom: DOMSource;
-  puzzle$: Stream<number[]>;
-  result$: Stream<Result>;
+  puzzle: Stream<number[]>;
+  result: Stream<Result>;
 }
 
 interface GridSinks {
@@ -19,8 +19,8 @@ interface GridSinks {
 }
 
 function GridComponent(sources: GridSources): GridSinks {
-  const puzzle$ = sources.puzzle$;
-  const result$ = sources.result$.filter(Boolean);
+  const puzzle$ = sources.puzzle;
+  const result$ = sources.result.filter(Boolean);
   const grid: number[] = Array.apply(null, { length: 25 }).map(Number.call, Number);
   const nothing: number[] = [];
   const cellClickProxy$ = xs.create<number>();
@@ -37,8 +37,11 @@ function GridComponent(sources: GridSources): GridSinks {
   const selected$ = reduce(selectedReducer$, nothing).filter(() => true);
   const enabled$ =
     xs.merge(
-      puzzle$.mapTo(false),
-      puzzle$.compose(delay<number[]>(3000)).mapTo(true),
+      puzzle$.map(() =>
+        xs.of(true)
+          .compose(delay<boolean>(3000))
+          .startWith(false)
+      ).flatten(),
       result$.mapTo(false)
     );
   const cells =

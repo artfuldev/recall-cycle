@@ -10,10 +10,10 @@ import delay from 'xstream/extra/delay';
 function main(sources: Sources): Sinks {
   const dom = sources.dom;
   const proxyNewGameClick$ = xs.create<MouseEvent>();
-  const proxySelected$ = xs.create<number[]>();
-  const state = model(intent(proxyNewGameClick$, proxySelected$));
-  const puzzle$ = state.puzzle$;
-  const result$ = state.result$;
+  const proxySelect$ = xs.create<number[]>();
+  const state = model(intent(proxyNewGameClick$, proxySelect$));
+  const puzzle = state.puzzle$;
+  const result = state.result$;
   const newGameButton =
     Button({
       selector$: xs.of('.new'),
@@ -22,11 +22,11 @@ function main(sources: Sources): Sinks {
     });
   const grid = Grid({
     dom,
-    puzzle$,
-    result$
+    puzzle,
+    result
   });
   proxyNewGameClick$.imitate(newGameButton.click$);
-  proxySelected$.imitate(grid.selection);
+  proxySelect$.imitate(grid.selection);
   const dom$ = view(state, newGameButton.dom, grid.dom);
   return {
     dom: dom$

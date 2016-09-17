@@ -163,7 +163,7 @@ a.new:hover {
     font-weight: 700;
 }
 
-.highlighted, selected, .correct {
+.highlighted, .selected, .correct {
     background: #68efad;
 }
 

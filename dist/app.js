@@ -67,10 +67,10 @@
 	function main(sources) {
 	    var dom = sources.dom;
 	    var proxyNewGameClick$ = xstream_1.default.create();
-	    var proxySelected$ = xstream_1.default.create();
-	    var state = model_1.default(intent_1.default(proxyNewGameClick$, proxySelected$));
-	    var puzzle$ = state.puzzle$;
-	    var result$ = state.result$;
+	    var proxySelect$ = xstream_1.default.create();
+	    var state = model_1.default(intent_1.default(proxyNewGameClick$, proxySelect$));
+	    var puzzle = state.puzzle$;
+	    var result = state.result$;
 	    var newGameButton = button_1.default({
 	        selector$: xstream_1.default.of('.new'),
 	        content$: xstream_1.default.of('New Game'),
@@ -78,11 +78,11 @@
 	    });
 	    var grid = grid_1.default({
 	        dom: dom,
-	        puzzle$: puzzle$,
-	        result$: result$
+	        puzzle: puzzle,
+	        result: result
 	    });
 	    proxyNewGameClick$.imitate(newGameButton.click$);
-	    proxySelected$.imitate(grid.selection);
+	    proxySelect$.imitate(grid.selection);
 	    var dom$ = view_1.default(state, newGameButton.dom, grid.dom);
 	    return {
 	        dom: dom$
@@ -8791,8 +8791,8 @@
 	var delay_1 = __webpack_require__(129);
 	var isolate_1 = __webpack_require__(126);
 	function GridComponent(sources) {
-	    var puzzle$ = sources.puzzle$;
-	    var result$ = sources.result$.filter(Boolean);
+	    var puzzle$ = sources.puzzle;
+	    var result$ = sources.result.filter(Boolean);
 	    var grid = Array.apply(null, { length: 25 }).map(Number.call, Number);
 	    var nothing = [];
 	    var cellClickProxy$ = xstream_1.default.create();
@@ -8804,7 +8804,11 @@
 	        };
 	    }));
 	    var selected$ = utils_1.reduce(selectedReducer$, nothing).filter(function () { return true; });
-	    var enabled$ = xstream_1.default.merge(puzzle$.mapTo(false), puzzle$.compose(delay_1.default(3000)).mapTo(true), result$.mapTo(false));
+	    var enabled$ = xstream_1.default.merge(puzzle$.map(function () {
+	        return xstream_1.default.of(true)
+	            .compose(delay_1.default(3000))
+	            .startWith(false);
+	    }).flatten(), result$.mapTo(false));
 	    var cells = grid.map(function (element, index) {
 	        var dom = sources.dom;
 	        var state$ = xstream_1.default.merge(puzzle$
