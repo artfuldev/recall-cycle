@@ -137,14 +137,15 @@
 	    var puzzle$ = actions.newGame$
 	        .map(function () { return puzzle(); })
 	        .startWith(puzzle());
-	    var over$ = actions.selected$
+	    var selected$ = actions.selected$.debug();
+	    var over$ = selected$
 	        .map(function (selected) { return selected.length === 9; })
 	        .compose(distinctBooleans);
-	    var result$ = over$
-	        .filter(Boolean)
-	        .map(function (over) {
-	        return puzzle$.map(function (puzzle) {
-	            return actions.selected$.map(function (selected) {
+	    var result$ = puzzle$.map(function (puzzle) {
+	        return selected$.map(function (selected) {
+	            return over$
+	                .filter(Boolean)
+	                .map(function () {
 	                var result = {
 	                    correct: selected.filter(function (s) { return puzzle.indexOf(s) !== -1; }),
 	                    wrong: selected.filter(function (s) { return puzzle.indexOf(s) === -1; }),
@@ -153,7 +154,8 @@
 	                return result;
 	            });
 	        }).flatten();
-	    }).flatten();
+	    }).flatten()
+	        .startWith(null);
 	    var scoreReducer$ = result$
 	        .filter(Boolean)
 	        .map(function (result) {
@@ -163,8 +165,7 @@
 	            return won ? score + 1 : score;
 	        };
 	    });
-	    var score$ = utils_1.reduce(scoreReducer$, 0)
-	        .remember();
+	    var score$ = utils_1.reduce(scoreReducer$, 0);
 	    return {
 	        puzzle$: puzzle$,
 	        score$: score$,
@@ -8788,9 +8789,11 @@
 	var utils_1 = __webpack_require__(6);
 	var delay_1 = __webpack_require__(129);
 	var isolate_1 = __webpack_require__(126);
+	var dropRepeats_1 = __webpack_require__(4);
+	var distinctBooleans = dropRepeats_1.default(function (prev, next) { return prev === next; });
 	function GridComponent(sources) {
 	    var puzzle$ = sources.puzzle;
-	    var result$ = sources.result.filter(Boolean);
+	    var result$ = sources.result;
 	    var grid = Array.apply(null, { length: 25 }).map(Number.call, Number);
 	    var nothing = [];
 	    var cellClickProxy$ = xstream_1.default.create();
@@ -8806,28 +8809,32 @@
 	        return xstream_1.default.of(true)
 	            .compose(delay_1.default(3000))
 	            .startWith(false);
-	    }).flatten(), result$.mapTo(false));
+	    }).flatten(), result$.mapTo(false)).compose(distinctBooleans);
 	    var cells = grid.map(function (element, index) {
 	        var dom = sources.dom;
-	        var state$ = xstream_1.default.merge(puzzle$
-	            .map(function (puzzle) {
-	            return xstream_1.default.merge(xstream_1.default.of(cell_1.CellState.Normal)
-	                .compose(delay_1.default(3000)), xstream_1.default.of(utils_1.has(puzzle, index) ? cell_1.CellState.Highlighted : cell_1.CellState.Normal));
-	        }).flatten(), result$
-	            .map(function (result) {
-	            if (utils_1.has(result.correct, index))
-	                return cell_1.CellState.Correct;
-	            if (utils_1.has(result.wrong, index))
-	                return cell_1.CellState.Wrong;
-	            if (utils_1.has(result.missed, index))
-	                return cell_1.CellState.Missed;
-	            return cell_1.CellState.Normal;
-	        }), selected$
-	            .map(function (selected) {
-	            return utils_1.has(selected, index)
-	                ? cell_1.CellState.Selected
-	                : cell_1.CellState.Normal;
-	        }));
+	        var state$ = puzzle$.map(function (puzzle) {
+	            return enabled$
+	                .map(function (enabled) {
+	                return xstream_1.default.merge(selected$
+	                    .filter(function () { return enabled; })
+	                    .map(function (selected) {
+	                    return utils_1.has(selected, index)
+	                        ? xstream_1.default.of(cell_1.CellState.Selected)
+	                        : xstream_1.default.of(cell_1.CellState.Normal);
+	                }).flatten(), result$
+	                    .filter(Boolean)
+	                    .map(function (result) {
+	                    if (utils_1.has(result.correct, index))
+	                        return cell_1.CellState.Correct;
+	                    if (utils_1.has(result.wrong, index))
+	                        return cell_1.CellState.Wrong;
+	                    if (utils_1.has(result.missed, index))
+	                        return cell_1.CellState.Missed;
+	                    return cell_1.CellState.Normal;
+	                }));
+	            }).flatten()
+	                .startWith(utils_1.has(puzzle, index) ? cell_1.CellState.Highlighted : cell_1.CellState.Normal);
+	        }).flatten();
 	        var cell = cell_1.default({
 	            dom: dom,
 	            enabled: enabled$,

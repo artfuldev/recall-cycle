@@ -26,17 +26,19 @@ function model(actions: Intent): State {
       .map(() => puzzle())
       .startWith(puzzle());
 
+  const selected$ = actions.selected$.debug();
+
   const over$ =
-    actions.selected$
+    selected$
       .map(selected => selected.length === 9)
       .compose(distinctBooleans);
 
   const result$ =
-    over$
-      .filter(Boolean)
-      .map(over =>
-        puzzle$.map(puzzle =>
-          actions.selected$.map(selected => {
+    puzzle$.map(puzzle =>
+      selected$.map(selected =>
+        over$
+          .filter(Boolean)
+          .map(() => {
             const result: Result = {
               correct: selected.filter(s => puzzle.indexOf(s) !== -1),
               wrong: selected.filter(s => puzzle.indexOf(s) === -1),
@@ -44,8 +46,9 @@ function model(actions: Intent): State {
             };
             return result;
           })
-        ).flatten()
-      ).flatten();
+      ).flatten()
+    ).flatten()
+    .startWith(null);
 
   const scoreReducer$ =
     result$
@@ -57,8 +60,7 @@ function model(actions: Intent): State {
           return won ? score + 1 : score;
         });
   const score$ =
-    reduce(scoreReducer$, 0)
-      .remember();
+    reduce(scoreReducer$, 0);
 
   return {
     puzzle$,

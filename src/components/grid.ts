@@ -6,6 +6,9 @@ import Cell, { CellState } from './cell';
 import { add, remove, has, reduce } from './../utils';
 import delay from 'xstream/extra/delay';
 import isolate from '@cycle/isolate';
+import dropRepeats from 'xstream/extra/dropRepeats';
+
+const distinctBooleans = dropRepeats<boolean>((prev, next) => prev === next);
 
 interface GridSources {
   dom: DOMSource;
@@ -20,7 +23,7 @@ interface GridSinks {
 
 function GridComponent(sources: GridSources): GridSinks {
   const puzzle$ = sources.puzzle;
-  const result$ = sources.result.filter(Boolean);
+  const result$ = sources.result;
   const grid: number[] = Array.apply(null, { length: 25 }).map(Number.call, Number);
   const nothing: number[] = [];
   const cellClickProxy$ = xs.create<number>();
@@ -43,35 +46,36 @@ function GridComponent(sources: GridSources): GridSinks {
           .startWith(false)
       ).flatten(),
       result$.mapTo(false)
-    );
+    ).compose(distinctBooleans);
   const cells =
     grid.map((element, index) => {
       const dom = sources.dom;
       const state$ =
-        xs.merge(
-          puzzle$
-            .map(puzzle =>
+        puzzle$.map(puzzle =>
+          enabled$
+            .map(enabled =>
               xs.merge(
-                xs.of(CellState.Normal)
-                  .compose(delay<CellState>(3000)),
-                xs.of(has(puzzle, index) ? CellState.Highlighted : CellState.Normal)
-              )).flatten(),
-          result$
-            .map(result => {
-              if (has(result.correct, index))
-                return CellState.Correct;
-              if (has(result.wrong, index))
-                return CellState.Wrong;
-              if (has(result.missed, index))
-                return CellState.Missed;
-              return CellState.Normal;
-            }),
-          selected$
-            .map(selected =>
-              has(selected, index)
-                ? CellState.Selected
-                : CellState.Normal)
-        );
+                selected$
+                  .filter(() => enabled)
+                  .map(selected =>
+                    has(selected, index)
+                      ? xs.of(CellState.Selected)
+                      : xs.of(CellState.Normal)
+                  ).flatten(),
+                result$
+                  .filter(Boolean)
+                  .map(result => {
+                    if (has(result.correct, index))
+                      return CellState.Correct;
+                    if (has(result.wrong, index))
+                      return CellState.Wrong;
+                    if (has(result.missed, index))
+                      return CellState.Missed;
+                    return CellState.Normal;
+                  })
+              )).flatten()
+            .startWith(has(puzzle, index) ? CellState.Highlighted : CellState.Normal)
+        ).flatten();
       const cell = Cell({
         dom,
         enabled: enabled$,
