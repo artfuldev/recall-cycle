@@ -4,9 +4,9 @@
   "description": "A cycle.js implementation of the Recall game",
   "main": "index.js",
   "dependencies": {
-    "@cycle/dom": "^12.2.4",
+    "@cycle/dom": "^11.0.1",
+    "@cycle/isolate": "^1.4.0",
     "@cycle/xstream-run": "^3.1.0",
-    "immutable": "^3.8.1",
     "xstream": "^5.1.4"
   },
   "devDependencies": {
@@ -19,7 +19,9 @@
   },
   "scripts": {
     "dev": "concurrently \"webpack --watch\" \"lite-server\"",
-    "start": "npm run dev"
+    "start": "npm run dev",
+    "build": "webpack",
+    "postinstall": "typings install"
   },
   "repository": {
     "type": "git",
