@@ -86,8 +86,10 @@ function GridComponent(sources: GridSources): GridSinks {
     });
   const cellClick$ =
     xs.merge(
-      ...cells.map((cell, i) =>
-        cell.clicks.map(ev => i))
+      ...cells
+        .map((cell, i) =>
+          cell.clicks
+            .map(ev => i))
     );
   cellClickProxy$.imitate(cellClick$);
   const cellDoms$: Stream<VNode[]> = xs.combine(...cells.map(cell => cell.dom));

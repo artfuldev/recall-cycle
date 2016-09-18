@@ -8836,8 +8836,10 @@
 	        });
 	        return cell;
 	    });
-	    var cellClick$ = xstream_1.default.merge.apply(xstream_1.default, cells.map(function (cell, i) {
-	        return cell.clicks.map(function (ev) { return i; });
+	    var cellClick$ = xstream_1.default.merge.apply(xstream_1.default, cells
+	        .map(function (cell, i) {
+	        return cell.clicks
+	            .map(function (ev) { return i; });
 	    }));
 	    cellClickProxy$.imitate(cellClick$);
 	    var cellDoms$ = xstream_1.default.combine.apply(xstream_1.default, cells.map(function (cell) { return cell.dom; }));
