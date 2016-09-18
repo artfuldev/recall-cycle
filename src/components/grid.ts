@@ -64,6 +64,7 @@ function GridComponent(sources: GridSources): GridSinks {
                   ).flatten(),
                 result$
                   .filter(Boolean)
+                  .filter(() => !enabled)
                   .map(result => {
                     if (has(result.correct, index))
                       return CellState.Correct;

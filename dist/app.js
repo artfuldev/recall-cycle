@@ -137,23 +137,17 @@
 	    var puzzle$ = actions.newGame$
 	        .map(function () { return puzzle(); })
 	        .startWith(puzzle());
-	    var selected$ = actions.selected$.debug();
-	    var over$ = selected$
-	        .map(function (selected) { return selected.length === 9; })
-	        .compose(distinctBooleans);
 	    var result$ = puzzle$.map(function (puzzle) {
-	        return selected$.map(function (selected) {
-	            return over$
-	                .filter(Boolean)
-	                .map(function () {
-	                var result = {
-	                    correct: selected.filter(function (s) { return puzzle.indexOf(s) !== -1; }),
-	                    wrong: selected.filter(function (s) { return puzzle.indexOf(s) === -1; }),
-	                    missed: puzzle.filter(function (p) { return selected.indexOf(p) === -1; })
-	                };
-	                return result;
-	            });
-	        }).flatten();
+	        return actions.selected$
+	            .filter(function (selected) { return selected.length === 9; })
+	            .map(function (selected) {
+	            var result = {
+	                correct: selected.filter(function (s) { return puzzle.indexOf(s) !== -1; }),
+	                wrong: selected.filter(function (s) { return puzzle.indexOf(s) === -1; }),
+	                missed: puzzle.filter(function (p) { return selected.indexOf(p) === -1; })
+	            };
+	            return result;
+	        });
 	    }).flatten()
 	        .startWith(null);
 	    var scoreReducer$ = result$
@@ -8823,6 +8817,7 @@
 	                        : xstream_1.default.of(cell_1.CellState.Normal);
 	                }).flatten(), result$
 	                    .filter(Boolean)
+	                    .filter(function () { return !enabled; })
 	                    .map(function (result) {
 	                    if (utils_1.has(result.correct, index))
 	                        return cell_1.CellState.Correct;
