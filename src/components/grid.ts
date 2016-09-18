@@ -23,7 +23,7 @@ interface GridSinks {
 
 function GridComponent(sources: GridSources): GridSinks {
   const puzzle$ = sources.puzzle;
-  const result$ = sources.result;
+  const result$ = sources.result.remember();
   const grid: number[] = Array.apply(null, { length: 25 }).map(Number.call, Number);
   const nothing: number[] = [];
   const cellClickProxy$ = xs.create<number>();

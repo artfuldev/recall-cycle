@@ -25,7 +25,7 @@ function model(actions: Intent): State {
     actions.newGame$
       .map(() => puzzle())
       .startWith(puzzle());
-      
+
   const result$ =
     puzzle$.map(puzzle =>
       actions.selected$
@@ -38,8 +38,7 @@ function model(actions: Intent): State {
             };
             return result;
           })
-      ).flatten()
-      .startWith(null);
+      ).flatten();
 
   const scoreReducer$ =
     result$

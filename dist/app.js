@@ -148,8 +148,7 @@
 	            };
 	            return result;
 	        });
-	    }).flatten()
-	        .startWith(null);
+	    }).flatten();
 	    var scoreReducer$ = result$
 	        .filter(Boolean)
 	        .map(function (result) {
@@ -8787,7 +8786,7 @@
 	var distinctBooleans = dropRepeats_1.default(function (prev, next) { return prev === next; });
 	function GridComponent(sources) {
 	    var puzzle$ = sources.puzzle;
-	    var result$ = sources.result;
+	    var result$ = sources.result.remember();
 	    var grid = Array.apply(null, { length: 25 }).map(Number.call, Number);
 	    var nothing = [];
 	    var cellClickProxy$ = xstream_1.default.create();
