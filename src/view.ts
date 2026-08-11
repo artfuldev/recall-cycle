@@ -13,7 +13,7 @@ interface IViewState {
 }
 
 function view(state: State, newGameDom$: Stream<VNode>, gridDom$: Stream<VNode>): Stream<VNode> {
-  const scoreBoard = Scoreboard({ score$: state.score$ });
+  const scoreBoard = Scoreboard({ score$: state.score$, bestScore$: state.bestScore$ });
   const scoreDom$ = scoreBoard.dom;
   const vdom$ =
     xs.combine(

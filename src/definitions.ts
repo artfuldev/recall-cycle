@@ -19,5 +19,6 @@ export interface Result {
 export interface State {
     puzzle$: Stream<Array<number>>;
     score$: Stream<number>;
+    bestScore$: Stream<number>;
     result$: Stream<Result>;
 }
