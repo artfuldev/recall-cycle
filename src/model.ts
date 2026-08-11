@@ -20,6 +20,8 @@ const puzzle = () => {
   return puzzle;
 };
 
+let initialBestScore = parseInt(localStorage.getItem('bestScore') || '0', 10);
+
 function model(actions: Intent): State {
   const puzzle$ =
     actions.newGame$
@@ -52,9 +54,18 @@ function model(actions: Intent): State {
   const score$ =
     reduce(scoreReducer$, 0);
 
+  const bestScore$ =
+    score$
+      .fold((prevBest: number, currScore: number) => {
+        const newBest = currScore > prevBest ? currScore : prevBest;
+        localStorage.setItem('bestScore', newBest.toString());
+        return newBest;
+      }, initialBestScore);
+
   return {
     puzzle$,
     score$,
+    bestScore$,
     result$
   };
 }
